@@ -1,0 +1,16 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Blackwire
+Comment=Burp Suite Alternative - HTTP Proxy Interceptor
+Exec=INSTALL_PATH/launch-with-browser.sh
+Path=INSTALL_PATH
+Icon=INSTALL_PATH/icon.svg
+<<<<<<< HEAD
+Terminal=false
+=======
+Terminal=true
+>>>>>>> bda3f13 (First commit)
+Categories=Development;Network;Security;
+Keywords=proxy;burp;http;intercept;pentest;
+StartupNotify=true

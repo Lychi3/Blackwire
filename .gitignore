@@ -1,0 +1,5 @@
+venv
+projects
+data
+backend/__pycache__
+backend/.proxy_config.json
