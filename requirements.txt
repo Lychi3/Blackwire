@@ -14,12 +14,9 @@ mitmproxy>=10.2.0
 
 # Optional: For better async support
 anyio>=4.2.0
-<<<<<<< HEAD
 
 # Chepy replacement
 pyyaml>=6.0
 
 # WebSocket resend support
 websockets>=12.0
-=======
->>>>>>> bda3f13 (First commit)

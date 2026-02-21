@@ -4,12 +4,7 @@
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%2339c5cf'/%3E%3Cstop offset='1' stop-color='%23a371f7'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='12' fill='url(%23g)'/%3E%3Ctext x='32' y='40' text-anchor='middle' font-family='Arial, sans-serif' font-size='24' font-weight='700' fill='white'%3EBW%3C/text%3E%3C/svg%3E" />
 <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
 <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
-<<<<<<< HEAD
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;600&family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
-=======
-<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
->>>>>>> bda3f13 (First commit)
 <style>
 :root{--bg:#0a0e14;--bg2:#0d1117;--bg3:#161b22;--bgh:#1f262d;--brd:#30363d;--txt:#e6edf3;--txt2:#8b949e;--txt3:#6e7681;--blue:#58a6ff;--green:#3fb950;--red:#f85149;--orange:#d29922;--purple:#a371f7;--cyan:#39c5cf}
 *{margin:0;padding:0;box-sizing:border-box}body{font-family:Inter,sans-serif;background:var(--bg);color:var(--txt);overflow:hidden}
@@ -34,11 +29,7 @@
 .tab-badge{background:var(--red);color:#fff;padding:1px 5px;border-radius:8px;font-size:9px}
 .main{flex:1;display:flex;overflow:hidden}
 .panel{display:flex;flex-direction:column;overflow:hidden}.pnl-hdr{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--bg2);border-bottom:1px solid var(--brd);font-size:12px;font-weight:500}
-<<<<<<< HEAD
 .pnl-cnt{flex:1;overflow:auto}.hist-pnl{flex-shrink:0;border-right:1px solid var(--brd);overflow:hidden}.det-pnl{flex:1;display:flex;flex-direction:column;min-width:0}
-=======
-.pnl-cnt{flex:1;overflow:auto}.hist-pnl{width:44%;border-right:1px solid var(--brd)}.det-pnl{flex:1;display:flex;flex-direction:column}
->>>>>>> bda3f13 (First commit)
 .req-list{font-family:'JetBrains Mono';font-size:11px}.req-item{display:grid;grid-template-columns:60px 1fr 60px 55px;gap:10px;padding:8px 14px;border-bottom:1px solid var(--brd);cursor:pointer;align-items:center}
 .req-item:hover{background:var(--bgh)}.req-item.sel{background:var(--bg3);border-left:3px solid var(--blue)}.req-item.out{opacity:.4}
 .mth{font-weight:600;padding:2px 6px;border-radius:3px;text-align:center;font-size:10px}
@@ -65,11 +56,7 @@
 .prj-name{font-weight:600;font-size:14px;margin-bottom:3px}.cur-badge{background:var(--cyan);color:#000;padding:1px 6px;border-radius:3px;font-size:9px;margin-left:6px}
 .prj-desc{color:var(--txt2);font-size:12px}.prj-date{color:var(--txt3);font-size:10px;margin-top:3px}
 .int-pnl{display:flex;flex-direction:column;width:100%;height:100%}.int-ctrl{display:flex;gap:10px;padding:14px;background:var(--bg2);border-bottom:1px solid var(--brd)}
-<<<<<<< HEAD
 .int-cnt{display:flex;flex:1;overflow:hidden}.pend-list{flex-shrink:0;border-right:1px solid var(--brd);display:flex;flex-direction:column}
-=======
-.int-cnt{display:flex;flex:1;overflow:hidden}.pend-list{width:280px;border-right:1px solid var(--brd);display:flex;flex-direction:column}
->>>>>>> bda3f13 (First commit)
 .pend-item{display:flex;gap:10px;padding:10px 14px;border-bottom:1px solid var(--brd);cursor:pointer;align-items:center}
 .pend-item:hover{background:var(--bgh)}.pend-item.sel{background:var(--bg3);border-left:3px solid var(--orange)}
 .int-edit{flex:1;display:flex;flex-direction:column;overflow:hidden}.ed-row{display:flex;gap:10px;padding:10px 14px;background:var(--bg2);border-bottom:1px solid var(--brd)}
@@ -80,11 +67,7 @@
 .scp-rule.dis{opacity:.4}.rul-type{padding:3px 8px;border-radius:3px;font-size:10px;font-weight:600}
 .rul-inc{background:rgba(63,185,80,.15);color:var(--green)}.rul-exc{background:rgba(248,81,73,.15);color:var(--red)}
 .rul-pat{flex:1;font-family:'JetBrains Mono';font-size:12px}.rul-acts{display:flex;gap:6px}
-<<<<<<< HEAD
 .rep-cnt{display:flex;width:100%;height:100%}.rep-side{flex-shrink:0;border-right:1px solid var(--brd);display:flex;flex-direction:column}
-=======
-.rep-cnt{display:flex;width:100%;height:100%}.rep-side{width:200px;border-right:1px solid var(--brd);display:flex;flex-direction:column}
->>>>>>> bda3f13 (First commit)
 .rep-list{flex:1;overflow:auto}.rep-item{display:flex;gap:6px;padding:10px 14px;border-bottom:1px solid var(--brd);cursor:pointer;align-items:center}
 .rep-item:hover{background:var(--bgh)}.rep-item.sel{background:var(--bg3);border-left:3px solid var(--purple)}.rep-item .name{font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .rep-main{flex:1;display:flex;flex-direction:column}.req-bar{display:flex;gap:10px;padding:10px 14px;background:var(--bg2);border-bottom:1px solid var(--brd)}
@@ -100,7 +83,6 @@
 .toast-c{position:fixed;bottom:20px;right:20px;z-index:1000}.toast{padding:10px 18px;background:var(--bg3);border:1px solid var(--brd);border-radius:6px;font-size:12px;margin-top:6px;animation:slideIn .2s}
 .toast.success{border-color:var(--green)}.toast.error{border-color:var(--red)}@keyframes slideIn{from{transform:translateX(100%);opacity:0}to{transform:translateX(0);opacity:1}}
 ::-webkit-scrollbar{width:6px;height:6px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--brd);border-radius:3px}
-<<<<<<< HEAD
 .chepy-cnt{display:flex;width:100%;height:100%}.chepy-col{display:flex;flex-direction:column;overflow:hidden}
 .chepy-in-col{flex-shrink:0;border-right:1px solid var(--brd)}.chepy-recipe-col{flex-shrink:0;border-right:1px solid var(--brd)}.chepy-out-col{flex:1;min-width:0}
 .chepy-add{display:flex;flex-direction:column;border-bottom:1px solid var(--brd);max-height:40%}.chepy-ops-list{flex:1;overflow:auto;padding:0 8px 8px}
@@ -200,7 +182,3 @@
 </style></head><body><div id="root"></div>
 <script src="/themes.js"></script>
 <script src="/App.jsx"></script></body></html>
-=======
-</style></head><body><div id="root"></div>
-<script type="text/babel" src="/App.jsx"></script></body></html>
->>>>>>> bda3f13 (First commit)
