@@ -3290,7 +3290,7 @@ function Blackwire() {
               <h2>Projects</h2>
               <div style={{ display: 'flex', gap: '8px' }}>
                 <button className="btn btn-p" onClick={() => setShowNew(true)}>+ New</button>
-                <button className="btn btn-s" onClick={importAsNewProject} title="Import project from file">↓ Import</button>
+                <button className="btn btn-s" onClick={importAsNewProject} title="Create new project from Blackwire export file">↓ Create from File</button>
               </div>
             </div>
             {showNew && (
@@ -3323,7 +3323,7 @@ function Blackwire() {
                           const menu = e.currentTarget.nextElementSibling;
                           menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
                         }}
-                        title="Export options"
+                        title="Export project data to file"
                       >
                         ↑ ▼
                       </button>
@@ -3337,7 +3337,7 @@ function Blackwire() {
                           borderRadius: '4px',
                           boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
                           zIndex: 1000,
-                          minWidth: '180px',
+                          minWidth: '240px',
                           marginTop: '4px'
                         }}
                         onClick={(e) => { e.stopPropagation(); e.currentTarget.style.display = 'none'; }}
@@ -3353,8 +3353,10 @@ function Blackwire() {
                           onClick={(e) => { e.stopPropagation(); exportProject(p.name); }}
                           onMouseEnter={(e) => e.currentTarget.style.background = 'var(--bg3)'}
                           onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
+                          title="Export complete project (requests, repeater, collections, rules, scope)"
                         >
-                          ↑ Blackwire Format
+                          <div style={{ fontWeight: 600 }}>↑ Complete Project (JSON)</div>
+                          <div style={{ fontSize: '10px', color: 'var(--txt3)', marginTop: '2px' }}>All data: requests, repeater, collections, scope</div>
                         </div>
                         <div
                           style={{
@@ -3366,8 +3368,10 @@ function Blackwire() {
                           onClick={(e) => { e.stopPropagation(); exportProjectBurp(p.name); }}
                           onMouseEnter={(e) => e.currentTarget.style.background = 'var(--bg3)'}
                           onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
+                          title="Export only HTTP history for Burp Suite Pro"
                         >
-                          ↑ Burp Suite XML
+                          <div style={{ fontWeight: 600 }}>↑ Burp Suite Format (XML)</div>
+                          <div style={{ fontSize: '10px', color: 'var(--txt3)', marginTop: '2px' }}>Only HTTP history, compatible with Burp</div>
                         </div>
                       </div>
                     </div>
@@ -3379,7 +3383,7 @@ function Blackwire() {
                           const menu = e.currentTarget.nextElementSibling;
                           menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
                         }}
-                        title="Import options"
+                        title="Import data into this project"
                       >
                         ↓ ▼
                       </button>
@@ -3393,7 +3397,7 @@ function Blackwire() {
                           borderRadius: '4px',
                           boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
                           zIndex: 1000,
-                          minWidth: '180px',
+                          minWidth: '240px',
                           marginTop: '4px'
                         }}
                         onClick={(e) => { e.stopPropagation(); e.currentTarget.style.display = 'none'; }}
@@ -3409,8 +3413,10 @@ function Blackwire() {
                           onClick={(e) => { e.stopPropagation(); importProject(p.name, false); }}
                           onMouseEnter={(e) => e.currentTarget.style.background = 'var(--bg3)'}
                           onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
+                          title="Add data from file to existing project data"
                         >
-                          ↓ Merge Data
+                          <div style={{ fontWeight: 600 }}>↓ Merge (Keep Existing)</div>
+                          <div style={{ fontSize: '10px', color: 'var(--txt3)', marginTop: '2px' }}>Combine file data with current data</div>
                         </div>
                         <div
                           style={{
@@ -3423,8 +3429,10 @@ function Blackwire() {
                           onClick={(e) => { e.stopPropagation(); importProject(p.name, true); }}
                           onMouseEnter={(e) => e.currentTarget.style.background = 'var(--bg3)'}
                           onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
+                          title="Delete all current data and replace with file data"
                         >
-                          🔄 Replace All
+                          <div style={{ fontWeight: 600 }}>🔄 Replace (Delete All)</div>
+                          <div style={{ fontSize: '10px', color: 'var(--txt3)', marginTop: '2px' }}>Clear project and import file data</div>
                         </div>
                         <div
                           style={{
@@ -3436,8 +3444,10 @@ function Blackwire() {
                           onClick={(e) => { e.stopPropagation(); importBurpXML(p.name); }}
                           onMouseEnter={(e) => e.currentTarget.style.background = 'var(--bg3)'}
                           onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
+                          title="Import HTTP history from Burp Suite XML export"
                         >
-                          ↓ Burp Suite XML
+                          <div style={{ fontWeight: 600 }}>↓ From Burp Suite (XML)</div>
+                          <div style={{ fontSize: '10px', color: 'var(--txt3)', marginTop: '2px' }}>Import HTTP history from Burp export</div>
                         </div>
                       </div>
                     </div>
