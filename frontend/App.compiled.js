@@ -4346,9 +4346,9 @@ function Blackwire() {
 
         , tab === 'collections' && curPrj && (
           React.createElement('div', { className: "coll-cnt", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4348}}
-            , React.createElement('div', { className: "det-tabs", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4349}}
-              , React.createElement('div', { className: 'det-tab' + (collSubTab === 'collections' ? ' act' : ''), onClick: () => setCollSubTab('collections'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 4350}}, "Collections")
-              , React.createElement('div', { className: 'det-tab' + (collSubTab === 'session-rules' ? ' act' : ''), onClick: () => { setCollSubTab('session-rules'); loadSessionRules(); }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4351}}, "Session Rules" )
+            , React.createElement('div', { className: "hist-sub-tabs", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4349}}
+              , React.createElement('div', { className: 'hist-sub-tab' + (collSubTab === 'collections' ? ' act' : ''), onClick: () => setCollSubTab('collections'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 4350}}, "Collections")
+              , React.createElement('div', { className: 'hist-sub-tab' + (collSubTab === 'session-rules' ? ' act' : ''), onClick: () => { setCollSubTab('session-rules'); loadSessionRules(); }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4351}}, "Session Rules" )
             )
 
             , collSubTab === 'collections' && (
@@ -4627,9 +4627,9 @@ function Blackwire() {
 
         , tab === 'chepy' && curPrj && (
           React.createElement('div', { className: "chepy-cnt", ref: chepyCntRef, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4629}}
-            , React.createElement('div', { className: "det-tabs", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4630}}
-              , React.createElement('div', { className: 'det-tab' + (chepySubTab === 'cipher' ? ' act' : ''), onClick: () => setChepySubTab('cipher'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 4631}}, "Cipher")
-              , React.createElement('div', { className: 'det-tab' + (chepySubTab === 'jwt' ? ' act' : ''), onClick: () => setChepySubTab('jwt'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 4632}}, "JWT")
+            , React.createElement('div', { className: "hist-sub-tabs", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4630}}
+              , React.createElement('div', { className: 'hist-sub-tab' + (chepySubTab === 'cipher' ? ' act' : ''), onClick: () => setChepySubTab('cipher'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 4631}}, "Cipher")
+              , React.createElement('div', { className: 'hist-sub-tab' + (chepySubTab === 'jwt' ? ' act' : ''), onClick: () => setChepySubTab('jwt'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 4632}}, "JWT")
             )
 
             , chepySubTab === 'cipher' && (

@@ -4346,9 +4346,9 @@ function Blackwire() {
 
         {tab === 'collections' && curPrj && (
           <div className="coll-cnt">
-            <div className="det-tabs">
-              <div className={'det-tab' + (collSubTab === 'collections' ? ' act' : '')} onClick={() => setCollSubTab('collections')}>Collections</div>
-              <div className={'det-tab' + (collSubTab === 'session-rules' ? ' act' : '')} onClick={() => { setCollSubTab('session-rules'); loadSessionRules(); }}>Session Rules</div>
+            <div className="hist-sub-tabs">
+              <div className={'hist-sub-tab' + (collSubTab === 'collections' ? ' act' : '')} onClick={() => setCollSubTab('collections')}>Collections</div>
+              <div className={'hist-sub-tab' + (collSubTab === 'session-rules' ? ' act' : '')} onClick={() => { setCollSubTab('session-rules'); loadSessionRules(); }}>Session Rules</div>
             </div>
 
             {collSubTab === 'collections' && (
@@ -4627,9 +4627,9 @@ function Blackwire() {
 
         {tab === 'chepy' && curPrj && (
           <div className="chepy-cnt" ref={chepyCntRef}>
-            <div className="det-tabs">
-              <div className={'det-tab' + (chepySubTab === 'cipher' ? ' act' : '')} onClick={() => setChepySubTab('cipher')}>Cipher</div>
-              <div className={'det-tab' + (chepySubTab === 'jwt' ? ' act' : '')} onClick={() => setChepySubTab('jwt')}>JWT</div>
+            <div className="hist-sub-tabs">
+              <div className={'hist-sub-tab' + (chepySubTab === 'cipher' ? ' act' : '')} onClick={() => setChepySubTab('cipher')}>Cipher</div>
+              <div className={'hist-sub-tab' + (chepySubTab === 'jwt' ? ' act' : '')} onClick={() => setChepySubTab('jwt')}>JWT</div>
             </div>
 
             {chepySubTab === 'cipher' && (
