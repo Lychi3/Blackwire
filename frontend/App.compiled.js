@@ -4125,7 +4125,7 @@ function Blackwire() {
 
         , tab === 'collections' && curPrj && (
           React.createElement('div', { className: "coll-cnt", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4127}}
-            , React.createElement('div', { className: "det-tabs", style: { justifyContent: 'flex-start', gap: 0, borderBottom: '1px solid var(--brd)' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4128}}
+            , React.createElement('div', { className: "det-tabs", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4128}}
               , React.createElement('div', { className: 'det-tab' + (collSubTab === 'collections' ? ' act' : ''), onClick: () => setCollSubTab('collections'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 4129}}, "Collections")
               , React.createElement('div', { className: 'det-tab' + (collSubTab === 'session-rules' ? ' act' : ''), onClick: () => { setCollSubTab('session-rules'); loadSessionRules(); }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4130}}, "Session Rules" )
             )
@@ -4406,7 +4406,7 @@ function Blackwire() {
 
         , tab === 'chepy' && curPrj && (
           React.createElement('div', { className: "chepy-cnt", ref: chepyCntRef, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4408}}
-            , React.createElement('div', { className: "det-tabs", style: { justifyContent: 'flex-start', gap: 0, borderBottom: '1px solid var(--brd)' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4409}}
+            , React.createElement('div', { className: "det-tabs", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4409}}
               , React.createElement('div', { className: 'det-tab' + (chepySubTab === 'cipher' ? ' act' : ''), onClick: () => setChepySubTab('cipher'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 4410}}, "Cipher")
               , React.createElement('div', { className: 'det-tab' + (chepySubTab === 'jwt' ? ' act' : ''), onClick: () => setChepySubTab('jwt'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 4411}}, "JWT")
             )
