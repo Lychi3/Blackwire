@@ -1053,6 +1053,142 @@ async def export_project(name: str):
         headers={'Content-Disposition': f'attachment; filename="{filename}"'}
     )
 
+@app.get("/api/projects/{name}/export-burp")
+async def export_project_burp(name: str):
+    """Exportar proyecto al formato XML de Burp Suite Pro"""
+    from fastapi.responses import Response
+    import base64
+    from urllib.parse import urlparse
+
+    if not get_project_path(name).exists():
+        raise HTTPException(status_code=404, detail="Project not found")
+
+    # Leer requests de la DB
+    db_path = get_project_db(name)
+    items_xml = []
+
+    async with aiosqlite.connect(db_path) as db:
+        cursor = await db.execute("""
+            SELECT id, method, url, headers, body, response_status, response_headers,
+                   response_body, timestamp
+            FROM requests
+            ORDER BY id ASC
+        """)
+        rows = await cursor.fetchall()
+
+        for row in rows:
+            req_id, method, url, headers, body, resp_status, resp_headers, resp_body, timestamp = row
+
+            # Parse URL
+            try:
+                parsed = urlparse(url)
+                protocol = parsed.scheme or "http"
+                host = parsed.netloc.split(':')[0] if parsed.netloc else "unknown"
+                port = parsed.port or (443 if protocol == "https" else 80)
+                path = parsed.path + ("?" + parsed.query if parsed.query else "")
+                extension = path.split('.')[-1] if '.' in path.split('/')[-1] else "null"
+            except:
+                protocol, host, port, path, extension = "http", "unknown", 80, "/", "null"
+
+            # Construir request HTTP completo
+            request_text = f"{method} {path} HTTP/1.1\r\n"
+            if headers:
+                try:
+                    headers_dict = json.loads(headers) if isinstance(headers, str) else headers
+                    for k, v in headers_dict.items():
+                        request_text += f"{k}: {v}\r\n"
+                except:
+                    pass
+            request_text += "\r\n"
+            if body:
+                request_text += body
+
+            # Construir response HTTP completo
+            response_text = ""
+            resp_length = 0
+            mime_type = "text"
+            if resp_status:
+                response_text = f"HTTP/1.1 {resp_status} OK\r\n"
+                if resp_headers:
+                    try:
+                        resp_headers_dict = json.loads(resp_headers) if isinstance(resp_headers, str) else resp_headers
+                        for k, v in resp_headers_dict.items():
+                            response_text += f"{k}: {v}\r\n"
+                            if k.lower() == "content-type":
+                                mime_type = v.split(';')[0].strip().split('/')[-1]
+                    except:
+                        pass
+                response_text += "\r\n"
+                if resp_body:
+                    response_text += resp_body
+                    resp_length = len(resp_body)
+
+            # Base64 encode para evitar problemas con caracteres especiales
+            request_b64 = base64.b64encode(request_text.encode('utf-8', errors='replace')).decode('ascii')
+            response_b64 = base64.b64encode(response_text.encode('utf-8', errors='replace')).decode('ascii') if response_text else ""
+
+            # Formatear timestamp
+            time_str = timestamp if timestamp else datetime.now().isoformat()
+
+            # Crear item XML
+            item_xml = f"""  <item>
+    <time>{time_str}</time>
+    <url><![CDATA[{url}]]></url>
+    <host ip="">{host}</host>
+    <port>{port}</port>
+    <protocol>{protocol}</protocol>
+    <method>{method}</method>
+    <path><![CDATA[{path}]]></path>
+    <extension>{extension}</extension>
+    <request base64="true"><![CDATA[{request_b64}]]></request>
+    <status>{resp_status or 0}</status>
+    <responselength>{resp_length}</responselength>
+    <mimetype>{mime_type}</mimetype>
+    <response base64="true"><![CDATA[{response_b64}]]></response>
+    <comment></comment>
+  </item>"""
+            items_xml.append(item_xml)
+
+    # Construir XML completo con DTD
+    burp_version = "Blackwire-1.0.0"
+    export_time = datetime.now().strftime("%a %b %d %H:%M:%S %Z %Y")
+
+    xml_content = f"""<?xml version="1.0"?>
+<!DOCTYPE items [
+<!ELEMENT items (item*)>
+<!ATTLIST items burpVersion CDATA "">
+<!ATTLIST items exportTime CDATA "">
+<!ELEMENT item (time, url, host, port, protocol, method, path, extension, request, status, responselength, mimetype, response, comment)>
+<!ELEMENT time (#PCDATA)>
+<!ELEMENT url (#PCDATA)>
+<!ELEMENT host (#PCDATA)>
+<!ATTLIST host ip CDATA "">
+<!ELEMENT port (#PCDATA)>
+<!ELEMENT protocol (#PCDATA)>
+<!ELEMENT method (#PCDATA)>
+<!ELEMENT path (#PCDATA)>
+<!ELEMENT extension (#PCDATA)>
+<!ELEMENT request (#PCDATA)>
+<!ATTLIST request base64 (true|false) "false">
+<!ELEMENT status (#PCDATA)>
+<!ELEMENT responselength (#PCDATA)>
+<!ELEMENT mimetype (#PCDATA)>
+<!ELEMENT response (#PCDATA)>
+<!ATTLIST response base64 (true|false) "false">
+<!ELEMENT comment (#PCDATA)>
+]>
+<items burpVersion="{burp_version}" exportTime="{export_time}">
+{chr(10).join(items_xml)}
+</items>
+"""
+
+    filename = f"burp-{name}-{datetime.now().strftime('%Y%m%d-%H%M%S')}.xml"
+    return Response(
+        content=xml_content,
+        media_type='application/xml',
+        headers={'Content-Disposition': f'attachment; filename="{filename}"'}
+    )
+
 @app.post("/api/projects/import")
 async def import_project_create(data: dict = Body(...)):
     """Crear un nuevo proyecto desde un archivo de exportación"""

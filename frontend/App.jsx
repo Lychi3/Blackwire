@@ -1118,6 +1118,11 @@ function Blackwire() {
     toast('Exporting project: ' + n, 'success');
   };
 
+  const exportProjectBurp = async n => {
+    window.open(API + '/api/projects/' + encodeURIComponent(n) + '/export-burp', '_blank');
+    toast('Exporting to Burp Suite format: ' + n, 'success');
+  };
+
   const importAsNewProject = async () => {
     const input = document.createElement('input');
     input.type = 'file';
@@ -3266,7 +3271,62 @@ function Blackwire() {
                     <div className="prj-date">{p.created_at ? new Date(p.created_at).toLocaleDateString() : ''}</div>
                   </div>
                   <div onClick={e => e.stopPropagation()} style={{ display: 'flex', gap: '4px', alignItems: 'center' }}>
-                    <button className="btn btn-sm btn-s" onClick={() => exportProject(p.name)} title="Export complete project to file">↑</button>
+                    <div style={{ position: 'relative', display: 'inline-block' }}>
+                      <button
+                        className="btn btn-sm btn-s"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          const menu = e.currentTarget.nextElementSibling;
+                          menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+                        }}
+                        title="Export options"
+                      >
+                        ↑ ▼
+                      </button>
+                      <div
+                        style={{
+                          display: 'none',
+                          position: 'absolute',
+                          right: 0,
+                          background: 'var(--bg2)',
+                          border: '1px solid var(--brd)',
+                          borderRadius: '4px',
+                          boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
+                          zIndex: 1000,
+                          minWidth: '180px',
+                          marginTop: '4px'
+                        }}
+                        onClick={(e) => { e.stopPropagation(); e.currentTarget.style.display = 'none'; }}
+                      >
+                        <div
+                          style={{
+                            padding: '8px 12px',
+                            cursor: 'pointer',
+                            fontSize: '11px',
+                            borderBottom: '1px solid var(--brd)',
+                            color: 'var(--txt)'
+                          }}
+                          onClick={(e) => { e.stopPropagation(); exportProject(p.name); }}
+                          onMouseEnter={(e) => e.currentTarget.style.background = 'var(--bg3)'}
+                          onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
+                        >
+                          ↑ Blackwire Format
+                        </div>
+                        <div
+                          style={{
+                            padding: '8px 12px',
+                            cursor: 'pointer',
+                            fontSize: '11px',
+                            color: 'var(--txt)'
+                          }}
+                          onClick={(e) => { e.stopPropagation(); exportProjectBurp(p.name); }}
+                          onMouseEnter={(e) => e.currentTarget.style.background = 'var(--bg3)'}
+                          onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
+                        >
+                          ↑ Burp Suite XML
+                        </div>
+                      </div>
+                    </div>
                     <div style={{ position: 'relative', display: 'inline-block' }}>
                       <button
                         className="btn btn-sm btn-s"
