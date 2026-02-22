@@ -23,9 +23,11 @@ EXTENSION_META = {
     "name": "match_replace",
     "title": "Match & Replace",
     "description": "Modifica URL, headers o body en requests/responses usando reglas simples o regex.",
-    "tabs": [
-        {"id": "main", "label": "🧩 Match & Replace"}
-    ],
+    "tabs": [],
+    "default_config": {
+        "enabled": False,
+        "rules": []
+    }
 }
 
 

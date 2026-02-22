@@ -881,7 +881,7 @@ function Blackwire() {
 
   // Auto-refresh desde webhook.site cuando estemos en las pestañas relevantes
   useEffect(() => {
-    if (tab !== 'extensions' && tab !== 'webhook') return;
+    if (tab !== 'extensions' && tab !== 'webhook_site') return;
     if (!_optionalChain([webhookExt, 'optionalAccess', _16 => _16.enabled]) || !_optionalChain([webhookExt, 'optionalAccess', _17 => _17.config, 'optionalAccess', _18 => _18.token_id])) return;
     const id = setInterval(() => refreshWebhook(true), 15000);
     return () => clearInterval(id);
@@ -2431,11 +2431,103 @@ function Blackwire() {
     );
   }
 
-  // Registry de componentes de extensión
-  const EXTENSION_COMPONENTS = {
+  // Registry de componentes de extensión custom (solo para UIs complejas)
+  const EXTENSION_CUSTOM_COMPONENTS = {
     'match_replace': MatchReplaceUI,
     'webhook_site': WebhookSiteUI,
   };
+
+  // Componente genérico schema-driven para extensiones simples
+  function SchemaBasedUI({ ext, updateExtCfg }) {
+    const schema = ext.ui_schema;
+    const config = ext.config || {};
+
+    if (!schema || !schema.fields) {
+      return (
+        React.createElement('div', { style: { padding: '20px', color: 'var(--txt3)', fontSize: '11px' },}, "No UI schema defined for this extension."
+
+        )
+      );
+    }
+
+    const handleFieldChange = (fieldName, value) => {
+      updateExtCfg(ext.name, { ...config, [fieldName]: value });
+    };
+
+    return (
+      React.createElement('div', { style: { marginTop: '12px', paddingTop: '12px', borderTop: '1px solid var(--brd)' },}
+        , schema.fields.map(field => (
+          React.createElement('div', { key: field.name, style: { marginBottom: '12px' },}
+            , React.createElement('label', { style: { display: 'block', fontSize: '11px', color: 'var(--txt2)', marginBottom: '6px' },}
+              , field.label
+              , field.required && React.createElement('span', { style: { color: 'var(--red)' },}, " *" )
+            )
+
+            , (field.type === 'text' || field.type === 'password') && (
+              React.createElement('input', {
+                className: "inp",
+                type: field.type,
+                placeholder: field.placeholder || '',
+                value: config[field.name] !== undefined ? config[field.name] : (field.default || ''),
+                onChange: e => handleFieldChange(field.name, e.target.value),}
+              )
+            )
+
+            , field.type === 'textarea' && (
+              React.createElement('textarea', {
+                className: "inp",
+                placeholder: field.placeholder || '',
+                value: config[field.name] !== undefined ? config[field.name] : (field.default || ''),
+                onChange: e => handleFieldChange(field.name, e.target.value),
+                rows: field.rows || 4,}
+              )
+            )
+
+            , field.type === 'number' && (
+              React.createElement('input', {
+                className: "inp",
+                type: "number",
+                placeholder: field.placeholder || '',
+                value: config[field.name] !== undefined ? config[field.name] : (field.default || 0),
+                onChange: e => handleFieldChange(field.name, parseInt(e.target.value) || 0),
+                min: field.min,
+                max: field.max,}
+              )
+            )
+
+            , field.type === 'checkbox' && (
+              React.createElement('div', { style: { display: 'flex', alignItems: 'center', gap: '8px' },}
+                , React.createElement('input', {
+                  type: "checkbox",
+                  checked: config[field.name] !== undefined ? config[field.name] : (field.default || false),
+                  onChange: e => handleFieldChange(field.name, e.target.checked),}
+                )
+                , field.help && React.createElement('span', { style: { fontSize: '10px', color: 'var(--txt3)' },}, field.help)
+              )
+            )
+
+            , field.type === 'select' && (
+              React.createElement('select', {
+                className: "inp",
+                value: config[field.name] !== undefined ? config[field.name] : (field.default || ''),
+                onChange: e => handleFieldChange(field.name, e.target.value),}
+
+                , field.options && field.options.map(opt => (
+                  React.createElement('option', { key: opt.value, value: opt.value,}, opt.label)
+                ))
+              )
+            )
+
+            , field.help && field.type !== 'checkbox' && (
+              React.createElement('div', { style: { fontSize: '10px', color: 'var(--txt3)', marginTop: '4px' },}
+                , field.help
+              )
+            )
+          )
+        ))
+      )
+    );
+  }
 
   const syntaxHighlightJSON = json => {
     json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -3281,6 +3373,13 @@ function Blackwire() {
             , React.createElement('div', { className: 'tab' + (tab === 'compare' ? ' act' : ''), onClick: () => setTab('compare'),}, "Compare")
             , React.createElement('div', { className: 'tab' + (tab === 'sensitive' ? ' act' : ''), onClick: () => setTab('sensitive'),}, "Sensitive")
             , React.createElement('div', { className: 'tab' + (tab === 'extensions' ? ' act' : ''), onClick: () => setTab('extensions'),}, "Extensions")
+            , extensions.filter(ext => ext.enabled && ext.tabs && ext.tabs.length > 0 && ext.name !== 'sensitive').map(ext =>
+              ext.tabs.map(extTab => (
+                React.createElement('div', { key: ext.name + '_' + extTab.id, className: 'tab' + (tab === ext.name ? ' act' : ''), onClick: () => setTab(ext.name),}
+                  , extTab.label
+                )
+              ))
+            )
           )
         )
       )
@@ -4172,7 +4271,7 @@ function Blackwire() {
           )
         )
 
-        , tab === 'webhook' && curPrj && _optionalChain([webhookExt, 'optionalAccess', _72 => _72.enabled]) && (
+        , tab === 'webhook_site' && curPrj && _optionalChain([webhookExt, 'optionalAccess', _72 => _72.enabled]) && (
           React.createElement(React.Fragment, null
             , React.createElement('div', { className: "panel hist-pnl" ,}
               , React.createElement('div', { className: "flt-bar",}
@@ -4334,22 +4433,38 @@ function Blackwire() {
                     , ext.enabled ? 'Enabled' : 'Disabled'
                   )
                 )
-                , ext.enabled && EXTENSION_COMPONENTS[ext.name] &&
-                  React.createElement(EXTENSION_COMPONENTS[ext.name], {
-                    ext,
-                    updateExtCfg,
-                    ...(ext.name === 'webhook_site' ? {
-                      whkReqs,
-                      whkApiKey,
-                      setWhkApiKey,
-                      whkLoading,
-                      createWebhookToken,
-                      refreshWebhook,
-                      loadWebhookLocal,
-                      toast
-                    } : {})
-                  })
-                
+                , ext.enabled && (() => {
+                  // 1. Si tiene ui_schema con tipo schema-driven → usar SchemaBasedUI
+                  if (_optionalChain([ext, 'access', _78 => _78.ui_schema, 'optionalAccess', _79 => _79.type]) === 'schema-driven') {
+                    return React.createElement(SchemaBasedUI, { ext, updateExtCfg });
+                  }
+
+                  // 2. Si está en registry de componentes custom → usar componente custom
+                  if (EXTENSION_CUSTOM_COMPONENTS[ext.name]) {
+                    return React.createElement(EXTENSION_CUSTOM_COMPONENTS[ext.name], {
+                      ext,
+                      updateExtCfg,
+                      // Props específicas solo para extensiones que las necesitan
+                      ...(ext.name === 'webhook_site' ? {
+                        whkReqs,
+                        whkApiKey,
+                        setWhkApiKey,
+                        whkLoading,
+                        createWebhookToken,
+                        refreshWebhook,
+                        loadWebhookLocal,
+                        toast
+                      } : {})
+                    });
+                  }
+
+                  // 3. Fallback: extensión sin UI
+                  return (
+                    React.createElement('div', { style: { marginTop: '12px', padding: '12px', fontSize: '11px', color: 'var(--txt3)' },}, "Extension enabled (no UI configured)"
+
+                    )
+                  );
+                })()
               )
             ))
           )
@@ -4504,7 +4619,7 @@ function Blackwire() {
                               , React.createElement('span', null, "Response")
                               , !resp.error && (
                                 React.createElement('span', { style: { color: 'var(--txt3)', fontSize: '10px' },}
-                                  , resp.status_code, " • "  , _optionalChain([resp, 'access', _78 => _78.elapsed, 'optionalAccess', _79 => _79.toFixed, 'call', _80 => _80(3)]), "s"
+                                  , resp.status_code, " • "  , _optionalChain([resp, 'access', _80 => _80.elapsed, 'optionalAccess', _81 => _81.toFixed, 'call', _82 => _82(3)]), "s"
                                 )
                               )
                             )
@@ -5497,7 +5612,7 @@ function Blackwire() {
 
       , contextMenu && (
         React.createElement('div', { ref: ctxMenuRef, className: "context-menu", style: { left: contextMenu.x, top: contextMenu.y }, onClick: e => e.stopPropagation(),}
-          , (_optionalChain([contextMenu, 'access', _81 => _81.normalized, 'optionalAccess', _82 => _82.body]) || contextMenu.source === 'selection') && (
+          , (_optionalChain([contextMenu, 'access', _83 => _83.normalized, 'optionalAccess', _84 => _84.body]) || contextMenu.source === 'selection') && (
             React.createElement('div', { className: "context-menu-item", onClick: () => handleContextAction('send-to-cipher'),}, "Send to Cipher"
 
             )
@@ -5537,7 +5652,7 @@ function Blackwire() {
           , React.createElement('div', { className: "context-menu-item", onClick: () => handleContextAction('copy-body'),}, "Copy Body"
 
           )
-          , contextMenu.source !== 'websocket' && contextMenu.source !== 'selection' && _optionalChain([contextMenu, 'access', _83 => _83.normalized, 'optionalAccess', _84 => _84.body]) && (
+          , contextMenu.source !== 'websocket' && contextMenu.source !== 'selection' && _optionalChain([contextMenu, 'access', _85 => _85.normalized, 'optionalAccess', _86 => _86.body]) && (
             React.createElement('div', { className: "context-menu-item", onClick: () => handleContextAction('download-body'),}, "Download Body"
 
             )
@@ -5552,7 +5667,7 @@ function Blackwire() {
 
             )
           )
-          , _optionalChain([contextMenu, 'access', _85 => _85.normalized, 'optionalAccess', _86 => _86.url]) && (
+          , _optionalChain([contextMenu, 'access', _87 => _87.normalized, 'optionalAccess', _88 => _88.url]) && (
             React.createElement(React.Fragment, null
               , React.createElement('div', { className: "context-menu-divider",} )
               , React.createElement('div', { className: "context-menu-item", onClick: () => handleContextAction('scope-include'),}, "Add host to Scope"

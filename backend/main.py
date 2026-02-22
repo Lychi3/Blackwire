@@ -256,6 +256,8 @@ def load_extension_metadata() -> List[dict]:
             "title": path.stem.replace("_", " ").title(),
             "description": "",
             "tabs": [],
+            "ui_schema": None,
+            "default_config": {"enabled": False}
         }
         try:
             spec = importlib.util.spec_from_file_location(f"blackwire_ext_meta_{path.stem}", path)
@@ -752,11 +754,18 @@ async def create_project(project: Project):
     if get_project_path(project.name).exists():
         raise HTTPException(status_code=400, detail="Project exists")
     get_project_path(project.name).mkdir(parents=True)
+
+    # Auto-inicializar todas las extensiones
+    extensions_config_init = {}
+    meta_list = load_extension_metadata()
+    for meta in meta_list:
+        ext_name = meta.get("name")
+        default_cfg = meta.get("default_config", {"enabled": False})
+        extensions_config_init[ext_name] = default_cfg
+
     config = {"name": project.name, "description": project.description, "scope_rules": [],
         "proxy_port": 8080, "proxy_mode": "regular", "proxy_args": "", "intercept_enabled": False, "created_at": datetime.now().isoformat(),
-        "extensions": {
-            "match_replace": {"enabled": False, "rules": []}
-        }}
+        "extensions": extensions_config_init}
     await save_project_config(project.name, config)
     await init_db(project.name)
     git = GitManager(project.name)

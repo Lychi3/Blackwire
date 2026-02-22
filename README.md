@@ -38,6 +38,12 @@
 - **Session Rules & Macros**: Automatiza extracción de tokens/cookies y reinyección en requests subsecuentes para mantener sesiones activas
 - **Git Integration**: Control de versiones integrado para commits y revisión de historial del proyecto
 
+### Extensibilidad
+- **Sistema de Extensiones Dinámicas**: Crea plugins en Python con UI generada automáticamente mediante schemas JSON
+- **Schema-Driven UI**: Define formularios de configuración sin escribir React — solo metadata en Python
+- **Tabs Dinámicas**: Las extensiones pueden crear pestañas propias en la UI automáticamente
+- **Acceso Total al Proxy**: Manipula requests/responses en tiempo real con hooks de mitmproxy
+
 ### Operación
 - **100% Portable**: Sin rutas hardcoded, funciona desde cualquier directorio
 - **Import/Export**: Exporta proyectos completos (requests, repeater, collections, scope) en formato JSON para compartir con colegas
@@ -531,31 +537,463 @@ También puedes agregar hosts al scope directamente desde el context menu sobre 
 
 ### Extensiones
 
-BlackWire soporta plugins personalizados en Python para extender funcionalidades.
+BlackWire cuenta con un **sistema de extensiones dinámicas** que te permite extender funcionalidades sin tocar el frontend. Las extensiones pueden manipular tráfico HTTP, agregar tabs personalizadas en la UI, y configurarse con formularios generados automáticamente.
+
+#### Sistema de Extensiones
 
 **Ubicación:** `backend/extensions/`
 
-**Ejemplo de extensión:**
+**Características:**
+- **UI Generada Automáticamente**: Define un schema JSON y el frontend genera formularios de configuración
+- **Descubrimiento Automático**: Solo crea el archivo `.py` y la extensión aparece automáticamente
+- **Tabs Dinámicas**: Crea pestañas completas en la UI sin modificar código frontend
+- **Auto-Inicialización**: Nuevos proyectos incluyen automáticamente todas las extensiones
+- **Acceso Total al Proxy**: Manipula requests/responses con el objeto `flow` de mitmproxy
+
+#### Extensiones Incluidas
+
+| Extensión | Descripción | UI |
+|-----------|-------------|-----|
+| **Match & Replace** | Modifica URLs, headers o body con regex | Custom |
+| **Webhook.site** | Integración con webhook.site para capturar webhooks | Custom |
+| **Sensitive Discovery** | Escaneo de secrets con patrones y Shannon Entropy | Custom |
+| **Rate Limiter** | Añade delays entre requests para evitar rate limiting | Schema-driven |
+
+---
+
+### Tutorial: Crear tu Primera Extensión
+
+#### Extensión Simple (Schema-Driven)
+
+Vamos a crear una extensión que añade un header personalizado a todas las peticiones. **Solo necesitas crear 1 archivo Python**.
+
+**1. Crear archivo `backend/extensions/custom_header.py`:**
+
 ```python
-# backend/extensions/mi_extension.py
+"""
+Custom Header Injector
+Inyecta headers personalizados en requests
+"""
 
-def on_request(flow):
-    """Se ejecuta en cada petición"""
-    if "Authorization" in flow.request.headers:
-        print(f"Token detectado: {flow.request.headers['Authorization']}")
+EXTENSION_META = {
+    "name": "custom_header",
+    "title": "Custom Header",
+    "description": "Inyecta headers personalizados en todas las peticiones",
+    "tabs": [],  # Sin tab propia, solo configuración en Extensions
 
-def on_response(flow):
-    """Se ejecuta en cada respuesta"""
-    if flow.response.status_code == 500:
-        print(f"Error 500 en: {flow.request.url}")
+    # UI generada automáticamente
+    "ui_schema": {
+        "type": "schema-driven",
+        "fields": [
+            {
+                "name": "header_name",
+                "label": "Header Name",
+                "type": "text",
+                "placeholder": "X-Custom-Header",
+                "default": "X-Custom-Header",
+                "help": "Nombre del header a inyectar"
+            },
+            {
+                "name": "header_value",
+                "label": "Header Value",
+                "type": "text",
+                "placeholder": "my-value",
+                "default": "",
+                "help": "Valor del header"
+            },
+            {
+                "name": "overwrite",
+                "label": "Overwrite if exists",
+                "type": "checkbox",
+                "default": False,
+                "help": "Sobrescribir si el header ya existe"
+            }
+        ]
+    },
+
+    # Configuración por defecto para nuevos proyectos
+    "default_config": {
+        "enabled": False,
+        "header_name": "X-Custom-Header",
+        "header_value": "",
+        "overwrite": False
+    }
+}
+
+from mitmproxy import http
+
+class CustomHeaderExtension:
+    name = "custom_header"
+
+    def on_request(self, flow: http.HTTPFlow, cfg: dict, full_config: dict):
+        if not cfg.get("enabled", False):
+            return
+
+        header_name = cfg.get("header_name", "X-Custom-Header")
+        header_value = cfg.get("header_value", "")
+        overwrite = cfg.get("overwrite", False)
+
+        # Inyectar header
+        if header_value:
+            if overwrite or header_name not in flow.request.headers:
+                flow.request.headers[header_name] = header_value
+
+def register():
+    return CustomHeaderExtension()
 ```
 
-**Hooks disponibles:**
-- `on_request(flow)`: Antes de enviar la petición
-- `on_response(flow)`: Después de recibir la respuesta
-- `on_error(flow)`: Cuando hay un error
+**2. Reiniciar el servidor:**
 
-Las extensiones tienen acceso completo al objeto `flow` de mitmproxy.
+```bash
+./stop.sh
+./start.sh
+```
+
+**3. ¡Listo!**
+
+- Ve a la pestaña **Extensions** en la UI
+- Verás "Custom Header" con un formulario generado automáticamente
+- Habilita la extensión
+- Configura el nombre y valor del header
+- Todas tus peticiones llevarán ese header
+
+---
+
+#### Tipos de Campo UI Soportados
+
+El sistema `ui_schema` soporta múltiples tipos de inputs:
+
+```python
+"fields": [
+    # Input de texto
+    {
+        "name": "api_key",
+        "label": "API Key",
+        "type": "text",  # o "password" para oscurecer
+        "placeholder": "Enter key...",
+        "default": "",
+        "help": "Tu API key"
+    },
+
+    # Input numérico
+    {
+        "name": "timeout",
+        "label": "Timeout (ms)",
+        "type": "number",
+        "default": 5000,
+        "min": 1000,
+        "max": 60000,
+        "help": "Timeout en milisegundos"
+    },
+
+    # Checkbox
+    {
+        "name": "enabled",
+        "label": "Enable logging",
+        "type": "checkbox",
+        "default": True,
+        "help": "Activar logs detallados"
+    },
+
+    # Dropdown/Select
+    {
+        "name": "mode",
+        "label": "Operation Mode",
+        "type": "select",
+        "options": [
+            {"value": "auto", "label": "Automatic"},
+            {"value": "manual", "label": "Manual"},
+            {"value": "disabled", "label": "Disabled"}
+        ],
+        "default": "auto"
+    },
+
+    # Área de texto multilinea
+    {
+        "name": "payload",
+        "label": "Payload Template",
+        "type": "textarea",
+        "rows": 8,
+        "placeholder": "Enter JSON...",
+        "default": "{}"
+    }
+]
+```
+
+---
+
+#### Extensión Avanzada (Con Tab Propia)
+
+Para crear una extensión con su propia pestaña en la UI (como Webhook.site):
+
+**1. Definir tab en `EXTENSION_META`:**
+
+```python
+EXTENSION_META = {
+    "name": "my_tool",
+    "title": "My Tool",
+    "description": "Una herramienta personalizada",
+    "tabs": [
+        {"id": "main", "label": "🔧 My Tool"}
+    ],
+    "ui_schema": {
+        "type": "schema-driven",
+        "fields": [...]
+    },
+    "default_config": {"enabled": False}
+}
+```
+
+**2. Crear componente React custom (solo si necesitas UI compleja):**
+
+Edita `frontend/App.jsx` y agrega:
+
+```javascript
+// Después de línea 2437
+function MyToolUI({ ext, updateExtCfg }) {
+  return (
+    <div>
+      {/* Tu UI personalizada aquí */}
+    </div>
+  );
+}
+
+// Agregar al registry
+const EXTENSION_CUSTOM_COMPONENTS = {
+  'match_replace': MatchReplaceUI,
+  'webhook_site': WebhookSiteUI,
+  'my_tool': MyToolUI,  // NUEVO
+};
+```
+
+**3. Recompilar frontend:**
+
+```bash
+cd frontend && mkdir -p /tmp/bw_src && cp App.jsx /tmp/bw_src/ && \
+npx sucrase /tmp/bw_src -d /tmp/bw_build --transforms jsx \
+--jsx-pragma React.createElement --jsx-fragment-pragma React.Fragment && \
+cp /tmp/bw_build/App.js App.compiled.js && rm -rf /tmp/bw_src /tmp/bw_build
+```
+
+**Cuando la extensión esté habilitada**, aparecerá automáticamente una nueva pestaña "🔧 My Tool" en la barra de navegación principal.
+
+---
+
+#### Hooks Disponibles
+
+Las extensiones tienen acceso a estos hooks de mitmproxy:
+
+```python
+class MiExtension:
+    name = "mi_extension"
+
+    def on_load(self, cfg: dict, full_config: dict):
+        """Llamado cuando se carga la extensión (al iniciar proxy)"""
+        pass
+
+    def on_request(self, flow: http.HTTPFlow, cfg: dict, full_config: dict):
+        """Llamado ANTES de enviar cada petición
+
+        Args:
+            flow: Objeto HTTPFlow de mitmproxy
+            cfg: Configuración específica de esta extensión
+            full_config: Configuración completa del proyecto
+        """
+        # Modificar request
+        flow.request.url = "https://example.com/modified"
+        flow.request.headers["X-Modified"] = "true"
+        flow.request.content = b"nuevo body"
+
+    def on_response(self, flow: http.HTTPFlow, cfg: dict, full_config: dict):
+        """Llamado DESPUÉS de recibir cada respuesta"""
+        # Modificar response
+        flow.response.status_code = 200
+        flow.response.headers["X-Injected"] = "by-extension"
+        flow.response.content = b"modified response"
+
+    def on_websocket_message(self, flow: http.HTTPFlow, cfg: dict, full_config: dict):
+        """Llamado cuando se recibe un mensaje WebSocket"""
+        pass
+```
+
+**Objeto `flow` de mitmproxy:**
+
+```python
+# Request
+flow.request.method          # "GET", "POST", etc.
+flow.request.url             # URL completa
+flow.request.pretty_host     # Host sin puerto
+flow.request.port            # Puerto
+flow.request.path            # Path + query string
+flow.request.headers         # Dict-like de headers
+flow.request.content         # Body (bytes)
+flow.request.text            # Body como string
+
+# Response (solo en on_response)
+flow.response.status_code    # 200, 404, etc.
+flow.response.headers        # Dict-like de headers
+flow.response.content        # Body (bytes)
+flow.response.text           # Body como string
+```
+
+---
+
+#### Ejemplo Completo: Rate Limiter
+
+Esta extensión incluida añade delays configurables entre peticiones:
+
+```python
+EXTENSION_META = {
+    "name": "rate_limiter",
+    "title": "Rate Limiter",
+    "description": "Añade delays entre requests para evitar rate limiting",
+    "tabs": [
+        {"id": "main", "label": "⏱️ Rate Limiter"}
+    ],
+    "ui_schema": {
+        "type": "schema-driven",
+        "fields": [
+            {
+                "name": "delay_ms",
+                "label": "Delay (milliseconds)",
+                "type": "number",
+                "placeholder": "500",
+                "default": 500,
+                "min": 0,
+                "max": 10000,
+                "help": "Delay between each request in milliseconds"
+            },
+            {
+                "name": "apply_to",
+                "label": "Apply To",
+                "type": "select",
+                "options": [
+                    {"value": "all", "label": "All Requests"},
+                    {"value": "specific_host", "label": "Specific Host Only"}
+                ],
+                "default": "all"
+            },
+            {
+                "name": "target_host",
+                "label": "Target Host",
+                "type": "text",
+                "placeholder": "example.com",
+                "default": "",
+                "help": "Only used when 'Specific Host Only' is selected"
+            }
+        ]
+    },
+    "default_config": {
+        "enabled": False,
+        "delay_ms": 500,
+        "apply_to": "all",
+        "target_host": ""
+    }
+}
+
+import time
+from mitmproxy import http
+
+class RateLimiterExtension:
+    name = "rate_limiter"
+
+    def on_request(self, flow: http.HTTPFlow, cfg: dict, full_config: dict):
+        if not cfg.get("enabled", False):
+            return
+
+        delay_ms = cfg.get("delay_ms", 500)
+        apply_to = cfg.get("apply_to", "all")
+        target_host = cfg.get("target_host", "")
+
+        should_delay = apply_to == "all" or (
+            apply_to == "specific_host" and target_host in flow.request.pretty_host
+        )
+
+        if should_delay and delay_ms > 0:
+            time.sleep(delay_ms / 1000.0)
+
+def register():
+    return RateLimiterExtension()
+```
+
+**Uso:**
+1. Ve a Extensions → habilita "Rate Limiter"
+2. Configura delay (ej. 1000ms = 1 segundo entre requests)
+3. Elige si aplicar a todos los hosts o uno específico
+4. ¡Listo! Tus requests tendrán delay automático
+
+---
+
+#### Ideas para Extensiones
+
+**Automatización:**
+- Auto-login: Extrae tokens de `/login` y los inyecta automáticamente
+- Session keeper: Renueva sesiones expiradas automáticamente
+- Retry on error: Reintenta peticiones fallidas con backoff exponencial
+
+**Seguridad:**
+- SQL injection scanner: Detecta parámetros vulnerables a SQLi
+- XSS detector: Analiza responses en busca de reflejos sin sanitizar
+- SSRF fuzzer: Inyecta payloads SSRF en parámetros de URL
+
+**Análisis:**
+- Response time logger: Guarda métricas de latencia por endpoint
+- Size tracker: Monitorea tamaño de requests/responses para detectar anomalías
+- Header collector: Extrae headers interesantes (CSP, CORS, Security headers)
+
+**Modificación:**
+- User-Agent rotator: Rota User-Agents automáticamente
+- Encoding fuzzer: Prueba diferentes encodings en parámetros
+- Cache buster: Añade parámetros random para evitar caché
+
+---
+
+#### Estructura de Archivos
+
+```
+backend/extensions/
+├── __init__.py               # Archivo vacío (requerido)
+├── match_replace.py          # Extensión con componente React custom
+├── webhook_site.py           # Extensión con tab propia
+├── sensitive_discoverer.py   # Extensión UI-only
+├── rate_limiter.py           # Extensión schema-driven
+└── mi_extension.py           # Tu extensión personalizada
+```
+
+Cada archivo debe:
+1. Definir `EXTENSION_META` con metadata
+2. Implementar una clase con hooks (`on_request`, `on_response`, etc.)
+3. Exportar función `register()` que retorna una instancia
+
+---
+
+#### Debugging de Extensiones
+
+**Ver logs del proxy:**
+
+```bash
+# El proxy de mitmproxy muestra logs en la terminal donde corrió start.sh
+# Busca líneas con [blackwire][ext]
+```
+
+**Agregar prints en tu extensión:**
+
+```python
+def on_request(self, flow, cfg, full_config):
+    print(f"[mi_extension] Processing: {flow.request.url}")
+    # Los prints aparecen en la terminal del proxy
+```
+
+**Verificar que se cargó:**
+
+```bash
+# Buscar en logs al iniciar proxy:
+# [blackwire][ext] Loaded extensions: ['match_replace', 'webhook_site', 'mi_extension']
+```
+
+---
+
+**¡Crea extensiones y compártelas con la comunidad!** Abre un Pull Request en el repo para incluir tu extensión en BlackWire.
 
 ---
 

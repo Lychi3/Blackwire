@@ -8,9 +8,10 @@ EXTENSION_META = {
     "name": "sensitive",
     "title": "Sensitive ",
     "description": "Scan HTTP traffic for sensitive data: API keys, secrets, tokens, credentials, PII.",
-    "tabs": [
-        {"id": "main", "label": "🔍 Sensitive "}
-    ],
+    "tabs": [],
+    "default_config": {
+        "enabled": False
+    }
 }
 
 

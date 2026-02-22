@@ -880,7 +880,7 @@ function Blackwire() {
 
   // Auto-refresh desde webhook.site cuando estemos en las pestañas relevantes
   useEffect(() => {
-    if (tab !== 'extensions' && tab !== 'webhook') return;
+    if (tab !== 'extensions' && tab !== 'webhook_site') return;
     if (!webhookExt?.enabled || !webhookExt?.config?.token_id) return;
     const id = setInterval(() => refreshWebhook(true), 15000);
     return () => clearInterval(id);
@@ -2430,11 +2430,103 @@ function Blackwire() {
     );
   }
 
-  // Registry de componentes de extensión
-  const EXTENSION_COMPONENTS = {
+  // Registry de componentes de extensión custom (solo para UIs complejas)
+  const EXTENSION_CUSTOM_COMPONENTS = {
     'match_replace': MatchReplaceUI,
     'webhook_site': WebhookSiteUI,
   };
+
+  // Componente genérico schema-driven para extensiones simples
+  function SchemaBasedUI({ ext, updateExtCfg }) {
+    const schema = ext.ui_schema;
+    const config = ext.config || {};
+
+    if (!schema || !schema.fields) {
+      return (
+        <div style={{ padding: '20px', color: 'var(--txt3)', fontSize: '11px' }}>
+          No UI schema defined for this extension.
+        </div>
+      );
+    }
+
+    const handleFieldChange = (fieldName, value) => {
+      updateExtCfg(ext.name, { ...config, [fieldName]: value });
+    };
+
+    return (
+      <div style={{ marginTop: '12px', paddingTop: '12px', borderTop: '1px solid var(--brd)' }}>
+        {schema.fields.map(field => (
+          <div key={field.name} style={{ marginBottom: '12px' }}>
+            <label style={{ display: 'block', fontSize: '11px', color: 'var(--txt2)', marginBottom: '6px' }}>
+              {field.label}
+              {field.required && <span style={{ color: 'var(--red)' }}> *</span>}
+            </label>
+
+            {(field.type === 'text' || field.type === 'password') && (
+              <input
+                className="inp"
+                type={field.type}
+                placeholder={field.placeholder || ''}
+                value={config[field.name] !== undefined ? config[field.name] : (field.default || '')}
+                onChange={e => handleFieldChange(field.name, e.target.value)}
+              />
+            )}
+
+            {field.type === 'textarea' && (
+              <textarea
+                className="inp"
+                placeholder={field.placeholder || ''}
+                value={config[field.name] !== undefined ? config[field.name] : (field.default || '')}
+                onChange={e => handleFieldChange(field.name, e.target.value)}
+                rows={field.rows || 4}
+              />
+            )}
+
+            {field.type === 'number' && (
+              <input
+                className="inp"
+                type="number"
+                placeholder={field.placeholder || ''}
+                value={config[field.name] !== undefined ? config[field.name] : (field.default || 0)}
+                onChange={e => handleFieldChange(field.name, parseInt(e.target.value) || 0)}
+                min={field.min}
+                max={field.max}
+              />
+            )}
+
+            {field.type === 'checkbox' && (
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <input
+                  type="checkbox"
+                  checked={config[field.name] !== undefined ? config[field.name] : (field.default || false)}
+                  onChange={e => handleFieldChange(field.name, e.target.checked)}
+                />
+                {field.help && <span style={{ fontSize: '10px', color: 'var(--txt3)' }}>{field.help}</span>}
+              </div>
+            )}
+
+            {field.type === 'select' && (
+              <select
+                className="inp"
+                value={config[field.name] !== undefined ? config[field.name] : (field.default || '')}
+                onChange={e => handleFieldChange(field.name, e.target.value)}
+              >
+                {field.options && field.options.map(opt => (
+                  <option key={opt.value} value={opt.value}>{opt.label}</option>
+                ))}
+              </select>
+            )}
+
+            {field.help && field.type !== 'checkbox' && (
+              <div style={{ fontSize: '10px', color: 'var(--txt3)', marginTop: '4px' }}>
+                {field.help}
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+    );
+  }
 
   const syntaxHighlightJSON = json => {
     json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -3280,6 +3372,13 @@ function Blackwire() {
             <div className={'tab' + (tab === 'compare' ? ' act' : '')} onClick={() => setTab('compare')}>Compare</div>
             <div className={'tab' + (tab === 'sensitive' ? ' act' : '')} onClick={() => setTab('sensitive')}>Sensitive</div>
             <div className={'tab' + (tab === 'extensions' ? ' act' : '')} onClick={() => setTab('extensions')}>Extensions</div>
+            {extensions.filter(ext => ext.enabled && ext.tabs && ext.tabs.length > 0 && ext.name !== 'sensitive').map(ext =>
+              ext.tabs.map(extTab => (
+                <div key={ext.name + '_' + extTab.id} className={'tab' + (tab === ext.name ? ' act' : '')} onClick={() => setTab(ext.name)}>
+                  {extTab.label}
+                </div>
+              ))
+            )}
           </React.Fragment>
         )}
       </nav>
@@ -4171,7 +4270,7 @@ function Blackwire() {
           </div>
         )}
 
-        {tab === 'webhook' && curPrj && webhookExt?.enabled && (
+        {tab === 'webhook_site' && curPrj && webhookExt?.enabled && (
           <React.Fragment>
             <div className="panel hist-pnl">
               <div className="flt-bar">
@@ -4333,22 +4432,38 @@ function Blackwire() {
                     {ext.enabled ? 'Enabled' : 'Disabled'}
                   </button>
                 </div>
-                {ext.enabled && EXTENSION_COMPONENTS[ext.name] &&
-                  React.createElement(EXTENSION_COMPONENTS[ext.name], {
-                    ext,
-                    updateExtCfg,
-                    ...(ext.name === 'webhook_site' ? {
-                      whkReqs,
-                      whkApiKey,
-                      setWhkApiKey,
-                      whkLoading,
-                      createWebhookToken,
-                      refreshWebhook,
-                      loadWebhookLocal,
-                      toast
-                    } : {})
-                  })
-                }
+                {ext.enabled && (() => {
+                  // 1. Si tiene ui_schema con tipo schema-driven → usar SchemaBasedUI
+                  if (ext.ui_schema?.type === 'schema-driven') {
+                    return React.createElement(SchemaBasedUI, { ext, updateExtCfg });
+                  }
+
+                  // 2. Si está en registry de componentes custom → usar componente custom
+                  if (EXTENSION_CUSTOM_COMPONENTS[ext.name]) {
+                    return React.createElement(EXTENSION_CUSTOM_COMPONENTS[ext.name], {
+                      ext,
+                      updateExtCfg,
+                      // Props específicas solo para extensiones que las necesitan
+                      ...(ext.name === 'webhook_site' ? {
+                        whkReqs,
+                        whkApiKey,
+                        setWhkApiKey,
+                        whkLoading,
+                        createWebhookToken,
+                        refreshWebhook,
+                        loadWebhookLocal,
+                        toast
+                      } : {})
+                    });
+                  }
+
+                  // 3. Fallback: extensión sin UI
+                  return (
+                    <div style={{ marginTop: '12px', padding: '12px', fontSize: '11px', color: 'var(--txt3)' }}>
+                      Extension enabled (no UI configured)
+                    </div>
+                  );
+                })()}
               </div>
             ))}
           </div>

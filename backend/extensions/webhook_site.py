@@ -10,6 +10,11 @@ EXTENSION_META = {
     "tabs": [
         {"id": "main", "label": "🔗 Webhook.site"}
     ],
+    "default_config": {
+        "enabled": False,
+        "token_id": None,
+        "token_url": None
+    }
 }
 
 
