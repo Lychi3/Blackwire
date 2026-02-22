@@ -2689,6 +2689,12 @@ function Blackwire() {
           toast('Opening replay...', 'success');
         }
         break;
+      case 'render-browser':
+        if (source === 'history' && req.id) {
+          window.open(API + '/api/requests/' + req.id + '/render', '_blank');
+          toast('Rendering response...', 'success');
+        }
+        break;
       case 'send-to-cipher':
         if (norm.body) {
           setChepyIn(norm.body);
@@ -2970,20 +2976,20 @@ function Blackwire() {
     const isSelected = smSelNode === node;
     const methods = [...node.methods].sort();
     return (
-      React.createElement(React.Fragment, { key: fullKey, __self: this, __source: {fileName: _jsxFileName, lineNumber: 2973}}
+      React.createElement(React.Fragment, { key: fullKey, __self: this, __source: {fileName: _jsxFileName, lineNumber: 2979}}
         , React.createElement('div', {
           className: 'sm-node' + (isSelected ? ' sel' : ''),
           style: { paddingLeft: (depth * 16 + 8) + 'px' },
-          onClick: () => setSmSelNode(node), __self: this, __source: {fileName: _jsxFileName, lineNumber: 2974}}
+          onClick: () => setSmSelNode(node), __self: this, __source: {fileName: _jsxFileName, lineNumber: 2980}}
 
-          , React.createElement('span', { className: "sm-toggle", onClick: e => { e.stopPropagation(); if (hasChildren) toggleSmNode(fullKey); }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 2979}}
+          , React.createElement('span', { className: "sm-toggle", onClick: e => { e.stopPropagation(); if (hasChildren) toggleSmNode(fullKey); }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 2985}}
             , hasChildren ? (expanded ? '\u25BC' : '\u25B6') : '\u00B7'
           )
-          , React.createElement('span', { className: "sm-label", __self: this, __source: {fileName: _jsxFileName, lineNumber: 2982}}, node.label)
-          , React.createElement('span', { className: "sm-methods", __self: this, __source: {fileName: _jsxFileName, lineNumber: 2983}}
-            , methods.map(m => React.createElement('span', { key: m, className: 'sm-mth mth-' + m, __self: this, __source: {fileName: _jsxFileName, lineNumber: 2984}}, m))
+          , React.createElement('span', { className: "sm-label", __self: this, __source: {fileName: _jsxFileName, lineNumber: 2988}}, node.label)
+          , React.createElement('span', { className: "sm-methods", __self: this, __source: {fileName: _jsxFileName, lineNumber: 2989}}
+            , methods.map(m => React.createElement('span', { key: m, className: 'sm-mth mth-' + m, __self: this, __source: {fileName: _jsxFileName, lineNumber: 2990}}, m))
           )
-          , React.createElement('span', { className: "sm-badge", __self: this, __source: {fileName: _jsxFileName, lineNumber: 2986}}, node.count)
+          , React.createElement('span', { className: "sm-badge", __self: this, __source: {fileName: _jsxFileName, lineNumber: 2992}}, node.count)
         )
         , expanded && Object.entries(node.children)
           .sort(([a], [b]) => a.localeCompare(b))
@@ -2997,7 +3003,7 @@ function Blackwire() {
     : (THEMES.midnight && THEMES.midnight.vars) ? THEMES.midnight.vars : {};
 
   return (
-    React.createElement('div', { className: "app", style: themeVars, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3000}}
+    React.createElement('div', { className: "app", style: themeVars, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3006}}
       , React.createElement('style', { dangerouslySetInnerHTML: { __html: `
 :root{--bg:#0a0e14;--bg2:#0d1117;--bg3:#161b22;--bgh:#1f262d;--brd:#30363d;--txt:#e6edf3;--txt2:#8b949e;--txt3:#6e7681;--blue:#58a6ff;--green:#3fb950;--red:#f85149;--orange:#d29922;--purple:#a371f7;--cyan:#39c5cf;--font-main:"Inter",sans-serif;--font-mono:"JetBrains Mono",monospace}
 *{margin:0;padding:0;box-sizing:border-box}body{font-family:var(--font-main);background:var(--bg);color:var(--txt);overflow:hidden}
@@ -3214,102 +3220,102 @@ function Blackwire() {
 .int-section h4{margin:0 0 10px 0;font-size:12px;color:var(--txt2)}
 .int-stats{display:flex;gap:16px;align-items:center;font-size:11px;color:var(--txt3)}
 .int-pos-tag{display:inline-flex;align-items:center;gap:4px;font-size:10px;padding:2px 8px;background:var(--bg3);border:1px solid var(--brd);border-radius:4px;color:var(--orange);font-family:var(--font-mono)}
-      `}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3001}} )
+      `}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3007}} )
 
       , !appReady ? (
-        React.createElement('div', { className: "splash", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3220}}
-          , React.createElement('div', { className: "logo-i", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3221}}, "BW")
-          , React.createElement('span', { className: "logo-t", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3222}}, "Blackwire")
-          , React.createElement('div', { className: "splash-spin", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3223}} )
+        React.createElement('div', { className: "splash", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3226}}
+          , React.createElement('div', { className: "logo-i", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3227}}, "BW")
+          , React.createElement('span', { className: "logo-t", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3228}}, "Blackwire")
+          , React.createElement('div', { className: "splash-spin", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3229}} )
         )
       ) : (
-      React.createElement(React.Fragment, {__self: this, __source: {fileName: _jsxFileName, lineNumber: 3226}}
-      , React.createElement('header', { className: "hdr", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3227}}
-        , React.createElement('div', { className: "logo", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3228}}
-          , React.createElement('div', { className: "logo-i", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3229}}, "BW")
-          , React.createElement('span', { className: "logo-t", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3230}}, "Blackwire")
-          , curPrj && React.createElement('span', { className: "prj-badge", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3231}}, curPrj)
+      React.createElement(React.Fragment, {__self: this, __source: {fileName: _jsxFileName, lineNumber: 3232}}
+      , React.createElement('header', { className: "hdr", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3233}}
+        , React.createElement('div', { className: "logo", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3234}}
+          , React.createElement('div', { className: "logo-i", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3235}}, "BW")
+          , React.createElement('span', { className: "logo-t", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3236}}, "Blackwire")
+          , curPrj && React.createElement('span', { className: "prj-badge", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3237}}, curPrj)
         )
-        , React.createElement('div', { className: "hdr-ctrl", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3233}}
-          , React.createElement('select', { className: "sel", value: themeId, onChange: e => setThemeId(e.target.value), title: "Theme", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3234}}
+        , React.createElement('div', { className: "hdr-ctrl", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3239}}
+          , React.createElement('select', { className: "sel", value: themeId, onChange: e => setThemeId(e.target.value), title: "Theme", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3240}}
             , Object.entries(THEMES).map(([id, t]) => (
-              React.createElement('option', { key: id, value: id, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3236}}, t.label)
+              React.createElement('option', { key: id, value: id, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3242}}, t.label)
             ))
           )
           , curPrj && (
-            React.createElement(React.Fragment, {__self: this, __source: {fileName: _jsxFileName, lineNumber: 3240}}
-              , React.createElement('div', { className: 'int-tog' + (intOn ? ' on' : ''), onClick: togInt, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3241}}
-                , React.createElement('span', { className: "int-dot", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3242}}), "Intercept "
+            React.createElement(React.Fragment, {__self: this, __source: {fileName: _jsxFileName, lineNumber: 3246}}
+              , React.createElement('div', { className: 'int-tog' + (intOn ? ' on' : ''), onClick: togInt, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3247}}
+                , React.createElement('span', { className: "int-dot", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3248}}), "Intercept "
                  , intOn ? 'ON' : 'OFF'
-                , pending.length > 0 && React.createElement('span', { className: "pend-badge", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3244}}, pending.length)
+                , pending.length > 0 && React.createElement('span', { className: "pend-badge", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3250}}, pending.length)
               )
-              , React.createElement('div', { className: "prx-st", onClick: () => setShowProxyCfg(true), style: { cursor: 'pointer' }, title: 'Mode: ' + pxMode + (pxArgs ? ' | Args: ' + pxArgs : ''), __self: this, __source: {fileName: _jsxFileName, lineNumber: 3246}}
-                , React.createElement('div', { className: 'st-dot ' + (pxRun ? 'run' : 'stop'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 3247}})
+              , React.createElement('div', { className: "prx-st", onClick: () => setShowProxyCfg(true), style: { cursor: 'pointer' }, title: 'Mode: ' + pxMode + (pxArgs ? ' | Args: ' + pxArgs : ''), __self: this, __source: {fileName: _jsxFileName, lineNumber: 3252}}
+                , React.createElement('div', { className: 'st-dot ' + (pxRun ? 'run' : 'stop'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 3253}})
                 , pxRun ? pxMode + ' :' + pxPort : 'Stopped'
               )
               , !pxRun ? (
-                React.createElement('button', { className: "btn btn-g" , onClick: startPx, disabled: loading, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3251}}, "▶ Start" )
+                React.createElement('button', { className: "btn btn-g" , onClick: startPx, disabled: loading, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3257}}, "▶ Start" )
               ) : (
-                React.createElement('button', { className: "btn btn-d" , onClick: stopPx, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3253}}, "■ Stop" )
+                React.createElement('button', { className: "btn btn-d" , onClick: stopPx, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3259}}, "■ Stop" )
               )
-              , React.createElement('button', { className: "btn btn-s" , onClick: launchBr, disabled: !pxRun, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3255}}, "🌐")
+              , React.createElement('button', { className: "btn btn-s" , onClick: launchBr, disabled: !pxRun, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3261}}, "🌐")
             )
           )
-          , React.createElement('button', { className: "btn btn-sm btn-s"  , title: "Shutdown server" , onClick: () => { if (confirm('Shut down Blackwire server?')) api.post('/api/shutdown'); }, style: { marginLeft: '4px', color: 'var(--red)', fontSize: '14px', padding: '4px 8px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3258}}, "⏻")
+          , React.createElement('button', { className: "btn btn-sm btn-s"  , title: "Shutdown server" , onClick: () => { if (confirm('Shut down Blackwire server?')) api.post('/api/shutdown'); }, style: { marginLeft: '4px', color: 'var(--red)', fontSize: '14px', padding: '4px 8px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3264}}, "⏻")
         )
       )
 
-      , React.createElement('nav', { className: "tabs", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3262}}
-        , React.createElement('div', { className: 'tab' + (tab === 'projects' ? ' act' : ''), onClick: () => setTab('projects'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 3263}}, "Projects")
+      , React.createElement('nav', { className: "tabs", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3268}}
+        , React.createElement('div', { className: 'tab' + (tab === 'projects' ? ' act' : ''), onClick: () => setTab('projects'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 3269}}, "Projects")
         , curPrj && (
-          React.createElement(React.Fragment, {__self: this, __source: {fileName: _jsxFileName, lineNumber: 3265}}
-            , React.createElement('div', { className: 'tab' + (tab === 'scope' ? ' act' : ''), onClick: () => setTab('scope'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 3266}}, "Scope")
-            , React.createElement('div', { className: 'tab' + (tab === 'history' ? ' act' : ''), onClick: () => setTab('history'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 3267}}, "History")
-            , React.createElement('div', { className: 'tab' + (tab === 'collections' ? ' act' : ''), onClick: () => { setTab('collections'); loadColls(); }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3268}}, "Collections")
-            , React.createElement('div', { className: 'tab' + (tab === 'repeater' ? ' act' : ''), onClick: () => setTab('repeater'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 3269}}, "Repeater")
-            , React.createElement('div', { className: 'tab' + (tab === 'intruder' ? ' act' : ''), onClick: () => setTab('intruder'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 3270}}, "Intruder")
-            , React.createElement('div', { className: 'tab' + (tab === 'git' ? ' act' : ''), onClick: () => setTab('git'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 3271}}, "Git")
-            , React.createElement('div', { className: 'tab' + (tab === 'chepy' ? ' act' : ''), onClick: () => setTab('chepy'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 3272}}, "Cipher")
-            , React.createElement('div', { className: 'tab' + (tab === 'compare' ? ' act' : ''), onClick: () => setTab('compare'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 3273}}, "Compare")
-            , React.createElement('div', { className: 'tab' + (tab === 'sensitive' ? ' act' : ''), onClick: () => setTab('sensitive'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 3274}}, "Sensitive")
-            , React.createElement('div', { className: 'tab' + (tab === 'extensions' ? ' act' : ''), onClick: () => setTab('extensions'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 3275}}, "Extensions")
+          React.createElement(React.Fragment, {__self: this, __source: {fileName: _jsxFileName, lineNumber: 3271}}
+            , React.createElement('div', { className: 'tab' + (tab === 'scope' ? ' act' : ''), onClick: () => setTab('scope'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 3272}}, "Scope")
+            , React.createElement('div', { className: 'tab' + (tab === 'history' ? ' act' : ''), onClick: () => setTab('history'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 3273}}, "History")
+            , React.createElement('div', { className: 'tab' + (tab === 'collections' ? ' act' : ''), onClick: () => { setTab('collections'); loadColls(); }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3274}}, "Collections")
+            , React.createElement('div', { className: 'tab' + (tab === 'repeater' ? ' act' : ''), onClick: () => setTab('repeater'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 3275}}, "Repeater")
+            , React.createElement('div', { className: 'tab' + (tab === 'intruder' ? ' act' : ''), onClick: () => setTab('intruder'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 3276}}, "Intruder")
+            , React.createElement('div', { className: 'tab' + (tab === 'git' ? ' act' : ''), onClick: () => setTab('git'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 3277}}, "Git")
+            , React.createElement('div', { className: 'tab' + (tab === 'chepy' ? ' act' : ''), onClick: () => setTab('chepy'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 3278}}, "Cipher")
+            , React.createElement('div', { className: 'tab' + (tab === 'compare' ? ' act' : ''), onClick: () => setTab('compare'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 3279}}, "Compare")
+            , React.createElement('div', { className: 'tab' + (tab === 'sensitive' ? ' act' : ''), onClick: () => setTab('sensitive'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 3280}}, "Sensitive")
+            , React.createElement('div', { className: 'tab' + (tab === 'extensions' ? ' act' : ''), onClick: () => setTab('extensions'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 3281}}, "Extensions")
           )
         )
       )
 
-      , React.createElement('main', { className: "main", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3280}}
+      , React.createElement('main', { className: "main", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3286}}
         , tab === 'projects' && (
-          React.createElement('div', { className: "prj-pnl", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3282}}
-            , React.createElement('div', { className: "prj-hdr", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3283}}
-              , React.createElement('h2', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 3284}}, "Projects")
-              , React.createElement('div', { style: { display: 'flex', gap: '8px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3285}}
-                , React.createElement('button', { className: "btn btn-p" , onClick: () => setShowNew(true), __self: this, __source: {fileName: _jsxFileName, lineNumber: 3286}}, "+ New" )
-                , React.createElement('button', { className: "btn btn-s" , onClick: importAsNewProject, title: "Import project from file"   , __self: this, __source: {fileName: _jsxFileName, lineNumber: 3287}}, "↓ Import" )
+          React.createElement('div', { className: "prj-pnl", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3288}}
+            , React.createElement('div', { className: "prj-hdr", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3289}}
+              , React.createElement('h2', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 3290}}, "Projects")
+              , React.createElement('div', { style: { display: 'flex', gap: '8px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3291}}
+                , React.createElement('button', { className: "btn btn-p" , onClick: () => setShowNew(true), __self: this, __source: {fileName: _jsxFileName, lineNumber: 3292}}, "+ New" )
+                , React.createElement('button', { className: "btn btn-s" , onClick: importAsNewProject, title: "Import project from file"   , __self: this, __source: {fileName: _jsxFileName, lineNumber: 3293}}, "↓ Import" )
               )
             )
             , showNew && (
-              React.createElement('div', { className: "new-prj", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3291}}
-                , React.createElement('input', { className: "inp", placeholder: "Project name" , value: newName, onChange: e => setNewName(e.target.value), __self: this, __source: {fileName: _jsxFileName, lineNumber: 3292}} )
-                , React.createElement('input', { className: "inp", placeholder: "Description", value: newDesc, onChange: e => setNewDesc(e.target.value), __self: this, __source: {fileName: _jsxFileName, lineNumber: 3293}} )
-                , React.createElement('div', { className: "form-acts", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3294}}
-                  , React.createElement('button', { className: "btn btn-p" , onClick: createPrj, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3295}}, "Create")
-                  , React.createElement('button', { className: "btn btn-s" , onClick: () => setShowNew(false), __self: this, __source: {fileName: _jsxFileName, lineNumber: 3296}}, "Cancel")
+              React.createElement('div', { className: "new-prj", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3297}}
+                , React.createElement('input', { className: "inp", placeholder: "Project name" , value: newName, onChange: e => setNewName(e.target.value), __self: this, __source: {fileName: _jsxFileName, lineNumber: 3298}} )
+                , React.createElement('input', { className: "inp", placeholder: "Description", value: newDesc, onChange: e => setNewDesc(e.target.value), __self: this, __source: {fileName: _jsxFileName, lineNumber: 3299}} )
+                , React.createElement('div', { className: "form-acts", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3300}}
+                  , React.createElement('button', { className: "btn btn-p" , onClick: createPrj, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3301}}, "Create")
+                  , React.createElement('button', { className: "btn btn-s" , onClick: () => setShowNew(false), __self: this, __source: {fileName: _jsxFileName, lineNumber: 3302}}, "Cancel")
                 )
               )
             )
-            , React.createElement('div', { className: "prj-list", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3300}}
+            , React.createElement('div', { className: "prj-list", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3306}}
               , prjs.map(p => (
-                React.createElement('div', { key: p.name, className: 'prj-card' + (p.is_current ? ' cur' : ''), onClick: () => selectPrj(p.name), __self: this, __source: {fileName: _jsxFileName, lineNumber: 3302}}
-                  , React.createElement('div', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 3303}}
-                    , React.createElement('div', { className: "prj-name", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3304}}
+                React.createElement('div', { key: p.name, className: 'prj-card' + (p.is_current ? ' cur' : ''), onClick: () => selectPrj(p.name), __self: this, __source: {fileName: _jsxFileName, lineNumber: 3308}}
+                  , React.createElement('div', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 3309}}
+                    , React.createElement('div', { className: "prj-name", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3310}}
                       , p.name
-                      , p.is_current && React.createElement('span', { className: "cur-badge", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3306}}, "ACTIVE")
+                      , p.is_current && React.createElement('span', { className: "cur-badge", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3312}}, "ACTIVE")
                     )
-                    , React.createElement('div', { className: "prj-desc", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3308}}, p.description || 'No description')
-                    , React.createElement('div', { className: "prj-date", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3309}}, p.created_at ? new Date(p.created_at).toLocaleDateString() : '')
+                    , React.createElement('div', { className: "prj-desc", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3314}}, p.description || 'No description')
+                    , React.createElement('div', { className: "prj-date", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3315}}, p.created_at ? new Date(p.created_at).toLocaleDateString() : '')
                   )
-                  , React.createElement('div', { onClick: e => e.stopPropagation(), style: { display: 'flex', gap: '4px', alignItems: 'center' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3311}}
-                    , React.createElement('div', { style: { position: 'relative', display: 'inline-block' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3312}}
+                  , React.createElement('div', { onClick: e => e.stopPropagation(), style: { display: 'flex', gap: '4px', alignItems: 'center' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3317}}
+                    , React.createElement('div', { style: { position: 'relative', display: 'inline-block' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3318}}
                       , React.createElement('button', {
                         className: "btn btn-sm btn-s"  ,
                         onClick: (e) => {
@@ -3317,7 +3323,7 @@ function Blackwire() {
                           const menu = e.currentTarget.nextElementSibling;
                           menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
                         },
-                        title: "Export options" , __self: this, __source: {fileName: _jsxFileName, lineNumber: 3313}}
+                        title: "Export options" , __self: this, __source: {fileName: _jsxFileName, lineNumber: 3319}}
 , "↑ ▼"
 
                       )
@@ -3334,7 +3340,7 @@ function Blackwire() {
                           minWidth: '180px',
                           marginTop: '4px'
                         },
-                        onClick: (e) => { e.stopPropagation(); e.currentTarget.style.display = 'none'; }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3324}}
+                        onClick: (e) => { e.stopPropagation(); e.currentTarget.style.display = 'none'; }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3330}}
 
                         , React.createElement('div', {
                           style: {
@@ -3346,7 +3352,7 @@ function Blackwire() {
                           },
                           onClick: (e) => { e.stopPropagation(); exportProject(p.name); },
                           onMouseEnter: (e) => e.currentTarget.style.background = 'var(--bg3)',
-                          onMouseLeave: (e) => e.currentTarget.style.background = 'transparent', __self: this, __source: {fileName: _jsxFileName, lineNumber: 3339}}
+                          onMouseLeave: (e) => e.currentTarget.style.background = 'transparent', __self: this, __source: {fileName: _jsxFileName, lineNumber: 3345}}
 , "↑ Blackwire Format"
 
                         )
@@ -3359,13 +3365,13 @@ function Blackwire() {
                           },
                           onClick: (e) => { e.stopPropagation(); exportProjectBurp(p.name); },
                           onMouseEnter: (e) => e.currentTarget.style.background = 'var(--bg3)',
-                          onMouseLeave: (e) => e.currentTarget.style.background = 'transparent', __self: this, __source: {fileName: _jsxFileName, lineNumber: 3353}}
+                          onMouseLeave: (e) => e.currentTarget.style.background = 'transparent', __self: this, __source: {fileName: _jsxFileName, lineNumber: 3359}}
 , "↑ Burp Suite XML"
 
                         )
                       )
                     )
-                    , React.createElement('div', { style: { position: 'relative', display: 'inline-block' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3368}}
+                    , React.createElement('div', { style: { position: 'relative', display: 'inline-block' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3374}}
                       , React.createElement('button', {
                         className: "btn btn-sm btn-s"  ,
                         onClick: (e) => {
@@ -3373,7 +3379,7 @@ function Blackwire() {
                           const menu = e.currentTarget.nextElementSibling;
                           menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
                         },
-                        title: "Import options" , __self: this, __source: {fileName: _jsxFileName, lineNumber: 3369}}
+                        title: "Import options" , __self: this, __source: {fileName: _jsxFileName, lineNumber: 3375}}
 , "↓ ▼"
 
                       )
@@ -3390,7 +3396,7 @@ function Blackwire() {
                           minWidth: '180px',
                           marginTop: '4px'
                         },
-                        onClick: (e) => { e.stopPropagation(); e.currentTarget.style.display = 'none'; }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3380}}
+                        onClick: (e) => { e.stopPropagation(); e.currentTarget.style.display = 'none'; }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3386}}
 
                         , React.createElement('div', {
                           style: {
@@ -3402,7 +3408,7 @@ function Blackwire() {
                           },
                           onClick: (e) => { e.stopPropagation(); importProject(p.name, false); },
                           onMouseEnter: (e) => e.currentTarget.style.background = 'var(--bg3)',
-                          onMouseLeave: (e) => e.currentTarget.style.background = 'transparent', __self: this, __source: {fileName: _jsxFileName, lineNumber: 3395}}
+                          onMouseLeave: (e) => e.currentTarget.style.background = 'transparent', __self: this, __source: {fileName: _jsxFileName, lineNumber: 3401}}
 , "↓ Merge Data"
 
                         )
@@ -3416,7 +3422,7 @@ function Blackwire() {
                           },
                           onClick: (e) => { e.stopPropagation(); importProject(p.name, true); },
                           onMouseEnter: (e) => e.currentTarget.style.background = 'var(--bg3)',
-                          onMouseLeave: (e) => e.currentTarget.style.background = 'transparent', __self: this, __source: {fileName: _jsxFileName, lineNumber: 3409}}
+                          onMouseLeave: (e) => e.currentTarget.style.background = 'transparent', __self: this, __source: {fileName: _jsxFileName, lineNumber: 3415}}
 , "🔄 Replace All"
 
                         )
@@ -3429,20 +3435,20 @@ function Blackwire() {
                           },
                           onClick: (e) => { e.stopPropagation(); importBurpXML(p.name); },
                           onMouseEnter: (e) => e.currentTarget.style.background = 'var(--bg3)',
-                          onMouseLeave: (e) => e.currentTarget.style.background = 'transparent', __self: this, __source: {fileName: _jsxFileName, lineNumber: 3423}}
+                          onMouseLeave: (e) => e.currentTarget.style.background = 'transparent', __self: this, __source: {fileName: _jsxFileName, lineNumber: 3429}}
 , "↓ Burp Suite XML"
 
                         )
                       )
                     )
-                    , React.createElement('button', { className: "btn btn-sm btn-d"  , onClick: () => delPrj(p.name), __self: this, __source: {fileName: _jsxFileName, lineNumber: 3438}}, "×")
+                    , React.createElement('button', { className: "btn btn-sm btn-d"  , onClick: () => delPrj(p.name), __self: this, __source: {fileName: _jsxFileName, lineNumber: 3444}}, "×")
                   )
                 )
               ))
               , prjs.length === 0 && (
-                React.createElement('div', { className: "empty", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3443}}
-                  , React.createElement('div', { className: "empty-i", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3444}})
-                  , React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 3445}}, "No projects" )
+                React.createElement('div', { className: "empty", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3449}}
+                  , React.createElement('div', { className: "empty-i", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3450}})
+                  , React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 3451}}, "No projects" )
                 )
               )
             )
@@ -3450,69 +3456,69 @@ function Blackwire() {
         )
 
         , tab === 'history' && curPrj && (
-          React.createElement('div', { className: "hist-wrap", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3453}}
-            , React.createElement('div', { className: "hist-sub-tabs", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3454}}
-              , React.createElement('div', { className: 'hist-sub-tab' + (histSubTab === 'http' ? ' act' : ''), onClick: () => setHistSubTab('http'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 3455}}, "HTTP")
-              , React.createElement('div', { className: 'hist-sub-tab' + (histSubTab === 'ws' ? ' act' : ''), onClick: () => { setHistSubTab('ws'); loadWsConns(); }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3456}}, "WebSocket")
-              , React.createElement('div', { className: 'hist-sub-tab' + (histSubTab === 'sitemap' ? ' act' : ''), onClick: () => setHistSubTab('sitemap'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 3457}}, "Site Map" )
+          React.createElement('div', { className: "hist-wrap", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3459}}
+            , React.createElement('div', { className: "hist-sub-tabs", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3460}}
+              , React.createElement('div', { className: 'hist-sub-tab' + (histSubTab === 'http' ? ' act' : ''), onClick: () => setHistSubTab('http'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 3461}}, "HTTP")
+              , React.createElement('div', { className: 'hist-sub-tab' + (histSubTab === 'ws' ? ' act' : ''), onClick: () => { setHistSubTab('ws'); loadWsConns(); }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3462}}, "WebSocket")
+              , React.createElement('div', { className: 'hist-sub-tab' + (histSubTab === 'sitemap' ? ' act' : ''), onClick: () => setHistSubTab('sitemap'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 3463}}, "Site Map" )
             )
 
             , histSubTab === 'http' && (
-              React.createElement('div', { className: "hist-content", ref: histContentRef, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3461}}
-                , React.createElement('div', { className: "panel hist-pnl" , style: { width: histPanelW + '%' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3462}}
-                  , React.createElement('div', { className: "flt-bar", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3463}}
-                    , React.createElement('div', { className: "flt-in-wrap", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3464}}
-                      , React.createElement('input', { className: 'flt-in' + (httpqlError ? ' flt-err' : ''), placeholder: "Filter: req.method.eq:\"GET\" AND resp.code.lt:400"   , value: search, onChange: e => setSearch(e.target.value), __self: this, __source: {fileName: _jsxFileName, lineNumber: 3465}} )
-                      , httpqlError && React.createElement('div', { className: "flt-err-msg", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3466}}, httpqlError)
+              React.createElement('div', { className: "hist-content", ref: histContentRef, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3467}}
+                , React.createElement('div', { className: "panel hist-pnl" , style: { width: histPanelW + '%' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3468}}
+                  , React.createElement('div', { className: "flt-bar", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3469}}
+                    , React.createElement('div', { className: "flt-in-wrap", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3470}}
+                      , React.createElement('input', { className: 'flt-in' + (httpqlError ? ' flt-err' : ''), placeholder: "Filter: req.method.eq:\"GET\" AND resp.code.lt:400"   , value: search, onChange: e => setSearch(e.target.value), __self: this, __source: {fileName: _jsxFileName, lineNumber: 3471}} )
+                      , httpqlError && React.createElement('div', { className: "flt-err-msg", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3472}}, httpqlError)
                     )
-                    , React.createElement('div', { className: "flt-preset-wrap", style: {position:'relative'}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3468}}
-                      , React.createElement('div', { className: "flt-tog", onClick: () => setShowPresets(!showPresets), title: "Filter presets" , __self: this, __source: {fileName: _jsxFileName, lineNumber: 3469}}, "▼")
+                    , React.createElement('div', { className: "flt-preset-wrap", style: {position:'relative'}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3474}}
+                      , React.createElement('div', { className: "flt-tog", onClick: () => setShowPresets(!showPresets), title: "Filter presets" , __self: this, __source: {fileName: _jsxFileName, lineNumber: 3475}}, "▼")
                       , showPresets && (
-                        React.createElement('div', { className: "flt-preset-dd", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3471}}
-                          , React.createElement('div', { className: "flt-preset-save", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3472}}
-                            , React.createElement('input', { className: "flt-in flt-preset-name" , placeholder: "Preset name..." , value: presetName, onChange: e => setPresetName(e.target.value), onKeyDown: e => e.key === 'Enter' && savePreset(), __self: this, __source: {fileName: _jsxFileName, lineNumber: 3473}} )
-                            , React.createElement('button', { className: "btn btn-sm btn-p"  , onClick: savePreset, disabled: !presetName.trim() || !search.trim(), __self: this, __source: {fileName: _jsxFileName, lineNumber: 3474}}, "Save")
+                        React.createElement('div', { className: "flt-preset-dd", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3477}}
+                          , React.createElement('div', { className: "flt-preset-save", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3478}}
+                            , React.createElement('input', { className: "flt-in flt-preset-name" , placeholder: "Preset name..." , value: presetName, onChange: e => setPresetName(e.target.value), onKeyDown: e => e.key === 'Enter' && savePreset(), __self: this, __source: {fileName: _jsxFileName, lineNumber: 3479}} )
+                            , React.createElement('button', { className: "btn btn-sm btn-p"  , onClick: savePreset, disabled: !presetName.trim() || !search.trim(), __self: this, __source: {fileName: _jsxFileName, lineNumber: 3480}}, "Save")
                           )
-                          , presets.length === 0 && React.createElement('div', { className: "flt-preset-empty", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3476}}, "No presets saved"  )
+                          , presets.length === 0 && React.createElement('div', { className: "flt-preset-empty", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3482}}, "No presets saved"  )
                           , presets.map(p => (
-                            React.createElement('div', { key: p.id, className: "flt-preset-item", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3478}}
-                              , React.createElement('span', { className: "flt-preset-name-label", onClick: () => applyPreset(p), title: p.query, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3479}}, p.name)
-                              , React.createElement('span', { className: "flt-preset-q", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3480}}, p.query)
-                              , React.createElement('button', { className: "btn btn-sm btn-d flt-preset-del"   , onClick: () => delPreset(p.id), __self: this, __source: {fileName: _jsxFileName, lineNumber: 3481}}, "×")
+                            React.createElement('div', { key: p.id, className: "flt-preset-item", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3484}}
+                              , React.createElement('span', { className: "flt-preset-name-label", onClick: () => applyPreset(p), title: p.query, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3485}}, p.name)
+                              , React.createElement('span', { className: "flt-preset-q", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3486}}, p.query)
+                              , React.createElement('button', { className: "btn btn-sm btn-d flt-preset-del"   , onClick: () => delPreset(p.id), __self: this, __source: {fileName: _jsxFileName, lineNumber: 3487}}, "×")
                             )
                           ))
                         )
                       )
                     )
-                    , React.createElement('div', { className: 'flt-tog' + (scopeOnly ? ' act' : ''), onClick: () => setScopeOnly(!scopeOnly), __self: this, __source: {fileName: _jsxFileName, lineNumber: 3487}}, "Scope")
-                    , React.createElement('div', { className: 'flt-tog' + (savedOnly ? ' act' : ''), onClick: () => setSavedOnly(!savedOnly), __self: this, __source: {fileName: _jsxFileName, lineNumber: 3488}}, "★")
+                    , React.createElement('div', { className: 'flt-tog' + (scopeOnly ? ' act' : ''), onClick: () => setScopeOnly(!scopeOnly), __self: this, __source: {fileName: _jsxFileName, lineNumber: 3493}}, "Scope")
+                    , React.createElement('div', { className: 'flt-tog' + (savedOnly ? ' act' : ''), onClick: () => setSavedOnly(!savedOnly), __self: this, __source: {fileName: _jsxFileName, lineNumber: 3494}}, "★")
                   )
-                  , React.createElement('div', { className: "pnl-hdr", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3490}}
-                    , React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 3491}}, filtered.length, " requests" )
-                    , React.createElement('div', { className: "acts", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3492}}
-                      , React.createElement('button', { className: "btn btn-sm btn-s"  , onClick: loadReqs, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3493}}, "↻")
-                      , React.createElement('button', { className: "btn btn-sm btn-d"  , onClick: clearHist, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3494}}, "Clear")
+                  , React.createElement('div', { className: "pnl-hdr", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3496}}
+                    , React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 3497}}, filtered.length, " requests" )
+                    , React.createElement('div', { className: "acts", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3498}}
+                      , React.createElement('button', { className: "btn btn-sm btn-s"  , onClick: loadReqs, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3499}}, "↻")
+                      , React.createElement('button', { className: "btn btn-sm btn-d"  , onClick: clearHist, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3500}}, "Clear")
                     )
                   )
-                  , React.createElement('div', { className: "pnl-cnt", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3497}}
-                    , React.createElement('div', { className: "req-list", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3498}}
+                  , React.createElement('div', { className: "pnl-cnt", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3503}}
+                    , React.createElement('div', { className: "req-list", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3504}}
                       , filtered.map(r => (
                         React.createElement('div', {
                           key: r.id,
                           className: 'req-item' + (_optionalChain([selReq, 'optionalAccess', _65 => _65.id]) === r.id ? ' sel' : '') + (!r.in_scope ? ' out' : ''),
                           onClick: () => setSelReq(r),
-                          onContextMenu: e => showContextMenu(e, r), __self: this, __source: {fileName: _jsxFileName, lineNumber: 3500}}
+                          onContextMenu: e => showContextMenu(e, r), __self: this, __source: {fileName: _jsxFileName, lineNumber: 3506}}
 
-                          , React.createElement('span', { className: 'mth mth-' + r.method, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3506}}, r.method)
-                          , React.createElement('span', { className: "url", title: r.url, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3507}}, r.url)
-                          , React.createElement('span', { className: 'sts ' + stCls(r.response_status), __self: this, __source: {fileName: _jsxFileName, lineNumber: 3508}}, r.response_status || '-')
-                          , React.createElement('span', { className: "ts", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3509}}, fmtTime(r.timestamp))
+                          , React.createElement('span', { className: 'mth mth-' + r.method, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3512}}, r.method)
+                          , React.createElement('span', { className: "url", title: r.url, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3513}}, r.url)
+                          , React.createElement('span', { className: 'sts ' + stCls(r.response_status), __self: this, __source: {fileName: _jsxFileName, lineNumber: 3514}}, r.response_status || '-')
+                          , React.createElement('span', { className: "ts", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3515}}, fmtTime(r.timestamp))
                         )
                       ))
                       , filtered.length === 0 && (
-                        React.createElement('div', { className: "empty", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3513}}
-                          , React.createElement('div', { className: "empty-i", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3514}}, "□")
-                          , React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 3515}}, "No requests" )
+                        React.createElement('div', { className: "empty", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3519}}
+                          , React.createElement('div', { className: "empty-i", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3520}}, "□")
+                          , React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 3521}}, "No requests" )
                         )
                       )
                     )
@@ -3524,42 +3530,42 @@ function Blackwire() {
                   if (!el) return;
                   const dpct = (dx / el.offsetWidth) * 100;
                   setHistPanelW(prev => Math.max(20, Math.min(80, prev + dpct)));
-                }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3522}} )
+                }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3528}} )
 
-                , React.createElement('div', { className: "panel det-pnl" , __self: this, __source: {fileName: _jsxFileName, lineNumber: 3529}}
+                , React.createElement('div', { className: "panel det-pnl" , __self: this, __source: {fileName: _jsxFileName, lineNumber: 3535}}
                   , selReq ? (
-                    React.createElement(React.Fragment, {__self: this, __source: {fileName: _jsxFileName, lineNumber: 3531}}
-                      , React.createElement('div', { className: "pnl-hdr", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3532}}
-                        , React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 3533}}, selReq.method, " " , selReq.url.substring(0, 50))
-                        , React.createElement('div', { className: "acts", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3534}}
-                          , React.createElement('button', { className: "btn btn-sm btn-p"  , onClick: () => selReqFull && toRep(selReqFull), disabled: !selReqFull, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3535}}, "→ Rep" )
-                          , React.createElement('button', { className: 'btn btn-sm ' + (selReq.saved ? 'btn-g' : 'btn-s'), onClick: () => togSave(selReq.id), __self: this, __source: {fileName: _jsxFileName, lineNumber: 3536}}
+                    React.createElement(React.Fragment, {__self: this, __source: {fileName: _jsxFileName, lineNumber: 3537}}
+                      , React.createElement('div', { className: "pnl-hdr", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3538}}
+                        , React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 3539}}, selReq.method, " " , selReq.url.substring(0, 50))
+                        , React.createElement('div', { className: "acts", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3540}}
+                          , React.createElement('button', { className: "btn btn-sm btn-p"  , onClick: () => selReqFull && toRep(selReqFull), disabled: !selReqFull, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3541}}, "→ Rep" )
+                          , React.createElement('button', { className: 'btn btn-sm ' + (selReq.saved ? 'btn-g' : 'btn-s'), onClick: () => togSave(selReq.id), __self: this, __source: {fileName: _jsxFileName, lineNumber: 3542}}
                             , selReq.saved ? '★' : '☆'
                           )
-                          , React.createElement('button', { className: "btn btn-sm btn-d"  , onClick: () => delReq(selReq.id), __self: this, __source: {fileName: _jsxFileName, lineNumber: 3539}}, "×")
+                          , React.createElement('button', { className: "btn btn-sm btn-d"  , onClick: () => delReq(selReq.id), __self: this, __source: {fileName: _jsxFileName, lineNumber: 3545}}, "×")
                         )
                       )
-                      , React.createElement('div', { className: "det-tabs", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3542}}
-                        , React.createElement('div', { className: 'det-tab' + (detTab === 'request' ? ' act' : ''), onClick: () => setDetTab('request'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 3543}}, "Request")
-                        , React.createElement('div', { className: 'det-tab' + (detTab === 'response' ? ' act' : ''), onClick: () => setDetTab('response'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 3544}}, "Response")
-                        , React.createElement('div', { style: { marginLeft: 'auto', display: 'flex', gap: '6px', alignItems: 'center' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3545}}
-                          , React.createElement('button', { className: 'btn btn-sm ' + (detTab === 'request' ? (reqFormat === 'raw' ? 'btn-p' : 'btn-s') : (respFormat === 'raw' ? 'btn-p' : 'btn-s')), onClick: () => detTab === 'request' ? setReqFormat('raw') : setRespFormat('raw'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 3546}}, "Raw"
+                      , React.createElement('div', { className: "det-tabs", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3548}}
+                        , React.createElement('div', { className: 'det-tab' + (detTab === 'request' ? ' act' : ''), onClick: () => setDetTab('request'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 3549}}, "Request")
+                        , React.createElement('div', { className: 'det-tab' + (detTab === 'response' ? ' act' : ''), onClick: () => setDetTab('response'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 3550}}, "Response")
+                        , React.createElement('div', { style: { marginLeft: 'auto', display: 'flex', gap: '6px', alignItems: 'center' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3551}}
+                          , React.createElement('button', { className: 'btn btn-sm ' + (detTab === 'request' ? (reqFormat === 'raw' ? 'btn-p' : 'btn-s') : (respFormat === 'raw' ? 'btn-p' : 'btn-s')), onClick: () => detTab === 'request' ? setReqFormat('raw') : setRespFormat('raw'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 3552}}, "Raw"
 
                           )
-                          , React.createElement('button', { className: 'btn btn-sm ' + (detTab === 'request' ? (reqFormat === 'pretty' ? 'btn-p' : 'btn-s') : (respFormat === 'pretty' ? 'btn-p' : 'btn-s')), onClick: () => detTab === 'request' ? setReqFormat('pretty') : setRespFormat('pretty'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 3549}}, "Pretty"
+                          , React.createElement('button', { className: 'btn btn-sm ' + (detTab === 'request' ? (reqFormat === 'pretty' ? 'btn-p' : 'btn-s') : (respFormat === 'pretty' ? 'btn-p' : 'btn-s')), onClick: () => detTab === 'request' ? setReqFormat('pretty') : setRespFormat('pretty'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 3555}}, "Pretty"
 
                           )
                           , detTab === 'response' && (
-                            React.createElement('button', { className: 'btn btn-sm ' + (respFormat === 'render' ? 'btn-p' : 'btn-s'), onClick: () => setRespFormat('render'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 3553}}, "Render"
+                            React.createElement('button', { className: 'btn btn-sm ' + (respFormat === 'render' ? 'btn-p' : 'btn-s'), onClick: () => setRespFormat('render'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 3559}}, "Render"
 
                             )
                           )
                         )
                       )
                       , !selReqFull ? (
-                        React.createElement('div', { className: "empty", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3560}}, React.createElement('div', { className: "splash-spin", style: {margin:'20px auto'}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3560}} ))
+                        React.createElement('div', { className: "empty", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3566}}, React.createElement('div', { className: "splash-spin", style: {margin:'20px auto'}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3566}} ))
                       ) : (
-                      React.createElement('div', { className: "code", ref: histCodeRef, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3562}}
+                      React.createElement('div', { className: "code", ref: histCodeRef, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3568}}
                         , (() => {
                           const d = selReqFull;
                           if (detTab === 'response' && respFormat === 'render') {
@@ -3568,7 +3574,7 @@ function Blackwire() {
                                 src: API + '/api/requests/' + selReq.id + '/render',
                                 sandbox: "allow-same-origin",
                                 style: { width: '100%', height: '100%', border: 'none', background: '#fff' },
-                                title: "Rendered Response" , __self: this, __source: {fileName: _jsxFileName, lineNumber: 3567}}
+                                title: "Rendered Response" , __self: this, __source: {fileName: _jsxFileName, lineNumber: 3573}}
                               )
                             );
                           }
@@ -3583,13 +3589,13 @@ function Blackwire() {
                             const plainText = rawContent.replace(/<[^>]*>/g, '');
                             const hl = highlightMatches(plainText, histBodySearch, histBodySearchRegex, histBodySearchIdx);
                             if (hl.count !== histBodySearchCount) setTimeout(() => setHistBodySearchCount(hl.count), 0);
-                            return React.createElement('div', { dangerouslySetInnerHTML: { __html: hl.html }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3586}} );
+                            return React.createElement('div', { dangerouslySetInnerHTML: { __html: hl.html }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3592}} );
                           }
-                          return React.createElement('div', { dangerouslySetInnerHTML: { __html: rawContent }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3588}} );
+                          return React.createElement('div', { dangerouslySetInnerHTML: { __html: rawContent }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3594}} );
                         })()
                       )
                       )
-                      , React.createElement('div', { className: "search-bar", style: { borderTop: '1px solid var(--brd)' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3592}}
+                      , React.createElement('div', { className: "search-bar", style: { borderTop: '1px solid var(--brd)' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3598}}
                         , React.createElement('input', {
                           placeholder: histBodySearchRegex ? 'Regex search...' : 'Search body...',
                           value: histBodySearch,
@@ -3598,18 +3604,18 @@ function Blackwire() {
                             if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); setHistBodySearchIdx(i => histBodySearchCount > 0 ? (i + 1) % histBodySearchCount : 0); }
                             if (e.key === 'Enter' && e.shiftKey) { e.preventDefault(); setHistBodySearchIdx(i => histBodySearchCount > 0 ? (i - 1 + histBodySearchCount) % histBodySearchCount : 0); }
                             if (e.key === 'Escape') { setHistBodySearch(''); setHistBodySearchIdx(0); setHistBodySearchCount(0); }
-                          }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3593}}
+                          }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3599}}
                         )
-                        , React.createElement('button', { className: 'srch-btn' + (histBodySearchRegex ? ' act' : ''), onClick: () => { setHistBodySearchRegex(!histBodySearchRegex); setHistBodySearchIdx(0); }, title: "Toggle regex" , __self: this, __source: {fileName: _jsxFileName, lineNumber: 3603}}, ".*")
-                        , React.createElement('span', { className: "search-info", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3604}}, histBodySearchCount > 0 ? (histBodySearchIdx + 1) + '/' + histBodySearchCount : '0/0')
-                        , React.createElement('button', { className: "srch-btn", onClick: () => setHistBodySearchIdx(i => histBodySearchCount > 0 ? (i - 1 + histBodySearchCount) % histBodySearchCount : 0), disabled: histBodySearchCount === 0, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3605}}, "▲")
-                        , React.createElement('button', { className: "srch-btn", onClick: () => setHistBodySearchIdx(i => histBodySearchCount > 0 ? (i + 1) % histBodySearchCount : 0), disabled: histBodySearchCount === 0, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3606}}, "▼")
-                        , React.createElement('button', { className: "srch-btn", onClick: () => { setHistBodySearch(''); setHistBodySearchIdx(0); setHistBodySearchCount(0); }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3607}}, "✕")
+                        , React.createElement('button', { className: 'srch-btn' + (histBodySearchRegex ? ' act' : ''), onClick: () => { setHistBodySearchRegex(!histBodySearchRegex); setHistBodySearchIdx(0); }, title: "Toggle regex" , __self: this, __source: {fileName: _jsxFileName, lineNumber: 3609}}, ".*")
+                        , React.createElement('span', { className: "search-info", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3610}}, histBodySearchCount > 0 ? (histBodySearchIdx + 1) + '/' + histBodySearchCount : '0/0')
+                        , React.createElement('button', { className: "srch-btn", onClick: () => setHistBodySearchIdx(i => histBodySearchCount > 0 ? (i - 1 + histBodySearchCount) % histBodySearchCount : 0), disabled: histBodySearchCount === 0, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3611}}, "▲")
+                        , React.createElement('button', { className: "srch-btn", onClick: () => setHistBodySearchIdx(i => histBodySearchCount > 0 ? (i + 1) % histBodySearchCount : 0), disabled: histBodySearchCount === 0, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3612}}, "▼")
+                        , React.createElement('button', { className: "srch-btn", onClick: () => { setHistBodySearch(''); setHistBodySearchIdx(0); setHistBodySearchCount(0); }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3613}}, "✕")
                       )
                     )
                   ) : (
-                    React.createElement('div', { className: "empty", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3611}}
-                      , React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 3612}}, "Select request" )
+                    React.createElement('div', { className: "empty", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3617}}
+                      , React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 3618}}, "Select request" )
                     )
                   )
                 )
@@ -3617,75 +3623,75 @@ function Blackwire() {
             )
 
             , histSubTab === 'ws' && (
-              React.createElement('div', { className: "ws-cnt", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3620}}
-                , React.createElement('div', { className: "ws-conns panel" , style: { width: wsConnsW + 'px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3621}}
-                  , React.createElement('div', { className: "pnl-hdr", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3622}}
-                    , React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 3623}}, "Connections (" , wsConns.length, ")")
-                    , React.createElement('button', { className: "btn btn-sm btn-s"  , onClick: loadWsConns, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3624}}, "↻")
+              React.createElement('div', { className: "ws-cnt", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3626}}
+                , React.createElement('div', { className: "ws-conns panel" , style: { width: wsConnsW + 'px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3627}}
+                  , React.createElement('div', { className: "pnl-hdr", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3628}}
+                    , React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 3629}}, "Connections (" , wsConns.length, ")")
+                    , React.createElement('button', { className: "btn btn-sm btn-s"  , onClick: loadWsConns, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3630}}, "↻")
                   )
-                  , React.createElement('div', { className: "pnl-cnt", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3626}}
+                  , React.createElement('div', { className: "pnl-cnt", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3632}}
                     , wsConns.map(c => (
                       React.createElement('div', { key: c.url, className: 'ws-conn-item' + (selWsConn === c.url ? ' sel' : ''),
-                           onClick: () => loadWsFrames(c.url), __self: this, __source: {fileName: _jsxFileName, lineNumber: 3628}}
-                        , React.createElement('span', { className: "ws-conn-url", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3630}}, c.url)
-                        , React.createElement('div', { style: { display: 'flex', justifyContent: 'space-between', marginTop: '4px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3631}}
-                          , React.createElement('span', { className: "ws-conn-count", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3632}}, c.frame_count, " frames" )
-                          , React.createElement('span', { className: "ts", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3633}}, fmtTime(c.last_seen))
+                           onClick: () => loadWsFrames(c.url), __self: this, __source: {fileName: _jsxFileName, lineNumber: 3634}}
+                        , React.createElement('span', { className: "ws-conn-url", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3636}}, c.url)
+                        , React.createElement('div', { style: { display: 'flex', justifyContent: 'space-between', marginTop: '4px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3637}}
+                          , React.createElement('span', { className: "ws-conn-count", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3638}}, c.frame_count, " frames" )
+                          , React.createElement('span', { className: "ts", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3639}}, fmtTime(c.last_seen))
                         )
                       )
                     ))
                     , wsConns.length === 0 && (
-                      React.createElement('div', { className: "empty", style: { padding: 30 }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3638}}
-                        , React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 3639}}, "No WebSocket connections captured"   )
+                      React.createElement('div', { className: "empty", style: { padding: 30 }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3644}}
+                        , React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 3645}}, "No WebSocket connections captured"   )
                       )
                     )
                   )
                 )
-                , React.createElement(ResizeHandle, { onDrag: (dx) => setWsConnsW(w => Math.max(120, Math.min(400, w + dx))), __self: this, __source: {fileName: _jsxFileName, lineNumber: 3644}} )
-                , React.createElement('div', { className: "ws-frames panel" , style: { width: wsFramesW + 'px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3645}}
-                  , React.createElement('div', { className: "pnl-hdr", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3646}}
-                    , React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 3647}}, "Frames " , selWsConn ? '(' + wsFrames.length + ')' : '')
+                , React.createElement(ResizeHandle, { onDrag: (dx) => setWsConnsW(w => Math.max(120, Math.min(400, w + dx))), __self: this, __source: {fileName: _jsxFileName, lineNumber: 3650}} )
+                , React.createElement('div', { className: "ws-frames panel" , style: { width: wsFramesW + 'px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3651}}
+                  , React.createElement('div', { className: "pnl-hdr", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3652}}
+                    , React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 3653}}, "Frames " , selWsConn ? '(' + wsFrames.length + ')' : '')
                   )
-                  , React.createElement('div', { className: "pnl-cnt", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3649}}
+                  , React.createElement('div', { className: "pnl-cnt", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3655}}
                     , wsFrames.map(f => (
                       React.createElement('div', { key: f.id, className: 'ws-frame-item' + (_optionalChain([selWsFrame, 'optionalAccess', _66 => _66.id]) === f.id ? ' sel' : ''),
                            onClick: () => selectWsFrame(f),
-                           onContextMenu: e => showContextMenu(e, { ...f, url: selWsConn, method: 'WS', body: f.content }, 'websocket'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 3651}}
-                        , React.createElement('span', { className: 'ws-dir ws-dir-' + f.direction, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3654}}
+                           onContextMenu: e => showContextMenu(e, { ...f, url: selWsConn, method: 'WS', body: f.content }, 'websocket'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 3657}}
+                        , React.createElement('span', { className: 'ws-dir ws-dir-' + f.direction, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3660}}
                           , f.direction === 'up' ? '\u2191' : '\u2193'
                         )
-                        , React.createElement('span', { className: "ws-frame-body", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3657}}, (f.content || '').substring(0, 80))
-                        , React.createElement('span', { className: "ts", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3658}}, fmtTime(f.timestamp))
+                        , React.createElement('span', { className: "ws-frame-body", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3663}}, (f.content || '').substring(0, 80))
+                        , React.createElement('span', { className: "ts", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3664}}, fmtTime(f.timestamp))
                       )
                     ))
                     , selWsConn && wsFrames.length === 0 && (
-                      React.createElement('div', { className: "empty", style: { padding: 30 }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3662}}, React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 3662}}, "No frames" ))
+                      React.createElement('div', { className: "empty", style: { padding: 30 }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3668}}, React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 3668}}, "No frames" ))
                     )
                     , !selWsConn && (
-                      React.createElement('div', { className: "empty", style: { padding: 30 }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3665}}, React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 3665}}, "Select a connection"  ))
+                      React.createElement('div', { className: "empty", style: { padding: 30 }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3671}}, React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 3671}}, "Select a connection"  ))
                     )
                   )
                 )
-                , React.createElement(ResizeHandle, { onDrag: (dx) => setWsFramesW(w => Math.max(150, Math.min(500, w + dx))), __self: this, __source: {fileName: _jsxFileName, lineNumber: 3669}} )
-                , React.createElement('div', { className: "ws-detail panel" , __self: this, __source: {fileName: _jsxFileName, lineNumber: 3670}}
+                , React.createElement(ResizeHandle, { onDrag: (dx) => setWsFramesW(w => Math.max(150, Math.min(500, w + dx))), __self: this, __source: {fileName: _jsxFileName, lineNumber: 3675}} )
+                , React.createElement('div', { className: "ws-detail panel" , __self: this, __source: {fileName: _jsxFileName, lineNumber: 3676}}
                   , selWsFrame ? (
-                    React.createElement(React.Fragment, {__self: this, __source: {fileName: _jsxFileName, lineNumber: 3672}}
-                      , React.createElement('div', { className: "pnl-hdr", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3673}}
-                        , React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 3674}}, selWsFrame.direction === 'up' ? 'Client \u2192 Server' : 'Server \u2192 Client')
-                        , React.createElement('span', { className: "ts", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3675}}, fmtTime(selWsFrame.timestamp))
+                    React.createElement(React.Fragment, {__self: this, __source: {fileName: _jsxFileName, lineNumber: 3678}}
+                      , React.createElement('div', { className: "pnl-hdr", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3679}}
+                        , React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 3680}}, selWsFrame.direction === 'up' ? 'Client \u2192 Server' : 'Server \u2192 Client')
+                        , React.createElement('span', { className: "ts", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3681}}, fmtTime(selWsFrame.timestamp))
                       )
-                      , React.createElement('div', { className: "code", style: { maxHeight: '40%', borderBottom: '1px solid var(--brd)' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3677}}, selWsFrame.content)
-                      , React.createElement('div', { className: "pnl-hdr", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3678}}, React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 3678}}, "Resend Frame" ))
+                      , React.createElement('div', { className: "code", style: { maxHeight: '40%', borderBottom: '1px solid var(--brd)' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3683}}, selWsFrame.content)
+                      , React.createElement('div', { className: "pnl-hdr", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3684}}, React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 3684}}, "Resend Frame" ))
                       , React.createElement('textarea', { className: "ed-ta", style: { flex: 1 }, value: wsResendMsg,
-                                onChange: e => setWsResendMsg(e.target.value), placeholder: "Edit frame content..."  , __self: this, __source: {fileName: _jsxFileName, lineNumber: 3679}} )
-                      , React.createElement('div', { style: { padding: '10px 14px', display: 'flex', gap: '10px', background: 'var(--bg2)', borderTop: '1px solid var(--brd)' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3681}}
+                                onChange: e => setWsResendMsg(e.target.value), placeholder: "Edit frame content..."  , __self: this, __source: {fileName: _jsxFileName, lineNumber: 3685}} )
+                      , React.createElement('div', { style: { padding: '10px 14px', display: 'flex', gap: '10px', background: 'var(--bg2)', borderTop: '1px solid var(--brd)' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3687}}
                         , React.createElement('button', { className: "btn btn-p" , onClick: resendWsFrame,
-                                disabled: wsSending || !wsResendMsg, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3682}}
+                                disabled: wsSending || !wsResendMsg, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3688}}
                           , wsSending ? '...' : '\u25B6 Resend'
                         )
                       )
                       , wsResendResp && (
-                        React.createElement('div', { className: "code", style: { maxHeight: '30%', borderTop: '1px solid var(--brd)' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3688}}
+                        React.createElement('div', { className: "code", style: { maxHeight: '30%', borderTop: '1px solid var(--brd)' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3694}}
                           , wsResendResp.error
                             ? 'Error: ' + wsResendResp.error
                             : wsResendResp.response
@@ -3695,57 +3701,57 @@ function Blackwire() {
                       )
                     )
                   ) : (
-                    React.createElement('div', { className: "empty", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3698}}, React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 3698}}, "Select a frame"  ))
+                    React.createElement('div', { className: "empty", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3704}}, React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 3704}}, "Select a frame"  ))
                   )
                 )
               )
             )
 
             , histSubTab === 'sitemap' && (
-              React.createElement('div', { className: "hist-content", ref: smContentRef, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3705}}
-                , React.createElement('div', { className: "panel sm-tree" , style: { width: smTreeW + '%' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3706}}
-                  , React.createElement('div', { className: "pnl-hdr", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3707}}
-                    , React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 3708}}, Object.keys(siteTree).length, " hosts" )
-                    , React.createElement('div', { style: { display: 'flex', gap: '4px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3709}}
-                      , React.createElement('button', { className: "btn btn-sm btn-s"  , onClick: () => setSmShowStats(!smShowStats), __self: this, __source: {fileName: _jsxFileName, lineNumber: 3710}}
+              React.createElement('div', { className: "hist-content", ref: smContentRef, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3711}}
+                , React.createElement('div', { className: "panel sm-tree" , style: { width: smTreeW + '%' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3712}}
+                  , React.createElement('div', { className: "pnl-hdr", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3713}}
+                    , React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 3714}}, Object.keys(siteTree).length, " hosts" )
+                    , React.createElement('div', { style: { display: 'flex', gap: '4px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3715}}
+                      , React.createElement('button', { className: "btn btn-sm btn-s"  , onClick: () => setSmShowStats(!smShowStats), __self: this, __source: {fileName: _jsxFileName, lineNumber: 3716}}
                         , smShowStats ? 'Hide' : 'Show', " Stats"
                       )
-                      , React.createElement('button', { className: "btn btn-sm btn-s"  , onClick: () => { setSmExpanded({}); setSmSelNode(null); }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3713}}, "Collapse All" )
+                      , React.createElement('button', { className: "btn btn-sm btn-s"  , onClick: () => { setSmExpanded({}); setSmSelNode(null); }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3719}}, "Collapse All" )
                     )
                   )
                   , smShowStats && (
-                    React.createElement('div', { style: { padding: '12px', borderBottom: '1px solid var(--brd)', fontSize: '10px', color: 'var(--txt2)' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3717}}
-                      , React.createElement('div', { style: { marginBottom: '8px', fontWeight: 600, color: 'var(--txt1)' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3718}}, "Top Methods" )
-                      , React.createElement('div', { style: { display: 'flex', flexWrap: 'wrap', gap: '4px', marginBottom: '12px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3719}}
+                    React.createElement('div', { style: { padding: '12px', borderBottom: '1px solid var(--brd)', fontSize: '10px', color: 'var(--txt2)' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3723}}
+                      , React.createElement('div', { style: { marginBottom: '8px', fontWeight: 600, color: 'var(--txt1)' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3724}}, "Top Methods" )
+                      , React.createElement('div', { style: { display: 'flex', flexWrap: 'wrap', gap: '4px', marginBottom: '12px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3725}}
                         , Object.entries(smStats.methods).sort((a, b) => b[1] - a[1]).slice(0, 5).map(([m, c]) => (
-                          React.createElement('span', { key: m, style: { padding: '2px 6px', background: 'var(--bg3)', borderRadius: '2px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3721}}
-                            , React.createElement('span', { className: 'mth-' + m, style: { fontWeight: 600 }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3722}}, m), " " , c
+                          React.createElement('span', { key: m, style: { padding: '2px 6px', background: 'var(--bg3)', borderRadius: '2px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3727}}
+                            , React.createElement('span', { className: 'mth-' + m, style: { fontWeight: 600 }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3728}}, m), " " , c
                           )
                         ))
                       )
-                      , React.createElement('div', { style: { marginBottom: '8px', fontWeight: 600, color: 'var(--txt1)' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3726}}, "Status Codes" )
-                      , React.createElement('div', { style: { display: 'flex', flexWrap: 'wrap', gap: '4px', marginBottom: '12px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3727}}
+                      , React.createElement('div', { style: { marginBottom: '8px', fontWeight: 600, color: 'var(--txt1)' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3732}}, "Status Codes" )
+                      , React.createElement('div', { style: { display: 'flex', flexWrap: 'wrap', gap: '4px', marginBottom: '12px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3733}}
                         , Object.entries(smStats.statuses).sort((a, b) => b[1] - a[1]).map(([s, c]) => (
-                          React.createElement('span', { key: s, style: { padding: '2px 6px', background: 'var(--bg3)', borderRadius: '2px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3729}}
+                          React.createElement('span', { key: s, style: { padding: '2px 6px', background: 'var(--bg3)', borderRadius: '2px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3735}}
                             , s, ": " , c
                           )
                         ))
                       )
-                      , React.createElement('div', { style: { marginBottom: '8px', fontWeight: 600, color: 'var(--txt1)' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3734}}, "Top Extensions" )
-                      , React.createElement('div', { style: { display: 'flex', flexWrap: 'wrap', gap: '4px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3735}}
+                      , React.createElement('div', { style: { marginBottom: '8px', fontWeight: 600, color: 'var(--txt1)' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3740}}, "Top Extensions" )
+                      , React.createElement('div', { style: { display: 'flex', flexWrap: 'wrap', gap: '4px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3741}}
                         , Object.entries(smStats.extensions).sort((a, b) => b[1] - a[1]).slice(0, 8).map(([e, c]) => (
-                          React.createElement('span', { key: e, style: { padding: '2px 6px', background: 'var(--bg3)', borderRadius: '2px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3737}}, "."
+                          React.createElement('span', { key: e, style: { padding: '2px 6px', background: 'var(--bg3)', borderRadius: '2px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3743}}, "."
                             , e, ": " , c
                           )
                         ))
                       )
                     )
                   )
-                  , React.createElement('div', { className: "pnl-cnt", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3744}}
+                  , React.createElement('div', { className: "pnl-cnt", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3750}}
                     , Object.keys(siteTree).length === 0 ? (
-                      React.createElement('div', { className: "empty", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3746}}
-                        , React.createElement('div', { className: "empty-i", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3747}}, "🌐")
-                        , React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 3748}}, "No requests captured"  )
+                      React.createElement('div', { className: "empty", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3752}}
+                        , React.createElement('div', { className: "empty-i", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3753}}, "🌐")
+                        , React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 3754}}, "No requests captured"  )
                       )
                     ) : (
                       Object.entries(siteTree)
@@ -3759,88 +3765,88 @@ function Blackwire() {
                   if (!el) return;
                   const dpct = (dx / el.offsetWidth) * 100;
                   setSmTreeW(prev => Math.max(15, Math.min(70, prev + dpct)));
-                }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3757}} )
-                , React.createElement('div', { className: "sm-right", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3763}}
-                  , React.createElement('div', { className: "panel", style: { flex: smSelNode && selReq ? 1 : 1, overflow: 'hidden', display: 'flex', flexDirection: 'column' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3764}}
-                    , React.createElement('div', { className: "pnl-hdr", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3765}}
-                      , React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 3766}}, smSelNode ? smNodeReqs.length + ' requests' : 'Select a node')
+                }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3763}} )
+                , React.createElement('div', { className: "sm-right", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3769}}
+                  , React.createElement('div', { className: "panel", style: { flex: smSelNode && selReq ? 1 : 1, overflow: 'hidden', display: 'flex', flexDirection: 'column' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3770}}
+                    , React.createElement('div', { className: "pnl-hdr", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3771}}
+                      , React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 3772}}, smSelNode ? smNodeReqs.length + ' requests' : 'Select a node')
                       , smSelNode && (
-                        React.createElement('div', { style: { display: 'flex', gap: '4px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3768}}
-                          , React.createElement('button', { className: "btn btn-sm btn-s"  , onClick: () => exportSitemap('json'), title: "Export as JSON"  , __self: this, __source: {fileName: _jsxFileName, lineNumber: 3769}}, "JSON")
-                          , React.createElement('button', { className: "btn btn-sm btn-s"  , onClick: () => exportSitemap('csv'), title: "Export as CSV"  , __self: this, __source: {fileName: _jsxFileName, lineNumber: 3770}}, "CSV")
+                        React.createElement('div', { style: { display: 'flex', gap: '4px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3774}}
+                          , React.createElement('button', { className: "btn btn-sm btn-s"  , onClick: () => exportSitemap('json'), title: "Export as JSON"  , __self: this, __source: {fileName: _jsxFileName, lineNumber: 3775}}, "JSON")
+                          , React.createElement('button', { className: "btn btn-sm btn-s"  , onClick: () => exportSitemap('csv'), title: "Export as CSV"  , __self: this, __source: {fileName: _jsxFileName, lineNumber: 3776}}, "CSV")
                         )
                       )
                     )
                     , smSelNode && (
-                      React.createElement('div', { style: { padding: '8px', borderBottom: '1px solid var(--brd)', display: 'grid', gridTemplateColumns: 'auto auto auto 1fr', gap: '6px', alignItems: 'center' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3775}}
-                        , React.createElement('select', { className: "sel", value: smFilterMethod, onChange: e => setSmFilterMethod(e.target.value), style: { fontSize: '10px', padding: '4px 6px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3776}}
-                          , React.createElement('option', { value: "", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3777}}, "All Methods" )
-                          , React.createElement('option', { value: "GET", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3778}}, "GET")
-                          , React.createElement('option', { value: "POST", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3779}}, "POST")
-                          , React.createElement('option', { value: "PUT", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3780}}, "PUT")
-                          , React.createElement('option', { value: "DELETE", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3781}}, "DELETE")
-                          , React.createElement('option', { value: "PATCH", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3782}}, "PATCH")
-                          , React.createElement('option', { value: "OPTIONS", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3783}}, "OPTIONS")
-                          , React.createElement('option', { value: "HEAD", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3784}}, "HEAD")
+                      React.createElement('div', { style: { padding: '8px', borderBottom: '1px solid var(--brd)', display: 'grid', gridTemplateColumns: 'auto auto auto 1fr', gap: '6px', alignItems: 'center' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3781}}
+                        , React.createElement('select', { className: "sel", value: smFilterMethod, onChange: e => setSmFilterMethod(e.target.value), style: { fontSize: '10px', padding: '4px 6px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3782}}
+                          , React.createElement('option', { value: "", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3783}}, "All Methods" )
+                          , React.createElement('option', { value: "GET", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3784}}, "GET")
+                          , React.createElement('option', { value: "POST", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3785}}, "POST")
+                          , React.createElement('option', { value: "PUT", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3786}}, "PUT")
+                          , React.createElement('option', { value: "DELETE", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3787}}, "DELETE")
+                          , React.createElement('option', { value: "PATCH", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3788}}, "PATCH")
+                          , React.createElement('option', { value: "OPTIONS", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3789}}, "OPTIONS")
+                          , React.createElement('option', { value: "HEAD", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3790}}, "HEAD")
                         )
-                        , React.createElement('select', { className: "sel", value: smFilterStatus, onChange: e => setSmFilterStatus(e.target.value), style: { fontSize: '10px', padding: '4px 6px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3786}}
-                          , React.createElement('option', { value: "", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3787}}, "All Status" )
-                          , React.createElement('option', { value: "2", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3788}}, "2xx")
-                          , React.createElement('option', { value: "3", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3789}}, "3xx")
-                          , React.createElement('option', { value: "4", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3790}}, "4xx")
-                          , React.createElement('option', { value: "5", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3791}}, "5xx")
+                        , React.createElement('select', { className: "sel", value: smFilterStatus, onChange: e => setSmFilterStatus(e.target.value), style: { fontSize: '10px', padding: '4px 6px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3792}}
+                          , React.createElement('option', { value: "", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3793}}, "All Status" )
+                          , React.createElement('option', { value: "2", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3794}}, "2xx")
+                          , React.createElement('option', { value: "3", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3795}}, "3xx")
+                          , React.createElement('option', { value: "4", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3796}}, "4xx")
+                          , React.createElement('option', { value: "5", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3797}}, "5xx")
                         )
-                        , React.createElement('input', { className: "inp", placeholder: "Extension", value: smFilterExt, onChange: e => setSmFilterExt(e.target.value), style: { fontSize: '10px', padding: '4px 6px', width: '80px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3793}} )
-                        , React.createElement('input', { className: "inp", placeholder: "Search URL..." , value: smFilterText, onChange: e => setSmFilterText(e.target.value), style: { fontSize: '10px', padding: '4px 6px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3794}} )
+                        , React.createElement('input', { className: "inp", placeholder: "Extension", value: smFilterExt, onChange: e => setSmFilterExt(e.target.value), style: { fontSize: '10px', padding: '4px 6px', width: '80px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3799}} )
+                        , React.createElement('input', { className: "inp", placeholder: "Search URL..." , value: smFilterText, onChange: e => setSmFilterText(e.target.value), style: { fontSize: '10px', padding: '4px 6px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3800}} )
                       )
                     )
-                    , React.createElement('div', { className: "pnl-cnt", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3797}}
+                    , React.createElement('div', { className: "pnl-cnt", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3803}}
                       , smSelNode ? (
-                        React.createElement('div', { className: "req-list", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3799}}
+                        React.createElement('div', { className: "req-list", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3805}}
                           , smNodeReqs.map(r => (
                             React.createElement('div', {
                               key: r.id,
                               className: 'req-item' + (_optionalChain([selReq, 'optionalAccess', _67 => _67.id]) === r.id ? ' sel' : '') + (!r.in_scope ? ' out' : ''),
                               onClick: () => setSelReq(r),
-                              onContextMenu: e => showContextMenu(e, r), __self: this, __source: {fileName: _jsxFileName, lineNumber: 3801}}
+                              onContextMenu: e => showContextMenu(e, r), __self: this, __source: {fileName: _jsxFileName, lineNumber: 3807}}
 
-                              , React.createElement('span', { className: 'mth mth-' + r.method, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3807}}, r.method)
-                              , React.createElement('span', { className: "url", title: r.url, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3808}}, r.url)
-                              , React.createElement('span', { className: 'sts ' + stCls(r.response_status), __self: this, __source: {fileName: _jsxFileName, lineNumber: 3809}}, r.response_status || '-')
-                              , React.createElement('span', { className: "ts", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3810}}, fmtTime(r.timestamp))
+                              , React.createElement('span', { className: 'mth mth-' + r.method, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3813}}, r.method)
+                              , React.createElement('span', { className: "url", title: r.url, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3814}}, r.url)
+                              , React.createElement('span', { className: 'sts ' + stCls(r.response_status), __self: this, __source: {fileName: _jsxFileName, lineNumber: 3815}}, r.response_status || '-')
+                              , React.createElement('span', { className: "ts", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3816}}, fmtTime(r.timestamp))
                             )
                           ))
                         )
                       ) : (
-                        React.createElement('div', { className: "empty", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3815}}, React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 3815}}, "Click a node in the tree"     ))
+                        React.createElement('div', { className: "empty", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3821}}, React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 3821}}, "Click a node in the tree"     ))
                       )
                     )
                   )
                   , selReq && smSelNode && (
-                    React.createElement('div', { className: "panel", style: { flex: 1, overflow: 'hidden', display: 'flex', flexDirection: 'column', borderTop: '1px solid var(--brd)' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3820}}
-                      , React.createElement('div', { className: "pnl-hdr", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3821}}
-                        , React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 3822}}, selReq.method, " " , selReq.url.substring(0, 60))
-                        , React.createElement('div', { className: "acts", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3823}}
-                          , React.createElement('button', { className: "btn btn-sm btn-p"  , onClick: () => selReqFull && toRep(selReqFull), disabled: !selReqFull, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3824}}, "→ Rep" )
+                    React.createElement('div', { className: "panel", style: { flex: 1, overflow: 'hidden', display: 'flex', flexDirection: 'column', borderTop: '1px solid var(--brd)' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3826}}
+                      , React.createElement('div', { className: "pnl-hdr", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3827}}
+                        , React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 3828}}, selReq.method, " " , selReq.url.substring(0, 60))
+                        , React.createElement('div', { className: "acts", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3829}}
+                          , React.createElement('button', { className: "btn btn-sm btn-p"  , onClick: () => selReqFull && toRep(selReqFull), disabled: !selReqFull, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3830}}, "→ Rep" )
                         )
                       )
-                      , React.createElement('div', { className: "det-tabs", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3827}}
-                        , React.createElement('div', { className: 'det-tab' + (detTab === 'request' ? ' act' : ''), onClick: () => setDetTab('request'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 3828}}, "Request")
-                        , React.createElement('div', { className: 'det-tab' + (detTab === 'response' ? ' act' : ''), onClick: () => setDetTab('response'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 3829}}, "Response")
-                        , React.createElement('div', { style: { marginLeft: 'auto', display: 'flex', gap: '6px', alignItems: 'center' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3830}}
-                          , React.createElement('button', { className: 'btn btn-sm ' + (detTab === 'request' ? (reqFormat === 'raw' ? 'btn-p' : 'btn-s') : (respFormat === 'raw' ? 'btn-p' : 'btn-s')), onClick: () => detTab === 'request' ? setReqFormat('raw') : setRespFormat('raw'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 3831}}, "Raw")
-                          , React.createElement('button', { className: 'btn btn-sm ' + (detTab === 'request' ? (reqFormat === 'pretty' ? 'btn-p' : 'btn-s') : (respFormat === 'pretty' ? 'btn-p' : 'btn-s')), onClick: () => detTab === 'request' ? setReqFormat('pretty') : setRespFormat('pretty'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 3832}}, "Pretty")
+                      , React.createElement('div', { className: "det-tabs", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3833}}
+                        , React.createElement('div', { className: 'det-tab' + (detTab === 'request' ? ' act' : ''), onClick: () => setDetTab('request'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 3834}}, "Request")
+                        , React.createElement('div', { className: 'det-tab' + (detTab === 'response' ? ' act' : ''), onClick: () => setDetTab('response'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 3835}}, "Response")
+                        , React.createElement('div', { style: { marginLeft: 'auto', display: 'flex', gap: '6px', alignItems: 'center' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3836}}
+                          , React.createElement('button', { className: 'btn btn-sm ' + (detTab === 'request' ? (reqFormat === 'raw' ? 'btn-p' : 'btn-s') : (respFormat === 'raw' ? 'btn-p' : 'btn-s')), onClick: () => detTab === 'request' ? setReqFormat('raw') : setRespFormat('raw'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 3837}}, "Raw")
+                          , React.createElement('button', { className: 'btn btn-sm ' + (detTab === 'request' ? (reqFormat === 'pretty' ? 'btn-p' : 'btn-s') : (respFormat === 'pretty' ? 'btn-p' : 'btn-s')), onClick: () => detTab === 'request' ? setReqFormat('pretty') : setRespFormat('pretty'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 3838}}, "Pretty")
                           , detTab === 'response' && (
-                            React.createElement('button', { className: 'btn btn-sm ' + (respFormat === 'render' ? 'btn-p' : 'btn-s'), onClick: () => setRespFormat('render'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 3834}}, "Render"
+                            React.createElement('button', { className: 'btn btn-sm ' + (respFormat === 'render' ? 'btn-p' : 'btn-s'), onClick: () => setRespFormat('render'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 3840}}, "Render"
 
                             )
                           )
                         )
                       )
                       , !selReqFull ? (
-                        React.createElement('div', { className: "empty", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3841}}, React.createElement('div', { className: "splash-spin", style: {margin:'20px auto'}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3841}} ))
+                        React.createElement('div', { className: "empty", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3847}}, React.createElement('div', { className: "splash-spin", style: {margin:'20px auto'}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3847}} ))
                       ) : (
-                      React.createElement('div', { className: "code", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3843}}
+                      React.createElement('div', { className: "code", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3849}}
                         , (() => {
                           const d = selReqFull;
                           if (detTab === 'response' && respFormat === 'render') {
@@ -3849,7 +3855,7 @@ function Blackwire() {
                                 src: API + '/api/requests/' + selReq.id + '/render',
                                 sandbox: "allow-same-origin",
                                 style: { width: '100%', height: '100%', border: 'none', background: '#fff' },
-                                title: "Rendered Response" , __self: this, __source: {fileName: _jsxFileName, lineNumber: 3848}}
+                                title: "Rendered Response" , __self: this, __source: {fileName: _jsxFileName, lineNumber: 3854}}
                               )
                             );
                           }
@@ -3858,7 +3864,7 @@ function Blackwire() {
                           const ct = detTab === 'request'
                             ? (escapeHtml(d.method + ' ' + (() => { try { return new URL(d.url).pathname; } catch (e) { return d.url; } })()) + '\n\n' + fmtHHtml(d.headers, d.url) + (d.body ? '\n\n' + (reqF.html ? reqF.text : escapeHtml(reqF.text)) : ''))
                             : (escapeHtml('HTTP ' + d.response_status) + '\n\n' + fmtHHtml(d.response_headers) + '\n\n' + (resF.html ? resF.text : escapeHtml(resF.text)));
-                          return React.createElement('div', { dangerouslySetInnerHTML: { __html: ct }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3861}} );
+                          return React.createElement('div', { dangerouslySetInnerHTML: { __html: ct }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3867}} );
                         })()
                       )
                       )
@@ -3871,55 +3877,55 @@ function Blackwire() {
         )
 
         , tab === 'intercept' && curPrj && (
-          React.createElement('div', { className: "int-pnl", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3874}}
-            , React.createElement('div', { className: "int-ctrl", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3875}}
-              , React.createElement('button', { className: 'btn btn-lg ' + (intOn ? 'btn-d' : 'btn-g'), onClick: togInt, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3876}}
+          React.createElement('div', { className: "int-pnl", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3880}}
+            , React.createElement('div', { className: "int-ctrl", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3881}}
+              , React.createElement('button', { className: 'btn btn-lg ' + (intOn ? 'btn-d' : 'btn-g'), onClick: togInt, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3882}}
                 , intOn ? '🔴 ON' : '⚪ OFF'
               )
               , pending.length > 0 && (
-                React.createElement(React.Fragment, {__self: this, __source: {fileName: _jsxFileName, lineNumber: 3880}}
-                  , React.createElement('button', { className: "btn btn-p" , onClick: fwdAll, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3881}}, "▶ Forward All ("   , pending.length, ")")
-                  , React.createElement('button', { className: "btn btn-d" , onClick: dropAll, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3882}}, "✕ Drop All"  )
+                React.createElement(React.Fragment, {__self: this, __source: {fileName: _jsxFileName, lineNumber: 3886}}
+                  , React.createElement('button', { className: "btn btn-p" , onClick: fwdAll, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3887}}, "▶ Forward All ("   , pending.length, ")")
+                  , React.createElement('button', { className: "btn btn-d" , onClick: dropAll, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3888}}, "✕ Drop All"  )
                 )
               )
             )
-            , React.createElement('div', { className: "int-cnt", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3886}}
-              , React.createElement('div', { className: "pend-list", style: { width: intPendW + 'px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3887}}
-                , React.createElement('div', { className: "pnl-hdr", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3888}}
-                  , React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 3889}}, "Pending (" , pending.length, ")")
+            , React.createElement('div', { className: "int-cnt", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3892}}
+              , React.createElement('div', { className: "pend-list", style: { width: intPendW + 'px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3893}}
+                , React.createElement('div', { className: "pnl-hdr", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3894}}
+                  , React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 3895}}, "Pending (" , pending.length, ")")
                 )
                 , pending.map(r => (
                   React.createElement('div', { key: r.id, className: 'pend-item' + (_optionalChain([selPend, 'optionalAccess', _68 => _68.id]) === r.id ? ' sel' : ''), onClick: () => { setSelPend(r); setEditReq({ ...r }); },
-                       onContextMenu: e => showContextMenu(e, r, 'intercept'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 3892}}
-                    , React.createElement('span', { className: 'mth mth-' + r.method, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3894}}, r.method)
-                    , React.createElement('span', { className: "url", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3895}}, r.url)
+                       onContextMenu: e => showContextMenu(e, r, 'intercept'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 3898}}
+                    , React.createElement('span', { className: 'mth mth-' + r.method, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3900}}, r.method)
+                    , React.createElement('span', { className: "url", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3901}}, r.url)
                   )
                 ))
                 , pending.length === 0 && (
-                  React.createElement('div', { className: "empty", style: { padding: 30 }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3899}}
-                    , React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 3900}}, intOn ? 'Waiting...' : 'Enable intercept')
+                  React.createElement('div', { className: "empty", style: { padding: 30 }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3905}}
+                    , React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 3906}}, intOn ? 'Waiting...' : 'Enable intercept')
                   )
                 )
               )
-              , React.createElement(ResizeHandle, { onDrag: (dx) => setIntPendW(w => Math.max(150, Math.min(500, w + dx))), __self: this, __source: {fileName: _jsxFileName, lineNumber: 3904}} )
-              , React.createElement('div', { className: "int-edit", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3905}}
+              , React.createElement(ResizeHandle, { onDrag: (dx) => setIntPendW(w => Math.max(150, Math.min(500, w + dx))), __self: this, __source: {fileName: _jsxFileName, lineNumber: 3910}} )
+              , React.createElement('div', { className: "int-edit", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3911}}
                 , selPend && editReq ? (
-                  React.createElement(React.Fragment, {__self: this, __source: {fileName: _jsxFileName, lineNumber: 3907}}
-                    , React.createElement('div', { className: "pnl-hdr", onContextMenu: e => showContextMenu(e, editReq, 'intercept'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 3908}}
-                      , React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 3909}}, "Edit")
-                      , React.createElement('div', { className: "acts", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3910}}
-                        , React.createElement('button', { className: "btn btn-g" , onClick: () => fwdReq(selPend.id, editReq), __self: this, __source: {fileName: _jsxFileName, lineNumber: 3911}}, "▶ Forward" )
-                        , React.createElement('button', { className: "btn btn-d" , onClick: () => dropReq(selPend.id), __self: this, __source: {fileName: _jsxFileName, lineNumber: 3912}}, "✕ Drop" )
+                  React.createElement(React.Fragment, {__self: this, __source: {fileName: _jsxFileName, lineNumber: 3913}}
+                    , React.createElement('div', { className: "pnl-hdr", onContextMenu: e => showContextMenu(e, editReq, 'intercept'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 3914}}
+                      , React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 3915}}, "Edit")
+                      , React.createElement('div', { className: "acts", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3916}}
+                        , React.createElement('button', { className: "btn btn-g" , onClick: () => fwdReq(selPend.id, editReq), __self: this, __source: {fileName: _jsxFileName, lineNumber: 3917}}, "▶ Forward" )
+                        , React.createElement('button', { className: "btn btn-d" , onClick: () => dropReq(selPend.id), __self: this, __source: {fileName: _jsxFileName, lineNumber: 3918}}, "✕ Drop" )
                       )
                     )
-                    , React.createElement('div', { className: "ed-row", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3915}}
-                      , React.createElement('select', { className: "mth-sel", value: editReq.method, onChange: e => setEditReq({ ...editReq, method: e.target.value }), __self: this, __source: {fileName: _jsxFileName, lineNumber: 3916}}
-                        , React.createElement('option', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 3917}}, "GET")
-                        , React.createElement('option', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 3918}}, "POST")
-                        , React.createElement('option', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 3919}}, "PUT")
-                        , React.createElement('option', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 3920}}, "DELETE")
+                    , React.createElement('div', { className: "ed-row", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3921}}
+                      , React.createElement('select', { className: "mth-sel", value: editReq.method, onChange: e => setEditReq({ ...editReq, method: e.target.value }), __self: this, __source: {fileName: _jsxFileName, lineNumber: 3922}}
+                        , React.createElement('option', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 3923}}, "GET")
+                        , React.createElement('option', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 3924}}, "POST")
+                        , React.createElement('option', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 3925}}, "PUT")
+                        , React.createElement('option', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 3926}}, "DELETE")
                       )
-                      , React.createElement('input', { className: "url-in", value: editReq.url, onChange: e => setEditReq({ ...editReq, url: e.target.value }), __self: this, __source: {fileName: _jsxFileName, lineNumber: 3922}} )
+                      , React.createElement('input', { className: "url-in", value: editReq.url, onChange: e => setEditReq({ ...editReq, url: e.target.value }), __self: this, __source: {fileName: _jsxFileName, lineNumber: 3928}} )
                     )
                     , React.createElement('textarea', { className: "ed-ta", placeholder: "Headers", style: { height: '30%' }, value: fmtH(editReq.headers, editReq.url), onChange: e => {
                       const h = {};
@@ -3928,12 +3934,12 @@ function Blackwire() {
                         if (k && v.length) h[k.trim()] = v.join(':').trim();
                       });
                       setEditReq({ ...editReq, headers: h });
-                    }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3924}} )
-                    , React.createElement('textarea', { className: "ed-ta", placeholder: "Body", style: { flex: 1 }, value: editReq.body || '', onChange: e => setEditReq({ ...editReq, body: e.target.value }), __self: this, __source: {fileName: _jsxFileName, lineNumber: 3932}} )
+                    }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3930}} )
+                    , React.createElement('textarea', { className: "ed-ta", placeholder: "Body", style: { flex: 1 }, value: editReq.body || '', onChange: e => setEditReq({ ...editReq, body: e.target.value }), __self: this, __source: {fileName: _jsxFileName, lineNumber: 3938}} )
                   )
                 ) : (
-                  React.createElement('div', { className: "empty", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3935}}
-                    , React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 3936}}, "Select pending request"  )
+                  React.createElement('div', { className: "empty", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3941}}
+                    , React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 3942}}, "Select pending request"  )
                   )
                 )
               )
@@ -3942,33 +3948,33 @@ function Blackwire() {
         )
 
         , tab === 'scope' && curPrj && (
-          React.createElement('div', { className: "scp-pnl", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3945}}
-            , React.createElement('div', { className: "scp-hdr", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3946}}
-              , React.createElement('h3', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 3947}}, "Scope Rules" )
-              , React.createElement('p', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 3948}}, "Define which hosts are in scope"     )
+          React.createElement('div', { className: "scp-pnl", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3951}}
+            , React.createElement('div', { className: "scp-hdr", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3952}}
+              , React.createElement('h3', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 3953}}, "Scope Rules" )
+              , React.createElement('p', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 3954}}, "Define which hosts are in scope"     )
             )
-            , React.createElement('div', { className: "scp-form", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3950}}
-              , React.createElement('input', { className: "inp", style: { flex: 1 }, placeholder: "Pattern: *.example.com" , value: newPat, onChange: e => setNewPat(e.target.value), __self: this, __source: {fileName: _jsxFileName, lineNumber: 3951}} )
-              , React.createElement('select', { className: "sel", value: newType, onChange: e => setNewType(e.target.value), __self: this, __source: {fileName: _jsxFileName, lineNumber: 3952}}
-                , React.createElement('option', { value: "include", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3953}}, "Include")
-                , React.createElement('option', { value: "exclude", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3954}}, "Exclude")
+            , React.createElement('div', { className: "scp-form", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3956}}
+              , React.createElement('input', { className: "inp", style: { flex: 1 }, placeholder: "Pattern: *.example.com" , value: newPat, onChange: e => setNewPat(e.target.value), __self: this, __source: {fileName: _jsxFileName, lineNumber: 3957}} )
+              , React.createElement('select', { className: "sel", value: newType, onChange: e => setNewType(e.target.value), __self: this, __source: {fileName: _jsxFileName, lineNumber: 3958}}
+                , React.createElement('option', { value: "include", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3959}}, "Include")
+                , React.createElement('option', { value: "exclude", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3960}}, "Exclude")
               )
-              , React.createElement('button', { className: "btn btn-p" , onClick: addRule, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3956}}, "+ Add" )
+              , React.createElement('button', { className: "btn btn-p" , onClick: addRule, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3962}}, "+ Add" )
             )
-            , React.createElement('div', { className: "scp-rules", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3958}}
+            , React.createElement('div', { className: "scp-rules", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3964}}
               , scopeRules.map(r => (
-                React.createElement('div', { key: r.id, className: 'scp-rule' + (r.enabled ? '' : ' dis'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 3960}}
-                  , React.createElement('span', { className: 'rul-type rul-' + (r.rule_type === 'include' ? 'inc' : 'exc'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 3961}}, r.rule_type)
-                  , React.createElement('span', { className: "rul-pat", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3962}}, r.pattern)
-                  , React.createElement('div', { className: "rul-acts", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3963}}
-                    , React.createElement('button', { className: "btn btn-sm btn-s"  , onClick: () => togRule(r.id), __self: this, __source: {fileName: _jsxFileName, lineNumber: 3964}}, r.enabled ? 'Disable' : 'Enable')
-                    , React.createElement('button', { className: "btn btn-sm btn-d"  , onClick: () => delRule(r.id), __self: this, __source: {fileName: _jsxFileName, lineNumber: 3965}}, "×")
+                React.createElement('div', { key: r.id, className: 'scp-rule' + (r.enabled ? '' : ' dis'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 3966}}
+                  , React.createElement('span', { className: 'rul-type rul-' + (r.rule_type === 'include' ? 'inc' : 'exc'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 3967}}, r.rule_type)
+                  , React.createElement('span', { className: "rul-pat", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3968}}, r.pattern)
+                  , React.createElement('div', { className: "rul-acts", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3969}}
+                    , React.createElement('button', { className: "btn btn-sm btn-s"  , onClick: () => togRule(r.id), __self: this, __source: {fileName: _jsxFileName, lineNumber: 3970}}, r.enabled ? 'Disable' : 'Enable')
+                    , React.createElement('button', { className: "btn btn-sm btn-d"  , onClick: () => delRule(r.id), __self: this, __source: {fileName: _jsxFileName, lineNumber: 3971}}, "×")
                   )
                 )
               ))
               , scopeRules.length === 0 && (
-                React.createElement('div', { className: "empty", style: { padding: 30 }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3970}}
-                  , React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 3971}}, "No rules - all in scope"     )
+                React.createElement('div', { className: "empty", style: { padding: 30 }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3976}}
+                  , React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 3977}}, "No rules - all in scope"     )
                 )
               )
             )
@@ -3976,67 +3982,67 @@ function Blackwire() {
         )
 
         , tab === 'repeater' && curPrj && (
-          React.createElement('div', { className: "rep-cnt", ref: repCntRef, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3979}}
-            , React.createElement('div', { className: "rep-side", style: { width: repSideW + 'px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3980}}
-              , React.createElement('div', { className: "pnl-hdr", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3981}}
-                , React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 3982}}, "Saved")
-                , React.createElement('button', { className: "btn btn-sm btn-p"  , onClick: saveRep, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3983}}, "+")
+          React.createElement('div', { className: "rep-cnt", ref: repCntRef, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3985}}
+            , React.createElement('div', { className: "rep-side", style: { width: repSideW + 'px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3986}}
+              , React.createElement('div', { className: "pnl-hdr", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3987}}
+                , React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 3988}}, "Saved")
+                , React.createElement('button', { className: "btn btn-sm btn-p"  , onClick: saveRep, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3989}}, "+")
               )
-              , React.createElement('div', { className: "rep-list", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3985}}
+              , React.createElement('div', { className: "rep-list", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3991}}
                 , repReqs.map(r => (
                   React.createElement('div', { key: r.id, className: 'rep-item' + (selRep === r.id ? ' sel' : ''), onClick: () => loadRepItem(r),
-                    onContextMenu: e => showContextMenu(e, r, 'repeater'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 3987}}
-                    , React.createElement('span', { className: 'mth mth-' + r.method, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3989}}, r.method)
-                    , React.createElement('span', { className: "name", onDoubleClick: e => { e.stopPropagation(); renameRepItem(r.id); }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3990}}, r.name)
+                    onContextMenu: e => showContextMenu(e, r, 'repeater'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 3993}}
+                    , React.createElement('span', { className: 'mth mth-' + r.method, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3995}}, r.method)
+                    , React.createElement('span', { className: "name", onDoubleClick: e => { e.stopPropagation(); renameRepItem(r.id); }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3996}}, r.name)
                     , selRep === r.id && (
-                      React.createElement('div', { style: { marginLeft: 'auto', display: 'flex', gap: '2px' }, onClick: e => e.stopPropagation(), __self: this, __source: {fileName: _jsxFileName, lineNumber: 3992}}
-                        , React.createElement('button', { className: "btn btn-sm btn-s"  , onClick: () => renameRepItem(r.id), title: "Rename", style: { padding: '2px 5px', fontSize: '10px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3993}}, "✎")
-                        , React.createElement('button', { className: "btn btn-sm btn-d"  , onClick: () => delRepItem(r.id), title: "Delete", style: { padding: '2px 5px', fontSize: '10px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3994}}, "✕")
+                      React.createElement('div', { style: { marginLeft: 'auto', display: 'flex', gap: '2px' }, onClick: e => e.stopPropagation(), __self: this, __source: {fileName: _jsxFileName, lineNumber: 3998}}
+                        , React.createElement('button', { className: "btn btn-sm btn-s"  , onClick: () => renameRepItem(r.id), title: "Rename", style: { padding: '2px 5px', fontSize: '10px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3999}}, "✎")
+                        , React.createElement('button', { className: "btn btn-sm btn-d"  , onClick: () => delRepItem(r.id), title: "Delete", style: { padding: '2px 5px', fontSize: '10px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4000}}, "✕")
                       )
                     )
                   )
                 ))
               )
             )
-            , React.createElement(ResizeHandle, { onDrag: (dx) => setRepSideW(w => Math.max(100, Math.min(400, w + dx))), __self: this, __source: {fileName: _jsxFileName, lineNumber: 4001}} )
-            , React.createElement('div', { className: "rep-main", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4002}}
-              , React.createElement('div', { className: "req-bar", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4003}}
-                , React.createElement('button', { className: "btn btn-s" , onClick: () => navigateHistory(-1), disabled: repHistoryIndex <= 0, title: "Previous", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4004}}, "◀")
-                , React.createElement('button', { className: "btn btn-s" , onClick: () => navigateHistory(1), disabled: repHistoryIndex >= repHistory.length - 1, title: "Next", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4005}}, "▶")
-                , React.createElement('select', { className: "mth-sel", value: repM, onChange: e => setRepM(e.target.value), __self: this, __source: {fileName: _jsxFileName, lineNumber: 4006}}
-                  , React.createElement('option', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4007}}, "GET")
-                  , React.createElement('option', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4008}}, "HEAD")
-                  , React.createElement('option', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4009}}, "POST")
-                  , React.createElement('option', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4010}}, "PUT")
-                  , React.createElement('option', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4011}}, "PATCH")
-                  , React.createElement('option', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4012}}, "DELETE")
-                  , React.createElement('option', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4013}}, "CONNECT")
-                  , React.createElement('option', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4014}}, "OPTIONS")
-                  , React.createElement('option', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4015}}, "TRACE")
-                  , React.createElement('option', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4016}}, "PATCH")
+            , React.createElement(ResizeHandle, { onDrag: (dx) => setRepSideW(w => Math.max(100, Math.min(400, w + dx))), __self: this, __source: {fileName: _jsxFileName, lineNumber: 4007}} )
+            , React.createElement('div', { className: "rep-main", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4008}}
+              , React.createElement('div', { className: "req-bar", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4009}}
+                , React.createElement('button', { className: "btn btn-s" , onClick: () => navigateHistory(-1), disabled: repHistoryIndex <= 0, title: "Previous", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4010}}, "◀")
+                , React.createElement('button', { className: "btn btn-s" , onClick: () => navigateHistory(1), disabled: repHistoryIndex >= repHistory.length - 1, title: "Next", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4011}}, "▶")
+                , React.createElement('select', { className: "mth-sel", value: repM, onChange: e => setRepM(e.target.value), __self: this, __source: {fileName: _jsxFileName, lineNumber: 4012}}
+                  , React.createElement('option', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4013}}, "GET")
+                  , React.createElement('option', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4014}}, "HEAD")
+                  , React.createElement('option', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4015}}, "POST")
+                  , React.createElement('option', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4016}}, "PUT")
+                  , React.createElement('option', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4017}}, "PATCH")
+                  , React.createElement('option', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4018}}, "DELETE")
+                  , React.createElement('option', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4019}}, "CONNECT")
+                  , React.createElement('option', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4020}}, "OPTIONS")
+                  , React.createElement('option', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4021}}, "TRACE")
+                  , React.createElement('option', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4022}}, "PATCH")
                 )
-                , React.createElement('input', { className: "url-in", placeholder: "https://...", value: repU, onChange: e => setRepU(e.target.value), __self: this, __source: {fileName: _jsxFileName, lineNumber: 4018}} )
-                , React.createElement('button', { className: "btn btn-p" , onClick: sendRep, disabled: loading || !repU, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4019}}, loading ? '...' : '▶ Send')
+                , React.createElement('input', { className: "url-in", placeholder: "https://...", value: repU, onChange: e => setRepU(e.target.value), __self: this, __source: {fileName: _jsxFileName, lineNumber: 4024}} )
+                , React.createElement('button', { className: "btn btn-p" , onClick: sendRep, disabled: loading || !repU, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4025}}, loading ? '...' : '▶ Send')
                 , React.createElement('select', { className: "sel", value: repFollowRedirects ? 'follow' : 'manual', onChange: e => setRepFollowRedirects(e.target.value === 'follow'),
-                  style: { fontSize: '10px', padding: '4px 6px', minWidth: '105px' }, title: "Redirect mode" , __self: this, __source: {fileName: _jsxFileName, lineNumber: 4020}}
-                  , React.createElement('option', { value: "manual", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4022}}, "No Redirect" )
-                  , React.createElement('option', { value: "follow", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4023}}, "Auto Follow" )
+                  style: { fontSize: '10px', padding: '4px 6px', minWidth: '105px' }, title: "Redirect mode" , __self: this, __source: {fileName: _jsxFileName, lineNumber: 4026}}
+                  , React.createElement('option', { value: "manual", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4028}}, "No Redirect" )
+                  , React.createElement('option', { value: "follow", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4029}}, "Auto Follow" )
                 )
               )
-              , React.createElement('div', { className: "rep-edit", style: { gridTemplateColumns: repSplitPct + '% 1fr' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4026}}
-                , React.createElement('div', { className: "ed-pane", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4027}}
-                  , React.createElement('div', { className: "ed-hdr", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4028}}
-                    , React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4029}}, "Headers")
+              , React.createElement('div', { className: "rep-edit", style: { gridTemplateColumns: repSplitPct + '% 1fr' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4032}}
+                , React.createElement('div', { className: "ed-pane", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4033}}
+                  , React.createElement('div', { className: "ed-hdr", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4034}}
+                    , React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4035}}, "Headers")
                   )
-                  , React.createElement('div', { className: "hdr-wrap", style: { height: '40%' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4031}}
-                    , React.createElement('pre', { className: "hdr-highlight ed-ta" , 'aria-hidden': "true", style: { pointerEvents: 'none' }, dangerouslySetInnerHTML: { __html: (repH ? colorizeHeaders(repH) : '') + '\n' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4032}} )
-                    , React.createElement('textarea', { className: "ed-ta hdr-ta" , value: repH, onChange: e => setRepH(e.target.value), spellCheck: "false", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4033}} )
+                  , React.createElement('div', { className: "hdr-wrap", style: { height: '40%' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4037}}
+                    , React.createElement('pre', { className: "hdr-highlight ed-ta" , 'aria-hidden': "true", style: { pointerEvents: 'none' }, dangerouslySetInnerHTML: { __html: (repH ? colorizeHeaders(repH) : '') + '\n' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4038}} )
+                    , React.createElement('textarea', { className: "ed-ta hdr-ta" , value: repH, onChange: e => setRepH(e.target.value), spellCheck: "false", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4039}} )
                   )
-                  , React.createElement('div', { className: "ed-hdr", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4035}}
-                    , React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4036}}, "Body")
-                    , React.createElement('div', { style: { display: 'flex', gap: '4px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4037}}
-                      , React.createElement('button', { className: "btn btn-sm btn-s"  , onClick: () => { setRepB(prettyPrint(repB)); setRepBodyColor(true); }, title: "Pretty Print" , __self: this, __source: {fileName: _jsxFileName, lineNumber: 4038}}, "Pretty")
-                      , React.createElement('button', { className: "btn btn-sm btn-s"  , onClick: () => { setRepB(minify(repB)); setRepBodyColor(false); }, title: "Minify", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4039}}, "Minify")
+                  , React.createElement('div', { className: "ed-hdr", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4041}}
+                    , React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4042}}, "Body")
+                    , React.createElement('div', { style: { display: 'flex', gap: '4px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4043}}
+                      , React.createElement('button', { className: "btn btn-sm btn-s"  , onClick: () => { setRepB(prettyPrint(repB)); setRepBodyColor(true); }, title: "Pretty Print" , __self: this, __source: {fileName: _jsxFileName, lineNumber: 4044}}, "Pretty")
+                      , React.createElement('button', { className: "btn btn-sm btn-s"  , onClick: () => { setRepB(minify(repB)); setRepBodyColor(false); }, title: "Minify", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4045}}, "Minify")
                     )
                   )
                   , repBodyColor ? (
@@ -4045,58 +4051,58 @@ function Blackwire() {
                       className: "ed-ce",
                       contentEditable: true,
                       suppressContentEditableWarning: true,
-                      onInput: handleRepBodyInput, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4043}}
+                      onInput: handleRepBodyInput, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4049}}
                     )
                   ) : (
-                    React.createElement('textarea', { className: "ed-ta", style: { flex: 1 }, value: repB, onChange: e => setRepB(e.target.value), __self: this, __source: {fileName: _jsxFileName, lineNumber: 4051}} )
+                    React.createElement('textarea', { className: "ed-ta", style: { flex: 1 }, value: repB, onChange: e => setRepB(e.target.value), __self: this, __source: {fileName: _jsxFileName, lineNumber: 4057}} )
                   )
                 )
-                , React.createElement('div', { className: "ed-pane", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4054}}
-                  , React.createElement('div', { className: "ed-hdr", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4055}}
-                    , React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4056}}, "Response")
-                    , React.createElement('div', { style: { display: 'flex', gap: '8px', alignItems: 'center' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4057}}
+                , React.createElement('div', { className: "ed-pane", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4060}}
+                  , React.createElement('div', { className: "ed-hdr", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4061}}
+                    , React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4062}}, "Response")
+                    , React.createElement('div', { style: { display: 'flex', gap: '8px', alignItems: 'center' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4063}}
                       , repResp && !repResp.error && (
-                        React.createElement('span', { style: { color: 'var(--txt3)' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4059}}
+                        React.createElement('span', { style: { color: 'var(--txt3)' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4065}}
                           , repResp.status_code, " • "  , _optionalChain([repResp, 'access', _69 => _69.elapsed, 'optionalAccess', _70 => _70.toFixed, 'call', _71 => _71(3)]), "s"
                         )
                       )
                       , repResp && repResp.body && !repResp.error && (
-                        React.createElement('div', { style: { display: 'flex', gap: '4px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4064}}
-                          , React.createElement('button', { className: 'btn btn-sm ' + (repRespFormat === 'code' ? 'btn-p' : 'btn-s'), onClick: () => setRepRespFormat('code'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 4065}}, "Raw")
-                          , React.createElement('button', { className: "btn btn-sm btn-s"  , onClick: () => { setRepRespBody(prettyPrint(repRespBody)); setRepRespFormat('code'); }, title: "Pretty Print" , __self: this, __source: {fileName: _jsxFileName, lineNumber: 4066}}, "Pretty")
-                          , React.createElement('button', { className: 'btn btn-sm ' + (repRespFormat === 'render' ? 'btn-p' : 'btn-s'), onClick: () => setRepRespFormat('render'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 4067}}, "Render")
+                        React.createElement('div', { style: { display: 'flex', gap: '4px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4070}}
+                          , React.createElement('button', { className: 'btn btn-sm ' + (repRespFormat === 'code' ? 'btn-p' : 'btn-s'), onClick: () => setRepRespFormat('code'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 4071}}, "Raw")
+                          , React.createElement('button', { className: "btn btn-sm btn-s"  , onClick: () => { setRepRespBody(prettyPrint(repRespBody)); setRepRespFormat('code'); }, title: "Pretty Print" , __self: this, __source: {fileName: _jsxFileName, lineNumber: 4072}}, "Pretty")
+                          , React.createElement('button', { className: 'btn btn-sm ' + (repRespFormat === 'render' ? 'btn-p' : 'btn-s'), onClick: () => setRepRespFormat('render'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 4073}}, "Render")
                         )
                       )
                     )
                   )
                   , repResp && repResp.error ? (
-                    React.createElement('div', { className: "code", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4073}}, repResp.error)
+                    React.createElement('div', { className: "code", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4079}}, repResp.error)
                   ) : repResp ? (
                     React.createElement(React.Fragment, null
                       , repResp.redirect_chain && repResp.redirect_chain.length > 0 && (
-                        React.createElement('div', { style: { padding: '6px 10px', background: 'var(--bg3)', borderBottom: '1px solid var(--brd)', fontSize: '10px', fontFamily: 'var(--font-mono)', flexShrink: 0, overflow: 'auto', maxHeight: '120px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4077}}
-                          , React.createElement('div', { style: { color: 'var(--cyan)', marginBottom: '4px', fontWeight: 600 }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4078}}, "Redirect chain ("  , repResp.redirect_chain.length, " hops):" )
+                        React.createElement('div', { style: { padding: '6px 10px', background: 'var(--bg3)', borderBottom: '1px solid var(--brd)', fontSize: '10px', fontFamily: 'var(--font-mono)', flexShrink: 0, overflow: 'auto', maxHeight: '120px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4083}}
+                          , React.createElement('div', { style: { color: 'var(--cyan)', marginBottom: '4px', fontWeight: 600 }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4084}}, "Redirect chain ("  , repResp.redirect_chain.length, " hops):" )
                           , repResp.redirect_chain.map((hop, i) => (
-                            React.createElement('div', { key: i, style: { color: 'var(--txt2)', paddingLeft: '8px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4080}}
-                              , React.createElement('span', { className: 'sts ' + stCls(hop.status_code), __self: this, __source: {fileName: _jsxFileName, lineNumber: 4081}}, hop.status_code), " " , hop.url, " → "  , hop.location
+                            React.createElement('div', { key: i, style: { color: 'var(--txt2)', paddingLeft: '8px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4086}}
+                              , React.createElement('span', { className: 'sts ' + stCls(hop.status_code), __self: this, __source: {fileName: _jsxFileName, lineNumber: 4087}}, hop.status_code), " " , hop.url, " → "  , hop.location
                             )
                           ))
-                          , React.createElement('div', { style: { color: 'var(--green)', paddingLeft: '8px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4084}}
-                            , React.createElement('span', { className: 'sts ' + stCls(repResp.status_code), __self: this, __source: {fileName: _jsxFileName, lineNumber: 4085}}, repResp.status_code), " " , repResp.final_url
+                          , React.createElement('div', { style: { color: 'var(--green)', paddingLeft: '8px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4090}}
+                            , React.createElement('span', { className: 'sts ' + stCls(repResp.status_code), __self: this, __source: {fileName: _jsxFileName, lineNumber: 4091}}, repResp.status_code), " " , repResp.final_url
                           )
                         )
                       )
                       , repResp.is_redirect && !repFollowRedirects && repResp.redirect_url && (
-                        React.createElement('div', { style: { padding: '6px 10px', background: 'rgba(210,153,34,.1)', borderBottom: '1px solid var(--brd)', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '11px', flexShrink: 0 }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4090}}
-                          , React.createElement('span', { style: { color: 'var(--orange)', fontWeight: 600 }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4091}}, "↪ Redirect" )
+                        React.createElement('div', { style: { padding: '6px 10px', background: 'rgba(210,153,34,.1)', borderBottom: '1px solid var(--brd)', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '11px', flexShrink: 0 }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4096}}
+                          , React.createElement('span', { style: { color: 'var(--orange)', fontWeight: 600 }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4097}}, "↪ Redirect" )
                           , React.createElement('span', { style: { fontFamily: 'var(--font-mono)', fontSize: '10px', color: 'var(--txt2)', flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' },
-                                title: repResp.redirect_url, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4092}}, repResp.redirect_url)
-                          , React.createElement('button', { className: "btn btn-sm btn-p"  , onClick: followRedirect, disabled: loading, title: "Follow this redirect"  , __self: this, __source: {fileName: _jsxFileName, lineNumber: 4094}}, "Follow →"
+                                title: repResp.redirect_url, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4098}}, repResp.redirect_url)
+                          , React.createElement('button', { className: "btn btn-sm btn-p"  , onClick: followRedirect, disabled: loading, title: "Follow this redirect"  , __self: this, __source: {fileName: _jsxFileName, lineNumber: 4100}}, "Follow →"
 
                           )
                         )
                       )
-                      , React.createElement('div', { className: "code", style: { height: '100px', minHeight: '60px', overflow: 'auto', flexShrink: 0, borderBottom: '1px solid var(--brd)' }, dangerouslySetInnerHTML: { __html: fmtHHtml(repResp.headers) }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4099}} )
+                      , React.createElement('div', { className: "code", style: { height: '100px', minHeight: '60px', overflow: 'auto', flexShrink: 0, borderBottom: '1px solid var(--brd)' }, dangerouslySetInnerHTML: { __html: fmtHHtml(repResp.headers) }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4105}} )
                       , (() => {
                         if (repRespFormat === 'render') {
                           const blob = new Blob([repRespBody], { type: 'text/html' });
@@ -4107,27 +4113,27 @@ function Blackwire() {
                               sandbox: "allow-same-origin",
                               style: { flex: 1, width: '100%', border: 'none', background: '#fff' },
                               title: "Rendered Response" ,
-                              onLoad: () => URL.revokeObjectURL(blobUrl), __self: this, __source: {fileName: _jsxFileName, lineNumber: 4105}}
+                              onLoad: () => URL.revokeObjectURL(blobUrl), __self: this, __source: {fileName: _jsxFileName, lineNumber: 4111}}
                             )
                           );
                         }
                         if (repBodySearch) {
                           const hl = highlightMatches(repRespBody, repBodySearch, repBodySearchRegex, repBodySearchIdx);
                           if (hl.count !== repBodySearchCount) setTimeout(() => setRepBodySearchCount(hl.count), 0);
-                          return React.createElement('div', { className: "code", ref: repCodeRef, style: { flex: 1, overflow: 'auto' }, dangerouslySetInnerHTML: { __html: hl.html }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4117}} );
+                          return React.createElement('div', { className: "code", ref: repCodeRef, style: { flex: 1, overflow: 'auto' }, dangerouslySetInnerHTML: { __html: hl.html }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4123}} );
                         }
                         const highlighted = colorizeBody(repRespBody);
                         return highlighted.html
-                          ? React.createElement('div', { className: "code", style: { flex: 1, overflow: 'auto' }, dangerouslySetInnerHTML: { __html: highlighted.text }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4121}} )
+                          ? React.createElement('div', { className: "code", style: { flex: 1, overflow: 'auto' }, dangerouslySetInnerHTML: { __html: highlighted.text }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4127}} )
                           : React.createElement('textarea', {
                               className: "ed-ta",
                               style: { flex: 1 },
                               value: repRespBody,
                               onChange: e => setRepRespBody(e.target.value),
-                              placeholder: "Response body will appear here"    , __self: this, __source: {fileName: _jsxFileName, lineNumber: 4122}}
+                              placeholder: "Response body will appear here"    , __self: this, __source: {fileName: _jsxFileName, lineNumber: 4128}}
                             );
                       })()
-                      , React.createElement('div', { className: "search-bar", style: { borderTop: '1px solid var(--brd)' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4130}}
+                      , React.createElement('div', { className: "search-bar", style: { borderTop: '1px solid var(--brd)' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4136}}
                         , React.createElement('input', {
                           placeholder: repBodySearchRegex ? 'Regex search...' : 'Search body...',
                           value: repBodySearch,
@@ -4136,17 +4142,17 @@ function Blackwire() {
                             if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); setRepBodySearchIdx(i => repBodySearchCount > 0 ? (i + 1) % repBodySearchCount : 0); }
                             if (e.key === 'Enter' && e.shiftKey) { e.preventDefault(); setRepBodySearchIdx(i => repBodySearchCount > 0 ? (i - 1 + repBodySearchCount) % repBodySearchCount : 0); }
                             if (e.key === 'Escape') { setRepBodySearch(''); setRepBodySearchIdx(0); setRepBodySearchCount(0); }
-                          }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4131}}
+                          }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4137}}
                         )
-                        , React.createElement('button', { className: 'srch-btn' + (repBodySearchRegex ? ' act' : ''), onClick: () => { setRepBodySearchRegex(!repBodySearchRegex); setRepBodySearchIdx(0); }, title: "Toggle regex" , __self: this, __source: {fileName: _jsxFileName, lineNumber: 4141}}, ".*")
-                        , React.createElement('span', { className: "search-info", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4142}}, repBodySearchCount > 0 ? (repBodySearchIdx + 1) + '/' + repBodySearchCount : '0/0')
-                        , React.createElement('button', { className: "srch-btn", onClick: () => setRepBodySearchIdx(i => repBodySearchCount > 0 ? (i - 1 + repBodySearchCount) % repBodySearchCount : 0), disabled: repBodySearchCount === 0, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4143}}, "▲")
-                        , React.createElement('button', { className: "srch-btn", onClick: () => setRepBodySearchIdx(i => repBodySearchCount > 0 ? (i + 1) % repBodySearchCount : 0), disabled: repBodySearchCount === 0, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4144}}, "▼")
-                        , React.createElement('button', { className: "srch-btn", onClick: () => { setRepBodySearch(''); setRepBodySearchIdx(0); setRepBodySearchCount(0); }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4145}}, "✕")
+                        , React.createElement('button', { className: 'srch-btn' + (repBodySearchRegex ? ' act' : ''), onClick: () => { setRepBodySearchRegex(!repBodySearchRegex); setRepBodySearchIdx(0); }, title: "Toggle regex" , __self: this, __source: {fileName: _jsxFileName, lineNumber: 4147}}, ".*")
+                        , React.createElement('span', { className: "search-info", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4148}}, repBodySearchCount > 0 ? (repBodySearchIdx + 1) + '/' + repBodySearchCount : '0/0')
+                        , React.createElement('button', { className: "srch-btn", onClick: () => setRepBodySearchIdx(i => repBodySearchCount > 0 ? (i - 1 + repBodySearchCount) % repBodySearchCount : 0), disabled: repBodySearchCount === 0, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4149}}, "▲")
+                        , React.createElement('button', { className: "srch-btn", onClick: () => setRepBodySearchIdx(i => repBodySearchCount > 0 ? (i + 1) % repBodySearchCount : 0), disabled: repBodySearchCount === 0, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4150}}, "▼")
+                        , React.createElement('button', { className: "srch-btn", onClick: () => { setRepBodySearch(''); setRepBodySearchIdx(0); setRepBodySearchCount(0); }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4151}}, "✕")
                       )
                     )
                   ) : (
-                    React.createElement('div', { className: "code", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4149}}, "Send a request"  )
+                    React.createElement('div', { className: "code", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4155}}, "Send a request"  )
                   )
                 )
               )
@@ -4155,70 +4161,70 @@ function Blackwire() {
         )
 
         , tab === 'webhook' && curPrj && _optionalChain([webhookExt, 'optionalAccess', _72 => _72.enabled]) && (
-          React.createElement(React.Fragment, {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4158}}
-            , React.createElement('div', { className: "panel hist-pnl" , __self: this, __source: {fileName: _jsxFileName, lineNumber: 4159}}
-              , React.createElement('div', { className: "flt-bar", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4160}}
-                , React.createElement('input', { className: "flt-in", placeholder: "Filter by URL, method, IP..."    , value: whkSearch, onChange: e => setWhkSearch(e.target.value), __self: this, __source: {fileName: _jsxFileName, lineNumber: 4161}} )
-                , React.createElement('div', { style: { display: 'flex', gap: '4px', alignItems: 'center' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4162}}
-                  , React.createElement('span', { style: { fontSize: '10px', color: 'var(--txt3)' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4163}}, _optionalChain([webhookExt, 'optionalAccess', _73 => _73.config, 'optionalAccess', _74 => _74.token_url]) ? '● Live' : '')
+          React.createElement(React.Fragment, {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4164}}
+            , React.createElement('div', { className: "panel hist-pnl" , __self: this, __source: {fileName: _jsxFileName, lineNumber: 4165}}
+              , React.createElement('div', { className: "flt-bar", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4166}}
+                , React.createElement('input', { className: "flt-in", placeholder: "Filter by URL, method, IP..."    , value: whkSearch, onChange: e => setWhkSearch(e.target.value), __self: this, __source: {fileName: _jsxFileName, lineNumber: 4167}} )
+                , React.createElement('div', { style: { display: 'flex', gap: '4px', alignItems: 'center' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4168}}
+                  , React.createElement('span', { style: { fontSize: '10px', color: 'var(--txt3)' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4169}}, _optionalChain([webhookExt, 'optionalAccess', _73 => _73.config, 'optionalAccess', _74 => _74.token_url]) ? '● Live' : '')
                 )
               )
-              , React.createElement('div', { className: "pnl-hdr", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4166}}
-                , React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4167}}, filteredWhk.length, " webhook requests"  )
-                , React.createElement('div', { className: "acts", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4168}}
-                  , React.createElement('button', { className: "btn btn-sm btn-s"  , onClick: () => refreshWebhook(), disabled: whkLoading, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4169}}, whkLoading ? '⏳' : '↻', " Sync" )
-                  , React.createElement('button', { className: "btn btn-sm btn-s"  , onClick: loadWebhookLocal, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4170}}, "↻")
-                  , React.createElement('button', { className: "btn btn-sm btn-d"  , onClick: clearWebhookHistory, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4171}}, "Clear")
+              , React.createElement('div', { className: "pnl-hdr", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4172}}
+                , React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4173}}, filteredWhk.length, " webhook requests"  )
+                , React.createElement('div', { className: "acts", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4174}}
+                  , React.createElement('button', { className: "btn btn-sm btn-s"  , onClick: () => refreshWebhook(), disabled: whkLoading, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4175}}, whkLoading ? '⏳' : '↻', " Sync" )
+                  , React.createElement('button', { className: "btn btn-sm btn-s"  , onClick: loadWebhookLocal, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4176}}, "↻")
+                  , React.createElement('button', { className: "btn btn-sm btn-d"  , onClick: clearWebhookHistory, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4177}}, "Clear")
                 )
               )
-              , React.createElement('div', { className: "pnl-cnt", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4174}}
-                , React.createElement('div', { className: "req-list", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4175}}
+              , React.createElement('div', { className: "pnl-cnt", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4180}}
+                , React.createElement('div', { className: "req-list", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4181}}
                   , filteredWhk.map(r => (
                     React.createElement('div', {
                       key: r.request_id,
                       className: 'req-item' + (_optionalChain([selWhkReq, 'optionalAccess', _75 => _75.request_id]) === r.request_id ? ' sel' : ''),
                       onClick: () => { setSelWhkReq(r); setWhkDetTab('request'); },
-                      onContextMenu: e => showContextMenu(e, r, 'webhook'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 4177}}
+                      onContextMenu: e => showContextMenu(e, r, 'webhook'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 4183}}
 
-                      , React.createElement('span', { className: 'mth mth-' + (r.method || 'GET'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 4183}}, r.method || 'GET')
-                      , React.createElement('span', { className: "url", title: r.url, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4184}}, r.url || r.path || '-')
-                      , React.createElement('span', { style: { color: 'var(--txt2)', fontSize: '10px', minWidth: '90px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4185}}, r.ip || '-')
-                      , React.createElement('span', { className: "ts", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4186}}, fmtTime(r.created_at))
+                      , React.createElement('span', { className: 'mth mth-' + (r.method || 'GET'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 4189}}, r.method || 'GET')
+                      , React.createElement('span', { className: "url", title: r.url, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4190}}, r.url || r.path || '-')
+                      , React.createElement('span', { style: { color: 'var(--txt2)', fontSize: '10px', minWidth: '90px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4191}}, r.ip || '-')
+                      , React.createElement('span', { className: "ts", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4192}}, fmtTime(r.created_at))
                     )
                   ))
                   , filteredWhk.length === 0 && (
-                    React.createElement('div', { className: "empty", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4190}}
-                      , React.createElement('div', { className: "empty-i", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4191}}, "○")
-                      , React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4192}}, _optionalChain([webhookExt, 'optionalAccess', _76 => _76.config, 'optionalAccess', _77 => _77.token_id]) ? 'No webhook requests yet' : 'Create a webhook URL first')
+                    React.createElement('div', { className: "empty", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4196}}
+                      , React.createElement('div', { className: "empty-i", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4197}}, "○")
+                      , React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4198}}, _optionalChain([webhookExt, 'optionalAccess', _76 => _76.config, 'optionalAccess', _77 => _77.token_id]) ? 'No webhook requests yet' : 'Create a webhook URL first')
                     )
                   )
                 )
               )
             )
 
-            , React.createElement('div', { className: "panel det-pnl" , __self: this, __source: {fileName: _jsxFileName, lineNumber: 4199}}
+            , React.createElement('div', { className: "panel det-pnl" , __self: this, __source: {fileName: _jsxFileName, lineNumber: 4205}}
               , selWhkReq ? (
-                React.createElement(React.Fragment, {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4201}}
-                  , React.createElement('div', { className: "pnl-hdr", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4202}}
-                    , React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4203}}, selWhkReq.method || 'GET', " " , (selWhkReq.url || '').substring(0, 50))
-                    , React.createElement('div', { className: "acts", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4204}}
-                      , React.createElement('button', { className: "btn btn-sm btn-p"  , onClick: () => whkToRepeater(selWhkReq), __self: this, __source: {fileName: _jsxFileName, lineNumber: 4205}}, "→ Rep" )
+                React.createElement(React.Fragment, {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4207}}
+                  , React.createElement('div', { className: "pnl-hdr", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4208}}
+                    , React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4209}}, selWhkReq.method || 'GET', " " , (selWhkReq.url || '').substring(0, 50))
+                    , React.createElement('div', { className: "acts", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4210}}
+                      , React.createElement('button', { className: "btn btn-sm btn-p"  , onClick: () => whkToRepeater(selWhkReq), __self: this, __source: {fileName: _jsxFileName, lineNumber: 4211}}, "→ Rep" )
                       , React.createElement('button', { className: "btn btn-sm btn-s"  , onClick: () => {
                         navigator.clipboard.writeText(selWhkReq.url || '');
                         toast('URL copied', 'success');
-                      }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4206}}, "📋")
+                      }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4212}}, "📋")
                     )
                   )
-                  , React.createElement('div', { className: "det-tabs", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4212}}
-                    , React.createElement('div', { className: 'det-tab' + (whkDetTab === 'request' ? ' act' : ''), onClick: () => setWhkDetTab('request'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 4213}}, "Request")
-                    , React.createElement('div', { className: 'det-tab' + (whkDetTab === 'headers' ? ' act' : ''), onClick: () => setWhkDetTab('headers'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 4214}}, "Headers")
-                    , React.createElement('div', { className: 'det-tab' + (whkDetTab === 'query' ? ' act' : ''), onClick: () => setWhkDetTab('query'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 4215}}, "Query")
-                    , React.createElement('div', { className: 'det-tab' + (whkDetTab === 'body' ? ' act' : ''), onClick: () => setWhkDetTab('body'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 4216}}, "Body")
-                    , React.createElement('div', { style: { marginLeft: 'auto', display: 'flex', gap: '6px', alignItems: 'center' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4217}}
+                  , React.createElement('div', { className: "det-tabs", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4218}}
+                    , React.createElement('div', { className: 'det-tab' + (whkDetTab === 'request' ? ' act' : ''), onClick: () => setWhkDetTab('request'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 4219}}, "Request")
+                    , React.createElement('div', { className: 'det-tab' + (whkDetTab === 'headers' ? ' act' : ''), onClick: () => setWhkDetTab('headers'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 4220}}, "Headers")
+                    , React.createElement('div', { className: 'det-tab' + (whkDetTab === 'query' ? ' act' : ''), onClick: () => setWhkDetTab('query'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 4221}}, "Query")
+                    , React.createElement('div', { className: 'det-tab' + (whkDetTab === 'body' ? ' act' : ''), onClick: () => setWhkDetTab('body'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 4222}}, "Body")
+                    , React.createElement('div', { style: { marginLeft: 'auto', display: 'flex', gap: '6px', alignItems: 'center' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4223}}
                       , (whkDetTab === 'body' || whkDetTab === 'request') && (
-                        React.createElement(React.Fragment, {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4219}}
-                          , React.createElement('button', { className: 'btn btn-sm ' + (whkReqFormat === 'raw' ? 'btn-p' : 'btn-s'), onClick: () => setWhkReqFormat('raw'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 4220}}, "Raw")
-                          , React.createElement('button', { className: 'btn btn-sm ' + (whkReqFormat === 'pretty' ? 'btn-p' : 'btn-s'), onClick: () => setWhkReqFormat('pretty'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 4221}}, "Pretty")
+                        React.createElement(React.Fragment, {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4225}}
+                          , React.createElement('button', { className: 'btn btn-sm ' + (whkReqFormat === 'raw' ? 'btn-p' : 'btn-s'), onClick: () => setWhkReqFormat('raw'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 4226}}, "Raw")
+                          , React.createElement('button', { className: 'btn btn-sm ' + (whkReqFormat === 'pretty' ? 'btn-p' : 'btn-s'), onClick: () => setWhkReqFormat('pretty'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 4227}}, "Pretty")
                         )
                       )
                     )
@@ -4234,30 +4240,30 @@ function Blackwire() {
                         + (selWhkReq.content ? '\n\n--- Body ---\n' + (bodyFmt ? bodyFmt.text : selWhkReq.content) : '');
                       const isHtml = bodyFmt && bodyFmt.html;
                       return isHtml
-                        ? React.createElement('div', { className: "code", dangerouslySetInnerHTML: { __html: info }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4237}} )
-                        : React.createElement('div', { className: "code", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4238}}, info);
+                        ? React.createElement('div', { className: "code", dangerouslySetInnerHTML: { __html: info }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4243}} )
+                        : React.createElement('div', { className: "code", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4244}}, info);
                     }
                     if (whkDetTab === 'headers') {
-                      return React.createElement('div', { className: "code", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4241}}, fmtH(selWhkReq.headers) || 'No headers');
+                      return React.createElement('div', { className: "code", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4247}}, fmtH(selWhkReq.headers) || 'No headers');
                     }
                     if (whkDetTab === 'query') {
                       const q = selWhkReq.query || {};
                       const entries = Object.entries(q);
-                      return React.createElement('div', { className: "code", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4246}}, entries.length === 0 ? 'No query parameters' : entries.map(([k, v]) => k + ' = ' + v).join('\n'));
+                      return React.createElement('div', { className: "code", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4252}}, entries.length === 0 ? 'No query parameters' : entries.map(([k, v]) => k + ' = ' + v).join('\n'));
                     }
                     if (whkDetTab === 'body') {
-                      if (!selWhkReq.content) return React.createElement('div', { className: "code", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4249}}, "No body content"  );
+                      if (!selWhkReq.content) return React.createElement('div', { className: "code", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4255}}, "No body content"  );
                       const bodyFmt = formatBody(selWhkReq.content, whkReqFormat);
                       return bodyFmt.html
-                        ? React.createElement('div', { className: "code", dangerouslySetInnerHTML: { __html: bodyFmt.text }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4252}} )
-                        : React.createElement('div', { className: "code", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4253}}, selWhkReq.content);
+                        ? React.createElement('div', { className: "code", dangerouslySetInnerHTML: { __html: bodyFmt.text }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4258}} )
+                        : React.createElement('div', { className: "code", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4259}}, selWhkReq.content);
                     }
-                    return React.createElement('div', { className: "code", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4255}});
+                    return React.createElement('div', { className: "code", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4261}});
                   })()
                 )
               ) : (
-                React.createElement('div', { className: "empty", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4259}}
-                  , React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4260}}, "Select a webhook request"   )
+                React.createElement('div', { className: "empty", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4265}}
+                  , React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4266}}, "Select a webhook request"   )
                 )
               )
             )
@@ -4265,26 +4271,26 @@ function Blackwire() {
         )
 
         , tab === 'git' && curPrj && (
-          React.createElement('div', { className: "git-pnl", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4268}}
-            , React.createElement('div', { className: "git-sec", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4269}}
-              , React.createElement('div', { className: "git-ttl", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4270}}, "Create Commit (Press Ctrl+S for auto-commit)"     )
-              , React.createElement('div', { className: "cmt-form", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4271}}
-                , React.createElement('input', { className: "cmt-in", placeholder: "Message...", value: cmtMsg, onChange: e => setCmtMsg(e.target.value), onKeyPress: e => e.key === 'Enter' && commit(), __self: this, __source: {fileName: _jsxFileName, lineNumber: 4272}} )
-                , React.createElement('button', { className: "btn btn-p" , onClick: commit, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4273}}, "Commit")
+          React.createElement('div', { className: "git-pnl", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4274}}
+            , React.createElement('div', { className: "git-sec", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4275}}
+              , React.createElement('div', { className: "git-ttl", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4276}}, "Create Commit (Press Ctrl+S for auto-commit)"     )
+              , React.createElement('div', { className: "cmt-form", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4277}}
+                , React.createElement('input', { className: "cmt-in", placeholder: "Message...", value: cmtMsg, onChange: e => setCmtMsg(e.target.value), onKeyPress: e => e.key === 'Enter' && commit(), __self: this, __source: {fileName: _jsxFileName, lineNumber: 4278}} )
+                , React.createElement('button', { className: "btn btn-p" , onClick: commit, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4279}}, "Commit")
               )
             )
-            , React.createElement('div', { className: "git-sec", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4276}}
-              , React.createElement('div', { className: "git-ttl", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4277}}, "History")
-              , React.createElement('div', { className: "cmt-list", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4278}}
+            , React.createElement('div', { className: "git-sec", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4282}}
+              , React.createElement('div', { className: "git-ttl", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4283}}, "History")
+              , React.createElement('div', { className: "cmt-list", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4284}}
                 , commits.map((c, i) => (
-                  React.createElement('div', { key: i, className: "cmt-item", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4280}}
-                    , React.createElement('span', { className: "cmt-hash", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4281}}, c.hash)
-                    , React.createElement('span', { className: "cmt-msg", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4282}}, c.message)
-                    , React.createElement('span', { className: "cmt-date", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4283}}, c.date)
+                  React.createElement('div', { key: i, className: "cmt-item", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4286}}
+                    , React.createElement('span', { className: "cmt-hash", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4287}}, c.hash)
+                    , React.createElement('span', { className: "cmt-msg", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4288}}, c.message)
+                    , React.createElement('span', { className: "cmt-date", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4289}}, c.date)
                   )
                 ))
                 , commits.length === 0 && (
-                  React.createElement('div', { className: "cmt-item", style: { justifyContent: 'center', color: 'var(--txt3)' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4287}}, "No commits"
+                  React.createElement('div', { className: "cmt-item", style: { justifyContent: 'center', color: 'var(--txt3)' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4293}}, "No commits"
 
                   )
                 )
@@ -4294,25 +4300,25 @@ function Blackwire() {
         )
 
         , tab === 'extensions' && curPrj && (
-          React.createElement('div', { className: "scp-pnl", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4297}}
-            , React.createElement('div', { className: "scp-hdr", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4298}}
-              , React.createElement('h3', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4299}}, "Extensions")
-              , React.createElement('p', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4300}}, "Manage and configure extensions for request/response manipulation"      )
+          React.createElement('div', { className: "scp-pnl", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4303}}
+            , React.createElement('div', { className: "scp-hdr", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4304}}
+              , React.createElement('h3', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4305}}, "Extensions")
+              , React.createElement('p', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4306}}, "Manage and configure extensions for request/response manipulation"      )
             )
             , extensions.length === 0 && (
-              React.createElement('div', { className: "empty", style: { padding: 30 }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4303}}
-                , React.createElement('div', { className: "empty-i", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4304}})
-                , React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4305}}, "No extensions installed"  )
+              React.createElement('div', { className: "empty", style: { padding: 30 }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4309}}
+                , React.createElement('div', { className: "empty-i", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4310}})
+                , React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4311}}, "No extensions installed"  )
               )
             )
             , extensions.filter(ext => ext.name !== 'sensitive').map(ext => (
-              React.createElement('div', { key: ext.name, style: { background: 'var(--bg2)', border: '1px solid var(--brd)', borderRadius: '8px', padding: '16px', marginBottom: '12px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4309}}
-                , React.createElement('div', { style: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4310}}
-                  , React.createElement('div', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4311}}
-                    , React.createElement('div', { style: { fontSize: '14px', fontWeight: '600', marginBottom: '4px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4312}}, ext.title || ext.name)
-                    , React.createElement('div', { style: { fontSize: '11px', color: 'var(--txt2)' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4313}}, ext.description || 'No description')
+              React.createElement('div', { key: ext.name, style: { background: 'var(--bg2)', border: '1px solid var(--brd)', borderRadius: '8px', padding: '16px', marginBottom: '12px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4315}}
+                , React.createElement('div', { style: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4316}}
+                  , React.createElement('div', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4317}}
+                    , React.createElement('div', { style: { fontSize: '14px', fontWeight: '600', marginBottom: '4px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4318}}, ext.title || ext.name)
+                    , React.createElement('div', { style: { fontSize: '11px', color: 'var(--txt2)' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4319}}, ext.description || 'No description')
                   )
-                  , React.createElement('button', { className: 'btn btn-sm ' + (ext.enabled ? 'btn-g' : 'btn-s'), onClick: () => togExtEnabled(ext.name, !ext.enabled), __self: this, __source: {fileName: _jsxFileName, lineNumber: 4315}}
+                  , React.createElement('button', { className: 'btn btn-sm ' + (ext.enabled ? 'btn-g' : 'btn-s'), onClick: () => togExtEnabled(ext.name, !ext.enabled), __self: this, __source: {fileName: _jsxFileName, lineNumber: 4321}}
                     , ext.enabled ? 'Enabled' : 'Disabled'
                   )
                 )
@@ -4339,92 +4345,92 @@ function Blackwire() {
 
 
         , tab === 'collections' && curPrj && (
-          React.createElement('div', { className: "coll-cnt", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4342}}
-            , React.createElement('div', { className: "det-tabs", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4343}}
-              , React.createElement('div', { className: 'det-tab' + (collSubTab === 'collections' ? ' act' : ''), onClick: () => setCollSubTab('collections'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 4344}}, "Collections")
-              , React.createElement('div', { className: 'det-tab' + (collSubTab === 'session-rules' ? ' act' : ''), onClick: () => { setCollSubTab('session-rules'); loadSessionRules(); }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4345}}, "Session Rules" )
+          React.createElement('div', { className: "coll-cnt", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4348}}
+            , React.createElement('div', { className: "det-tabs", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4349}}
+              , React.createElement('div', { className: 'det-tab' + (collSubTab === 'collections' ? ' act' : ''), onClick: () => setCollSubTab('collections'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 4350}}, "Collections")
+              , React.createElement('div', { className: 'det-tab' + (collSubTab === 'session-rules' ? ' act' : ''), onClick: () => { setCollSubTab('session-rules'); loadSessionRules(); }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4351}}, "Session Rules" )
             )
 
             , collSubTab === 'collections' && (
-              React.createElement(React.Fragment, {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4349}}
-                , React.createElement('div', { className: "coll-side panel" , style: { width: collSideW + 'px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4350}}
-                  , React.createElement('div', { className: "pnl-hdr", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4351}}
-                    , React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4352}}, "Collections")
-                    , React.createElement('button', { className: "btn btn-sm btn-p"  , onClick: createColl, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4353}}, "+")
+              React.createElement(React.Fragment, {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4355}}
+                , React.createElement('div', { className: "coll-side panel" , style: { width: collSideW + 'px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4356}}
+                  , React.createElement('div', { className: "pnl-hdr", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4357}}
+                    , React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4358}}, "Collections")
+                    , React.createElement('button', { className: "btn btn-sm btn-p"  , onClick: createColl, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4359}}, "+")
                   )
-              , React.createElement('div', { className: "pnl-cnt", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4355}}
+              , React.createElement('div', { className: "pnl-cnt", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4361}}
                 , colls.map(c => (
                   React.createElement('div', { key: c.id, className: 'coll-item' + (selColl === c.id ? ' sel' : ''),
                        onClick: () => loadCollItems(c.id),
-                       onContextMenu: e => { e.preventDefault(); if (confirm('Delete "' + c.name + '"?')) deleteColl(c.id); }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4357}}
-                    , React.createElement('span', { className: "coll-name", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4360}}, c.name)
-                    , React.createElement('span', { className: "coll-count", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4361}}, c.item_count)
+                       onContextMenu: e => { e.preventDefault(); if (confirm('Delete "' + c.name + '"?')) deleteColl(c.id); }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4363}}
+                    , React.createElement('span', { className: "coll-name", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4366}}, c.name)
+                    , React.createElement('span', { className: "coll-count", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4367}}, c.item_count)
                   )
                 ))
                 , colls.length === 0 && (
-                  React.createElement('div', { className: "empty", style: { padding: 20, fontSize: 11 }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4365}}
-                    , React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4366}}, "No collections yet"  )
+                  React.createElement('div', { className: "empty", style: { padding: 20, fontSize: 11 }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4371}}
+                    , React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4372}}, "No collections yet"  )
                   )
                 )
               )
             )
-            , React.createElement(ResizeHandle, { onDrag: (dx) => setCollSideW(w => Math.max(100, Math.min(400, w + dx))), __self: this, __source: {fileName: _jsxFileName, lineNumber: 4371}} )
-            , React.createElement('div', { className: "coll-steps panel" , style: { width: collStepsW + 'px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4372}}
-              , React.createElement('div', { className: "pnl-hdr", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4373}}
-                , React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4374}}, "Steps " , selColl ? '(' + collItems.length + ')' : '')
+            , React.createElement(ResizeHandle, { onDrag: (dx) => setCollSideW(w => Math.max(100, Math.min(400, w + dx))), __self: this, __source: {fileName: _jsxFileName, lineNumber: 4377}} )
+            , React.createElement('div', { className: "coll-steps panel" , style: { width: collStepsW + 'px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4378}}
+              , React.createElement('div', { className: "pnl-hdr", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4379}}
+                , React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4380}}, "Steps " , selColl ? '(' + collItems.length + ')' : '')
               )
-              , React.createElement('div', { className: "pnl-cnt", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4376}}
+              , React.createElement('div', { className: "pnl-cnt", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4382}}
                 , collItems.map((item, idx) => (
                   React.createElement('div', { key: item.id, className: 'coll-step-item' + (collStep === idx ? ' active' : '') + (collResps[item.id] ? (collResps[item.id].error ? ' err' : ' done') : ''),
                        onClick: () => setCollStep(idx),
-                       onContextMenu: e => showContextMenu(e, item, 'collection'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 4378}}
-                    , React.createElement('span', { className: "coll-step-num", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4381}}, idx + 1)
-                    , React.createElement('span', { className: 'mth mth-' + item.method, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4382}}, item.method)
-                    , React.createElement('span', { className: "url", style: { flex: 1 }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4383}}, item.url.length > 45 ? item.url.substring(0, 45) + '...' : item.url)
+                       onContextMenu: e => showContextMenu(e, item, 'collection'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 4384}}
+                    , React.createElement('span', { className: "coll-step-num", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4387}}, idx + 1)
+                    , React.createElement('span', { className: 'mth mth-' + item.method, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4388}}, item.method)
+                    , React.createElement('span', { className: "url", style: { flex: 1 }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4389}}, item.url.length > 45 ? item.url.substring(0, 45) + '...' : item.url)
                     , collResps[item.id] && !collResps[item.id].error && (
-                      React.createElement('span', { className: 'sts ' + stCls(collResps[item.id].status_code), __self: this, __source: {fileName: _jsxFileName, lineNumber: 4385}}, collResps[item.id].status_code)
+                      React.createElement('span', { className: 'sts ' + stCls(collResps[item.id].status_code), __self: this, __source: {fileName: _jsxFileName, lineNumber: 4391}}, collResps[item.id].status_code)
                     )
                     , collResps[item.id] && collResps[item.id].error && (
-                      React.createElement('span', { className: "sts st5" , __self: this, __source: {fileName: _jsxFileName, lineNumber: 4388}}, "ERR")
+                      React.createElement('span', { className: "sts st5" , __self: this, __source: {fileName: _jsxFileName, lineNumber: 4394}}, "ERR")
                     )
-                    , React.createElement('button', { className: "btn btn-sm btn-d"  , onClick: e => { e.stopPropagation(); deleteCollItem(selColl, item.id); }, style: { padding: '2px 5px', fontSize: '10px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4390}}, "✕")
+                    , React.createElement('button', { className: "btn btn-sm btn-d"  , onClick: e => { e.stopPropagation(); deleteCollItem(selColl, item.id); }, style: { padding: '2px 5px', fontSize: '10px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4396}}, "✕")
                   )
                 ))
                 , selColl && collItems.length === 0 && (
-                  React.createElement('div', { className: "empty", style: { padding: 20, fontSize: 11 }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4394}}
-                    , React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4395}}, "Add requests via right-click in History"     )
+                  React.createElement('div', { className: "empty", style: { padding: 20, fontSize: 11 }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4400}}
+                    , React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4401}}, "Add requests via right-click in History"     )
                   )
                 )
                 , !selColl && (
-                  React.createElement('div', { className: "empty", style: { padding: 20, fontSize: 11 }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4399}}
-                    , React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4400}}, "Select a collection"  )
+                  React.createElement('div', { className: "empty", style: { padding: 20, fontSize: 11 }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4405}}
+                    , React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4406}}, "Select a collection"  )
                   )
                 )
                 , Object.keys(collVars).length > 0 && (
-                  React.createElement('div', { className: "coll-vars", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4404}}
-                    , React.createElement('div', { className: "coll-vars-hdr", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4405}}, "Variables")
+                  React.createElement('div', { className: "coll-vars", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4410}}
+                    , React.createElement('div', { className: "coll-vars-hdr", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4411}}, "Variables")
                     , Object.entries(collVars).map(([k, v]) => (
-                      React.createElement('div', { key: k, className: "coll-var", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4407}}
-                        , React.createElement('span', { className: "coll-var-name", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4408}}, k)
-                        , React.createElement('span', { className: "coll-var-val", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4409}}, String(v).substring(0, 60))
+                      React.createElement('div', { key: k, className: "coll-var", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4413}}
+                        , React.createElement('span', { className: "coll-var-name", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4414}}, k)
+                        , React.createElement('span', { className: "coll-var-val", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4415}}, String(v).substring(0, 60))
                       )
                     ))
                   )
                 )
               )
             )
-            , React.createElement(ResizeHandle, { onDrag: (dx) => setCollStepsW(w => Math.max(150, Math.min(600, w + dx))), __self: this, __source: {fileName: _jsxFileName, lineNumber: 4416}} )
-            , React.createElement('div', { className: "coll-exec panel" , __self: this, __source: {fileName: _jsxFileName, lineNumber: 4417}}
+            , React.createElement(ResizeHandle, { onDrag: (dx) => setCollStepsW(w => Math.max(150, Math.min(600, w + dx))), __self: this, __source: {fileName: _jsxFileName, lineNumber: 4422}} )
+            , React.createElement('div', { className: "coll-exec panel" , __self: this, __source: {fileName: _jsxFileName, lineNumber: 4423}}
               , selColl && collItems.length > 0 ? (
-                React.createElement(React.Fragment, {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4419}}
-                  , React.createElement('div', { className: "pnl-hdr", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4420}}
-                    , React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4421}}, "Step " , Math.min(collStep + 1, collItems.length), " of "  , collItems.length)
-                    , React.createElement('div', { className: "acts", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4422}}
+                React.createElement(React.Fragment, {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4425}}
+                  , React.createElement('div', { className: "pnl-hdr", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4426}}
+                    , React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4427}}, "Step " , Math.min(collStep + 1, collItems.length), " of "  , collItems.length)
+                    , React.createElement('div', { className: "acts", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4428}}
                       , React.createElement('button', { className: "btn btn-sm btn-p"  , onClick: executeCollStep,
-                              disabled: collRunning || collStep >= collItems.length, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4423}}
+                              disabled: collRunning || collStep >= collItems.length, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4429}}
                         , collRunning ? '...' : '\u25B6 Send Next'
                       )
-                      , React.createElement('button', { className: "btn btn-sm btn-s"  , onClick: resetCollRun, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4427}}, "Reset")
+                      , React.createElement('button', { className: "btn btn-sm btn-s"  , onClick: resetCollRun, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4433}}, "Reset")
                     )
                   )
                   , (() => {
@@ -4432,42 +4438,42 @@ function Blackwire() {
                     if (!item) return null;
                     const resp = collResps[item.id];
                     return (
-                      React.createElement(React.Fragment, {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4435}}
-                        , React.createElement('div', { style: { padding: '10px 14px', background: 'var(--bg2)', borderBottom: '1px solid var(--brd)', fontSize: '12px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4436}}
-                          , React.createElement('div', { style: { display: 'flex', gap: '8px', alignItems: 'center', marginBottom: '6px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4437}}
-                            , React.createElement('span', { className: 'mth mth-' + item.method, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4438}}, item.method)
-                            , React.createElement('span', { style: { fontFamily: 'var(--font-mono)', fontSize: '11px', flex: 1 }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4439}}, item.url)
+                      React.createElement(React.Fragment, {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4441}}
+                        , React.createElement('div', { style: { padding: '10px 14px', background: 'var(--bg2)', borderBottom: '1px solid var(--brd)', fontSize: '12px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4442}}
+                          , React.createElement('div', { style: { display: 'flex', gap: '8px', alignItems: 'center', marginBottom: '6px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4443}}
+                            , React.createElement('span', { className: 'mth mth-' + item.method, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4444}}, item.method)
+                            , React.createElement('span', { style: { fontFamily: 'var(--font-mono)', fontSize: '11px', flex: 1 }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4445}}, item.url)
                           )
                           , item.headers && Object.keys(item.headers).length > 0 && (
-                            React.createElement('div', { style: { fontSize: '10px', color: 'var(--txt3)', marginBottom: '4px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4442}}
+                            React.createElement('div', { style: { fontSize: '10px', color: 'var(--txt3)', marginBottom: '4px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4448}}
                               , Object.entries(item.headers).map(([k, v]) => k + ': ' + v).join(' | ')
                             )
                           )
                           , item.body && (
-                            React.createElement('div', { style: { fontSize: '10px', color: 'var(--txt3)' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4447}}, "Body: " , item.body.substring(0, 100))
+                            React.createElement('div', { style: { fontSize: '10px', color: 'var(--txt3)' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4453}}, "Body: " , item.body.substring(0, 100))
                           )
                         )
-                        , React.createElement('div', { style: { padding: '8px 14px', background: 'var(--bg3)', borderBottom: '1px solid var(--brd)' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4450}}
-                          , React.createElement('div', { style: { fontSize: '10px', color: 'var(--txt2)', fontWeight: '600', marginBottom: '6px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4451}}, "Variable Extractions" )
+                        , React.createElement('div', { style: { padding: '8px 14px', background: 'var(--bg3)', borderBottom: '1px solid var(--brd)' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4456}}
+                          , React.createElement('div', { style: { fontSize: '10px', color: 'var(--txt2)', fontWeight: '600', marginBottom: '6px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4457}}, "Variable Extractions" )
                           , (item.var_extracts || []).map((ve, vi) => (
-                            React.createElement('div', { key: vi, className: "coll-extract", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4453}}
-                              , React.createElement('span', { className: "coll-extract-name", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4454}}, ve.name)
-                              , React.createElement('span', { style: { color: 'var(--txt3)', fontSize: '10px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4455}}, "from " , ve.source, " at" )
-                              , React.createElement('span', { style: { fontFamily: 'var(--font-mono)', fontSize: '10px', color: 'var(--cyan)' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4456}}, ve.path)
+                            React.createElement('div', { key: vi, className: "coll-extract", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4459}}
+                              , React.createElement('span', { className: "coll-extract-name", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4460}}, ve.name)
+                              , React.createElement('span', { style: { color: 'var(--txt3)', fontSize: '10px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4461}}, "from " , ve.source, " at" )
+                              , React.createElement('span', { style: { fontFamily: 'var(--font-mono)', fontSize: '10px', color: 'var(--cyan)' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4462}}, ve.path)
                               , React.createElement('button', { className: "btn btn-sm btn-d"  , style: { padding: '1px 4px', fontSize: '9px' },
                                 onClick: () => {
                                   const newExtracts = item.var_extracts.filter((_, i) => i !== vi);
                                   updateCollItemExtracts(selColl, item.id, newExtracts);
-                                }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4457}}, "✕")
+                                }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4463}}, "✕")
                             )
                           ))
-                          , React.createElement('div', { style: { display: 'flex', gap: '6px', marginTop: '6px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4464}}
-                            , React.createElement('input', { className: "inp", placeholder: "var name" , id: "ve-name", style: { flex: 1, fontSize: '10px', padding: '4px 6px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4465}} )
-                            , React.createElement('select', { className: "sel", id: "ve-source", style: { fontSize: '10px', padding: '4px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4466}}
-                              , React.createElement('option', { value: "body", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4467}}, "body")
-                              , React.createElement('option', { value: "header", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4468}}, "header")
+                          , React.createElement('div', { style: { display: 'flex', gap: '6px', marginTop: '6px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4470}}
+                            , React.createElement('input', { className: "inp", placeholder: "var name" , id: "ve-name", style: { flex: 1, fontSize: '10px', padding: '4px 6px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4471}} )
+                            , React.createElement('select', { className: "sel", id: "ve-source", style: { fontSize: '10px', padding: '4px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4472}}
+                              , React.createElement('option', { value: "body", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4473}}, "body")
+                              , React.createElement('option', { value: "header", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4474}}, "header")
                             )
-                            , React.createElement('input', { className: "inp", placeholder: "$.path.to.value", id: "ve-path", style: { flex: 1, fontSize: '10px', padding: '4px 6px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4470}} )
+                            , React.createElement('input', { className: "inp", placeholder: "$.path.to.value", id: "ve-path", style: { flex: 1, fontSize: '10px', padding: '4px 6px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4476}} )
                             , React.createElement('button', { className: "btn btn-sm btn-s"  , onClick: () => {
                               const name = document.getElementById('ve-name').value;
                               const source = document.getElementById('ve-source').value;
@@ -4477,33 +4483,33 @@ function Blackwire() {
                               updateCollItemExtracts(selColl, item.id, newExtracts);
                               document.getElementById('ve-name').value = '';
                               document.getElementById('ve-path').value = '';
-                            }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4471}}, "+ Add" )
+                            }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4477}}, "+ Add" )
                           )
                         )
                         , resp && (
-                          React.createElement(React.Fragment, {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4484}}
-                            , React.createElement('div', { className: "pnl-hdr", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4485}}
-                              , React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4486}}, "Response")
+                          React.createElement(React.Fragment, {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4490}}
+                            , React.createElement('div', { className: "pnl-hdr", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4491}}
+                              , React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4492}}, "Response")
                               , !resp.error && (
-                                React.createElement('span', { style: { color: 'var(--txt3)', fontSize: '10px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4488}}
+                                React.createElement('span', { style: { color: 'var(--txt3)', fontSize: '10px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4494}}
                                   , resp.status_code, " • "  , _optionalChain([resp, 'access', _78 => _78.elapsed, 'optionalAccess', _79 => _79.toFixed, 'call', _80 => _80(3)]), "s"
                                 )
                               )
                             )
                             , (() => {
-                              if (resp.error) return React.createElement('div', { className: "code", style: { flex: 1 }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4494}}, resp.error);
+                              if (resp.error) return React.createElement('div', { className: "code", style: { flex: 1 }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4500}}, resp.error);
                               const collBodyFmt = colorizeBody(resp.body || '');
                               return collBodyFmt.html
-                                ? React.createElement('div', { className: "code", style: { flex: 1 }, dangerouslySetInnerHTML: { __html: collBodyFmt.text }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4497}} )
-                                : React.createElement('div', { className: "code", style: { flex: 1 }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4498}}, resp.body || '');
+                                ? React.createElement('div', { className: "code", style: { flex: 1 }, dangerouslySetInnerHTML: { __html: collBodyFmt.text }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4503}} )
+                                : React.createElement('div', { className: "code", style: { flex: 1 }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4504}}, resp.body || '');
                             })()
                             , resp.extracted_variables && Object.keys(resp.extracted_variables).length > 0 && (
-                              React.createElement('div', { className: "coll-vars", style: { borderTop: '1px solid var(--brd)' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4501}}
-                                , React.createElement('div', { className: "coll-vars-hdr", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4502}}, "Extracted")
+                              React.createElement('div', { className: "coll-vars", style: { borderTop: '1px solid var(--brd)' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4507}}
+                                , React.createElement('div', { className: "coll-vars-hdr", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4508}}, "Extracted")
                                 , Object.entries(resp.extracted_variables).map(([k, v]) => (
-                                  React.createElement('div', { key: k, className: "coll-var", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4504}}
-                                    , React.createElement('span', { className: "coll-var-name", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4505}}, k)
-                                    , React.createElement('span', { className: "coll-var-val", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4506}}, String(v).substring(0, 60))
+                                  React.createElement('div', { key: k, className: "coll-var", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4510}}
+                                    , React.createElement('span', { className: "coll-var-name", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4511}}, k)
+                                    , React.createElement('span', { className: "coll-var-val", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4512}}, String(v).substring(0, 60))
                                   )
                                 ))
                               )
@@ -4511,105 +4517,105 @@ function Blackwire() {
                           )
                         )
                         , !resp && (
-                          React.createElement('div', { className: "empty", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4514}}, React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4514}}, "Click \"Send Next\" to execute this step"      ))
+                          React.createElement('div', { className: "empty", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4520}}, React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4520}}, "Click \"Send Next\" to execute this step"      ))
                         )
                       )
                     );
                   })()
                 )
               ) : (
-                React.createElement('div', { className: "empty", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4521}}, React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4521}}, selColl ? 'No steps - add requests from History' : 'Select a collection'))
+                React.createElement('div', { className: "empty", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4527}}, React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4527}}, selColl ? 'No steps - add requests from History' : 'Select a collection'))
               )
             )
               )
             )
 
             , collSubTab === 'session-rules' && (
-              React.createElement('div', { style: { padding: '20px', overflow: 'auto', flex: 1 }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4528}}
-                , React.createElement('div', { style: { maxWidth: '900px', margin: '0 auto' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4529}}
-                  , React.createElement('div', { style: { marginBottom: '24px', padding: '16px', background: 'var(--bg2)', border: '1px solid var(--brd)', borderRadius: '4px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4530}}
-                    , React.createElement('div', { style: { fontSize: '13px', fontWeight: 600, marginBottom: '12px', color: 'var(--cyan)' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4531}}, "Add Session Rule"  )
-                    , React.createElement('div', { style: { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '12px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4532}}
-                      , React.createElement('div', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4533}}
-                        , React.createElement('label', { style: { fontSize: '11px', color: 'var(--txt2)', display: 'block', marginBottom: '4px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4534}}, "Rule Name" )
-                        , React.createElement('input', { className: "inp", value: newRule.name, onChange: e => setNewRule({ ...newRule, name: e.target.value }), placeholder: "My Session Token"  , __self: this, __source: {fileName: _jsxFileName, lineNumber: 4535}} )
+              React.createElement('div', { style: { padding: '20px', overflow: 'auto', flex: 1 }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4534}}
+                , React.createElement('div', { style: { maxWidth: '900px', margin: '0 auto' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4535}}
+                  , React.createElement('div', { style: { marginBottom: '24px', padding: '16px', background: 'var(--bg2)', border: '1px solid var(--brd)', borderRadius: '4px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4536}}
+                    , React.createElement('div', { style: { fontSize: '13px', fontWeight: 600, marginBottom: '12px', color: 'var(--cyan)' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4537}}, "Add Session Rule"  )
+                    , React.createElement('div', { style: { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '12px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4538}}
+                      , React.createElement('div', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4539}}
+                        , React.createElement('label', { style: { fontSize: '11px', color: 'var(--txt2)', display: 'block', marginBottom: '4px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4540}}, "Rule Name" )
+                        , React.createElement('input', { className: "inp", value: newRule.name, onChange: e => setNewRule({ ...newRule, name: e.target.value }), placeholder: "My Session Token"  , __self: this, __source: {fileName: _jsxFileName, lineNumber: 4541}} )
                       )
-                      , React.createElement('div', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4537}}
-                        , React.createElement('label', { style: { fontSize: '11px', color: 'var(--txt2)', display: 'block', marginBottom: '4px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4538}}, "Variable Name" )
-                        , React.createElement('input', { className: "inp", value: newRule.variable, onChange: e => setNewRule({ ...newRule, variable: e.target.value }), placeholder: "session_token", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4539}} )
+                      , React.createElement('div', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4543}}
+                        , React.createElement('label', { style: { fontSize: '11px', color: 'var(--txt2)', display: 'block', marginBottom: '4px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4544}}, "Variable Name" )
+                        , React.createElement('input', { className: "inp", value: newRule.variable, onChange: e => setNewRule({ ...newRule, variable: e.target.value }), placeholder: "session_token", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4545}} )
                       )
                     )
-                    , React.createElement('div', { style: { display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px', marginBottom: '12px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4542}}
-                      , React.createElement('div', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4543}}
-                        , React.createElement('label', { style: { fontSize: '11px', color: 'var(--txt2)', display: 'block', marginBottom: '4px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4544}}, "When")
-                        , React.createElement('select', { className: "sel", value: newRule.when, onChange: e => setNewRule({ ...newRule, when: e.target.value }), __self: this, __source: {fileName: _jsxFileName, lineNumber: 4545}}
-                          , React.createElement('option', { value: "request", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4546}}, "Request")
-                          , React.createElement('option', { value: "response", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4547}}, "Response")
-                          , React.createElement('option', { value: "both", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4548}}, "Both")
+                    , React.createElement('div', { style: { display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px', marginBottom: '12px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4548}}
+                      , React.createElement('div', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4549}}
+                        , React.createElement('label', { style: { fontSize: '11px', color: 'var(--txt2)', display: 'block', marginBottom: '4px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4550}}, "When")
+                        , React.createElement('select', { className: "sel", value: newRule.when, onChange: e => setNewRule({ ...newRule, when: e.target.value }), __self: this, __source: {fileName: _jsxFileName, lineNumber: 4551}}
+                          , React.createElement('option', { value: "request", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4552}}, "Request")
+                          , React.createElement('option', { value: "response", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4553}}, "Response")
+                          , React.createElement('option', { value: "both", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4554}}, "Both")
                         )
                       )
-                      , React.createElement('div', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4551}}
-                        , React.createElement('label', { style: { fontSize: '11px', color: 'var(--txt2)', display: 'block', marginBottom: '4px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4552}}, "Target")
-                        , React.createElement('select', { className: "sel", value: newRule.target, onChange: e => setNewRule({ ...newRule, target: e.target.value }), __self: this, __source: {fileName: _jsxFileName, lineNumber: 4553}}
-                          , React.createElement('option', { value: "url", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4554}}, "URL")
-                          , React.createElement('option', { value: "headers", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4555}}, "Headers")
-                          , React.createElement('option', { value: "body", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4556}}, "Body")
+                      , React.createElement('div', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4557}}
+                        , React.createElement('label', { style: { fontSize: '11px', color: 'var(--txt2)', display: 'block', marginBottom: '4px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4558}}, "Target")
+                        , React.createElement('select', { className: "sel", value: newRule.target, onChange: e => setNewRule({ ...newRule, target: e.target.value }), __self: this, __source: {fileName: _jsxFileName, lineNumber: 4559}}
+                          , React.createElement('option', { value: "url", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4560}}, "URL")
+                          , React.createElement('option', { value: "headers", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4561}}, "Headers")
+                          , React.createElement('option', { value: "body", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4562}}, "Body")
                         )
                       )
-                      , React.createElement('div', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4559}}
-                        , React.createElement('label', { style: { fontSize: '11px', color: 'var(--txt2)', display: 'block', marginBottom: '4px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4560}}, "Group Number" )
-                        , React.createElement('input', { className: "inp", type: "number", value: newRule.group, onChange: e => setNewRule({ ...newRule, group: parseInt(e.target.value) || 1 }), __self: this, __source: {fileName: _jsxFileName, lineNumber: 4561}} )
+                      , React.createElement('div', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4565}}
+                        , React.createElement('label', { style: { fontSize: '11px', color: 'var(--txt2)', display: 'block', marginBottom: '4px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4566}}, "Group Number" )
+                        , React.createElement('input', { className: "inp", type: "number", value: newRule.group, onChange: e => setNewRule({ ...newRule, group: parseInt(e.target.value) || 1 }), __self: this, __source: {fileName: _jsxFileName, lineNumber: 4567}} )
                       )
                     )
                     , newRule.target === 'headers' && (
-                      React.createElement('div', { style: { marginBottom: '12px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4565}}
-                        , React.createElement('label', { style: { fontSize: '11px', color: 'var(--txt2)', display: 'block', marginBottom: '4px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4566}}, "Header Name" )
-                        , React.createElement('input', { className: "inp", value: newRule.header, onChange: e => setNewRule({ ...newRule, header: e.target.value }), placeholder: "Set-Cookie", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4567}} )
+                      React.createElement('div', { style: { marginBottom: '12px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4571}}
+                        , React.createElement('label', { style: { fontSize: '11px', color: 'var(--txt2)', display: 'block', marginBottom: '4px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4572}}, "Header Name" )
+                        , React.createElement('input', { className: "inp", value: newRule.header, onChange: e => setNewRule({ ...newRule, header: e.target.value }), placeholder: "Set-Cookie", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4573}} )
                       )
                     )
-                    , React.createElement('div', { style: { marginBottom: '12px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4570}}
-                      , React.createElement('label', { style: { fontSize: '11px', color: 'var(--txt2)', display: 'block', marginBottom: '4px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4571}}, "Regex Pattern" )
-                      , React.createElement('input', { className: "inp", value: newRule.regex, onChange: e => setNewRule({ ...newRule, regex: e.target.value }), placeholder: "session=([^;]+)", style: { fontFamily: 'var(--font-mono)', fontSize: '11px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4572}} )
+                    , React.createElement('div', { style: { marginBottom: '12px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4576}}
+                      , React.createElement('label', { style: { fontSize: '11px', color: 'var(--txt2)', display: 'block', marginBottom: '4px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4577}}, "Regex Pattern" )
+                      , React.createElement('input', { className: "inp", value: newRule.regex, onChange: e => setNewRule({ ...newRule, regex: e.target.value }), placeholder: "session=([^;]+)", style: { fontFamily: 'var(--font-mono)', fontSize: '11px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4578}} )
                     )
-                    , React.createElement('button', { className: "btn btn-p" , onClick: addSessionRule, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4574}}, "Add Rule" )
+                    , React.createElement('button', { className: "btn btn-p" , onClick: addSessionRule, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4580}}, "Add Rule" )
                   )
 
-                  , React.createElement('div', { style: { marginBottom: '16px', fontSize: '13px', fontWeight: 600 }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4577}}, "Active Rules ("  , sessionRules.length, ")")
+                  , React.createElement('div', { style: { marginBottom: '16px', fontSize: '13px', fontWeight: 600 }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4583}}, "Active Rules ("  , sessionRules.length, ")")
                   , sessionRules.map(rule => (
-                    React.createElement('div', { key: rule.id, style: { marginBottom: '12px', padding: '12px', background: 'var(--bg2)', border: '1px solid var(--brd)', borderRadius: '4px', opacity: rule.enabled ? 1 : 0.5 }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4579}}
-                      , React.createElement('div', { style: { display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4580}}
-                        , React.createElement('input', { type: "checkbox", checked: rule.enabled, onChange: e => toggleSessionRule(rule.id, e.target.checked), __self: this, __source: {fileName: _jsxFileName, lineNumber: 4581}} )
-                        , React.createElement('div', { style: { flex: 1 }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4582}}
-                          , React.createElement('div', { style: { fontSize: '12px', fontWeight: 600, color: 'var(--txt1)' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4583}}, rule.name)
-                          , React.createElement('div', { style: { fontSize: '10px', color: 'var(--txt2)', marginTop: '2px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4584}}, "Extract to variable: "
-                               , React.createElement('code', { style: { background: 'var(--bg3)', padding: '1px 4px', borderRadius: '2px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4585}}, rule.variable)
+                    React.createElement('div', { key: rule.id, style: { marginBottom: '12px', padding: '12px', background: 'var(--bg2)', border: '1px solid var(--brd)', borderRadius: '4px', opacity: rule.enabled ? 1 : 0.5 }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4585}}
+                      , React.createElement('div', { style: { display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4586}}
+                        , React.createElement('input', { type: "checkbox", checked: rule.enabled, onChange: e => toggleSessionRule(rule.id, e.target.checked), __self: this, __source: {fileName: _jsxFileName, lineNumber: 4587}} )
+                        , React.createElement('div', { style: { flex: 1 }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4588}}
+                          , React.createElement('div', { style: { fontSize: '12px', fontWeight: 600, color: 'var(--txt1)' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4589}}, rule.name)
+                          , React.createElement('div', { style: { fontSize: '10px', color: 'var(--txt2)', marginTop: '2px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4590}}, "Extract to variable: "
+                               , React.createElement('code', { style: { background: 'var(--bg3)', padding: '1px 4px', borderRadius: '2px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4591}}, rule.variable)
                           )
                         )
-                        , React.createElement('button', { className: "btn btn-sm btn-d"  , onClick: () => deleteSessionRule(rule.id), __self: this, __source: {fileName: _jsxFileName, lineNumber: 4588}}, "Delete")
+                        , React.createElement('button', { className: "btn btn-sm btn-d"  , onClick: () => deleteSessionRule(rule.id), __self: this, __source: {fileName: _jsxFileName, lineNumber: 4594}}, "Delete")
                       )
-                      , React.createElement('div', { style: { display: 'grid', gridTemplateColumns: 'auto 1fr', gap: '8px', fontSize: '10px', color: 'var(--txt2)' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4590}}
-                        , React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4591}}, "When:"), React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4591}}, rule.when)
-                        , React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4592}}, "Target:"), React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4592}}, rule.target, rule.target === 'headers' && rule.header ? ' (' + rule.header + ')' : '')
-                        , React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4593}}, "Regex:"), React.createElement('code', { style: { background: 'var(--bg3)', padding: '2px 4px', borderRadius: '2px', fontFamily: 'var(--font-mono)' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4593}}, rule.regex)
-                        , React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4594}}, "Group:"), React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4594}}, rule.group)
+                      , React.createElement('div', { style: { display: 'grid', gridTemplateColumns: 'auto 1fr', gap: '8px', fontSize: '10px', color: 'var(--txt2)' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4596}}
+                        , React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4597}}, "When:"), React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4597}}, rule.when)
+                        , React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4598}}, "Target:"), React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4598}}, rule.target, rule.target === 'headers' && rule.header ? ' (' + rule.header + ')' : '')
+                        , React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4599}}, "Regex:"), React.createElement('code', { style: { background: 'var(--bg3)', padding: '2px 4px', borderRadius: '2px', fontFamily: 'var(--font-mono)' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4599}}, rule.regex)
+                        , React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4600}}, "Group:"), React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4600}}, rule.group)
                       )
                     )
                   ))
                   , sessionRules.length === 0 && (
-                    React.createElement('div', { className: "empty", style: { padding: '30px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4599}}
-                      , React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4600}}, "No session rules configured"   )
+                    React.createElement('div', { className: "empty", style: { padding: '30px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4605}}
+                      , React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4606}}, "No session rules configured"   )
                     )
                   )
 
-                  , React.createElement('div', { style: { marginTop: '24px', padding: '16px', background: 'var(--bg2)', border: '1px solid var(--brd)', borderRadius: '4px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4604}}
-                    , React.createElement('div', { style: { fontSize: '12px', fontWeight: 600, marginBottom: '8px', color: 'var(--cyan)' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4605}}, "Usage")
-                    , React.createElement('div', { style: { fontSize: '11px', color: 'var(--txt2)', lineHeight: '1.6' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4606}}, "Session rules automatically extract values from requests/responses using regex patterns. Extracted values are stored as variables that can be used in Collections."
+                  , React.createElement('div', { style: { marginTop: '24px', padding: '16px', background: 'var(--bg2)', border: '1px solid var(--brd)', borderRadius: '4px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4610}}
+                    , React.createElement('div', { style: { fontSize: '12px', fontWeight: 600, marginBottom: '8px', color: 'var(--cyan)' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4611}}, "Usage")
+                    , React.createElement('div', { style: { fontSize: '11px', color: 'var(--txt2)', lineHeight: '1.6' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4612}}, "Session rules automatically extract values from requests/responses using regex patterns. Extracted values are stored as variables that can be used in Collections."
 
-                      , React.createElement('ul', { style: { marginTop: '8px', paddingLeft: '20px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4608}}
-                        , React.createElement('li', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4609}}, "Use capturing groups in regex: "     , React.createElement('code', { style: { background: 'var(--bg3)', padding: '1px 4px', borderRadius: '2px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4609}}, "session=([^;]+)"))
-                        , React.createElement('li', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4610}}, "Specify which group to extract (default is 1)"       )
-                        , React.createElement('li', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4611}}, "Target can be URL, specific header, or body content"        )
-                        , React.createElement('li', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4612}}, "Variables are automatically available in Collection requests as "        , '{{variable_name}}')
+                      , React.createElement('ul', { style: { marginTop: '8px', paddingLeft: '20px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4614}}
+                        , React.createElement('li', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4615}}, "Use capturing groups in regex: "     , React.createElement('code', { style: { background: 'var(--bg3)', padding: '1px 4px', borderRadius: '2px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4615}}, "session=([^;]+)"))
+                        , React.createElement('li', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4616}}, "Specify which group to extract (default is 1)"       )
+                        , React.createElement('li', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4617}}, "Target can be URL, specific header, or body content"        )
+                        , React.createElement('li', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4618}}, "Variables are automatically available in Collection requests as "        , '{{variable_name}}')
                       )
                     )
                   )
@@ -4620,25 +4626,25 @@ function Blackwire() {
         )
 
         , tab === 'chepy' && curPrj && (
-          React.createElement('div', { className: "chepy-cnt", ref: chepyCntRef, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4623}}
-            , React.createElement('div', { className: "det-tabs", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4624}}
-              , React.createElement('div', { className: 'det-tab' + (chepySubTab === 'cipher' ? ' act' : ''), onClick: () => setChepySubTab('cipher'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 4625}}, "Cipher")
-              , React.createElement('div', { className: 'det-tab' + (chepySubTab === 'jwt' ? ' act' : ''), onClick: () => setChepySubTab('jwt'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 4626}}, "JWT")
+          React.createElement('div', { className: "chepy-cnt", ref: chepyCntRef, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4629}}
+            , React.createElement('div', { className: "det-tabs", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4630}}
+              , React.createElement('div', { className: 'det-tab' + (chepySubTab === 'cipher' ? ' act' : ''), onClick: () => setChepySubTab('cipher'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 4631}}, "Cipher")
+              , React.createElement('div', { className: 'det-tab' + (chepySubTab === 'jwt' ? ' act' : ''), onClick: () => setChepySubTab('jwt'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 4632}}, "JWT")
             )
 
             , chepySubTab === 'cipher' && (
-              React.createElement(React.Fragment, {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4630}}
-                , React.createElement('div', { className: "chepy-col chepy-in-col" , style: { width: chepyInW + '%' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4631}}
-                  , React.createElement('div', { className: "pnl-hdr", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4632}}
-                    , React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4633}}, "Input")
-                    , React.createElement('button', { className: "btn btn-sm btn-s"  , onClick: () => setChepyIn(''), __self: this, __source: {fileName: _jsxFileName, lineNumber: 4634}}, "Clear")
+              React.createElement(React.Fragment, {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4636}}
+                , React.createElement('div', { className: "chepy-col chepy-in-col" , style: { width: chepyInW + '%' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4637}}
+                  , React.createElement('div', { className: "pnl-hdr", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4638}}
+                    , React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4639}}, "Input")
+                    , React.createElement('button', { className: "btn btn-sm btn-s"  , onClick: () => setChepyIn(''), __self: this, __source: {fileName: _jsxFileName, lineNumber: 4640}}, "Clear")
                   )
                   , React.createElement('textarea', {
                     className: "ed-ta",
                     style: { flex: 1 },
                     value: chepyIn,
                     onChange: e => setChepyIn(e.target.value),
-                    placeholder: "Paste or type input text here..."     , __self: this, __source: {fileName: _jsxFileName, lineNumber: 4636}}
+                    placeholder: "Paste or type input text here..."     , __self: this, __source: {fileName: _jsxFileName, lineNumber: 4642}}
                   )
                 )
 
@@ -4647,69 +4653,69 @@ function Blackwire() {
               if (!el) return;
               const dpct = (dx / el.offsetWidth) * 100;
               setChepyInW(prev => Math.max(15, Math.min(50, prev + dpct)));
-            }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4645}} )
+            }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4651}} )
 
-            , React.createElement('div', { className: "chepy-col chepy-recipe-col" , style: { width: chepyRecW + '%' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4652}}
-              , React.createElement('div', { className: "pnl-hdr", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4653}}
-                , React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4654}}, "Recipe")
-                , React.createElement('div', { style: { display: 'flex', gap: '6px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4655}}
-                  , React.createElement('button', { className: "btn btn-sm btn-d"  , onClick: clearChepyRecipe, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4656}}, "Clear")
-                  , React.createElement('button', { className: "btn btn-sm btn-p"  , onClick: bakeChepy, disabled: chepyBaking, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4657}}
+            , React.createElement('div', { className: "chepy-col chepy-recipe-col" , style: { width: chepyRecW + '%' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4658}}
+              , React.createElement('div', { className: "pnl-hdr", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4659}}
+                , React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4660}}, "Recipe")
+                , React.createElement('div', { style: { display: 'flex', gap: '6px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4661}}
+                  , React.createElement('button', { className: "btn btn-sm btn-d"  , onClick: clearChepyRecipe, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4662}}, "Clear")
+                  , React.createElement('button', { className: "btn btn-sm btn-p"  , onClick: bakeChepy, disabled: chepyBaking, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4663}}
                     , chepyBaking ? '...' : 'Bake'
                   )
                 )
               )
 
-              , React.createElement('div', { className: "chepy-add", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4663}}
+              , React.createElement('div', { className: "chepy-add", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4669}}
                 , React.createElement('select', { className: "sel", value: chepySelCat,
                   onChange: e => setChepySelCat(e.target.value),
-                  style: { margin: '8px', borderRadius: '4px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4664}}
+                  style: { margin: '8px', borderRadius: '4px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4670}}
                   , Object.keys(chepyCat).map(cat => (
-                    React.createElement('option', { key: cat, value: cat, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4668}}, cat)
+                    React.createElement('option', { key: cat, value: cat, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4674}}, cat)
                   ))
                 )
-                , React.createElement('div', { className: "chepy-ops-list", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4671}}
+                , React.createElement('div', { className: "chepy-ops-list", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4677}}
                   , (chepyCat[chepySelCat] || []).map(op => (
-                    React.createElement('div', { key: op.name, className: "chepy-avail-op", onClick: () => addChepyOp(op), __self: this, __source: {fileName: _jsxFileName, lineNumber: 4673}}
+                    React.createElement('div', { key: op.name, className: "chepy-avail-op", onClick: () => addChepyOp(op), __self: this, __source: {fileName: _jsxFileName, lineNumber: 4679}}
                       , op.label
                     )
                   ))
                 )
               )
 
-              , React.createElement('div', { className: "chepy-steps", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4680}}
+              , React.createElement('div', { className: "chepy-steps", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4686}}
                 , chepyOps.length === 0 && (
-                  React.createElement('div', { className: "empty", style: { padding: 20, fontSize: 11 }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4682}}
-                    , React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4683}}, "Click operations above to build a recipe"      )
+                  React.createElement('div', { className: "empty", style: { padding: 20, fontSize: 11 }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4688}}
+                    , React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4689}}, "Click operations above to build a recipe"      )
                   )
                 )
                 , chepyOps.map((op, i) => (
-                  React.createElement('div', { key: i, className: "chepy-step", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4687}}
-                    , React.createElement('div', { className: "chepy-step-hdr", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4688}}
-                      , React.createElement('span', { className: "chepy-step-num", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4689}}, i + 1)
-                      , React.createElement('span', { className: "chepy-step-name", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4690}}, op.label)
-                      , React.createElement('div', { className: "chepy-step-acts", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4691}}
-                        , React.createElement('button', { className: "btn btn-sm btn-s"  , onClick: () => moveChepyOp(i, -1), disabled: i === 0, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4692}}, "▲")
-                        , React.createElement('button', { className: "btn btn-sm btn-s"  , onClick: () => moveChepyOp(i, 1), disabled: i === chepyOps.length - 1, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4693}}, "▼")
-                        , React.createElement('button', { className: "btn btn-sm btn-d"  , onClick: () => removeChepyOp(i), __self: this, __source: {fileName: _jsxFileName, lineNumber: 4694}}, "✕")
+                  React.createElement('div', { key: i, className: "chepy-step", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4693}}
+                    , React.createElement('div', { className: "chepy-step-hdr", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4694}}
+                      , React.createElement('span', { className: "chepy-step-num", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4695}}, i + 1)
+                      , React.createElement('span', { className: "chepy-step-name", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4696}}, op.label)
+                      , React.createElement('div', { className: "chepy-step-acts", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4697}}
+                        , React.createElement('button', { className: "btn btn-sm btn-s"  , onClick: () => moveChepyOp(i, -1), disabled: i === 0, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4698}}, "▲")
+                        , React.createElement('button', { className: "btn btn-sm btn-s"  , onClick: () => moveChepyOp(i, 1), disabled: i === chepyOps.length - 1, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4699}}, "▼")
+                        , React.createElement('button', { className: "btn btn-sm btn-d"  , onClick: () => removeChepyOp(i), __self: this, __source: {fileName: _jsxFileName, lineNumber: 4700}}, "✕")
                       )
                     )
                     , op.params.length > 0 && (
-                      React.createElement('div', { className: "chepy-step-params", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4698}}
+                      React.createElement('div', { className: "chepy-step-params", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4704}}
                         , op.params.map(p => (
-                          React.createElement('div', { key: p.name, className: "chepy-param", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4700}}
-                            , React.createElement('label', { className: "chepy-param-lbl", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4701}}, p.label)
+                          React.createElement('div', { key: p.name, className: "chepy-param", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4706}}
+                            , React.createElement('label', { className: "chepy-param-lbl", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4707}}, p.label)
                             , p.type === 'select' ? (
                               React.createElement('select', { className: "sel", value: op.args[p.name] || p.default,
                                 onChange: e => updateChepyArg(i, p.name, e.target.value),
-                                style: { flex: 1, fontSize: '11px', padding: '5px 8px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4703}}
-                                , (p.options || []).map(o => React.createElement('option', { key: o, value: o, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4706}}, o))
+                                style: { flex: 1, fontSize: '11px', padding: '5px 8px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4709}}
+                                , (p.options || []).map(o => React.createElement('option', { key: o, value: o, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4712}}, o))
                               )
                             ) : (
                               React.createElement('input', { className: "inp", value: op.args[p.name] || '',
                                 onChange: e => updateChepyArg(i, p.name, e.target.value),
                                 placeholder: p.default || '',
-                                style: { flex: 1, fontSize: '11px', padding: '5px 8px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4709}} )
+                                style: { flex: 1, fontSize: '11px', padding: '5px 8px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4715}} )
                             )
                           )
                         ))
@@ -4725,36 +4731,36 @@ function Blackwire() {
               if (!el) return;
               const dpct = (dx / el.offsetWidth) * 100;
               setChepyRecW(prev => Math.max(15, Math.min(50, prev + dpct)));
-            }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4723}} )
+            }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4729}} )
 
-            , React.createElement('div', { className: "chepy-col chepy-out-col" , __self: this, __source: {fileName: _jsxFileName, lineNumber: 4730}}
-              , React.createElement('div', { className: "pnl-hdr", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4731}}
-                , React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4732}}, "Output")
+            , React.createElement('div', { className: "chepy-col chepy-out-col" , __self: this, __source: {fileName: _jsxFileName, lineNumber: 4736}}
+              , React.createElement('div', { className: "pnl-hdr", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4737}}
+                , React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4738}}, "Output")
                 , React.createElement('button', { className: "btn btn-sm btn-s"  ,
                   onClick: () => { navigator.clipboard.writeText(chepyOut); toast('Copied', 'success'); },
-                  disabled: !chepyOut, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4733}}, "Copy"
+                  disabled: !chepyOut, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4739}}, "Copy"
 
                 )
               )
               , chepyErr ? (
-                React.createElement('div', { className: "code", style: { color: 'var(--red)' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4740}}, chepyErr)
+                React.createElement('div', { className: "code", style: { color: 'var(--red)' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4746}}, chepyErr)
               ) : (
-                React.createElement('div', { className: "code", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4742}}, chepyOut || 'Output will appear here after baking')
+                React.createElement('div', { className: "code", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4748}}, chepyOut || 'Output will appear here after baking')
               )
             )
               )
             )
 
             , chepySubTab === 'jwt' && (
-              React.createElement('div', { className: "jwt-analyzer", style: { display: 'flex', flexDirection: 'column', flex: 1, padding: '20px', gap: '16px', overflow: 'auto' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4749}}
-                , React.createElement('div', { style: { display: 'flex', flexDirection: 'column', gap: '8px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4750}}
-                  , React.createElement('label', { style: { fontSize: '12px', fontWeight: 600, color: 'var(--txt1)' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4751}}, "JWT Token" )
+              React.createElement('div', { className: "jwt-analyzer", style: { display: 'flex', flexDirection: 'column', flex: 1, padding: '20px', gap: '16px', overflow: 'auto' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4755}}
+                , React.createElement('div', { style: { display: 'flex', flexDirection: 'column', gap: '8px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4756}}
+                  , React.createElement('label', { style: { fontSize: '12px', fontWeight: 600, color: 'var(--txt1)' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4757}}, "JWT Token" )
                   , React.createElement('textarea', {
                     className: "ed-ta",
                     style: { minHeight: '80px', fontFamily: 'var(--font-mono)', fontSize: '11px' },
                     value: jwtToken,
                     onChange: e => setJwtToken(e.target.value),
-                    placeholder: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4752}}
+                    placeholder: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4758}}
                   )
                   , React.createElement('button', {
                     className: "btn btn-p" ,
@@ -4769,44 +4775,44 @@ function Blackwire() {
                         toast('Invalid JWT token', 'error');
                       }
                     },
-                    disabled: !jwtToken, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4759}}
+                    disabled: !jwtToken, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4765}}
 , "Decode JWT"
 
                   )
                 )
 
-                , React.createElement('div', { style: { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4778}}
-                  , React.createElement('div', { style: { display: 'flex', flexDirection: 'column', gap: '8px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4779}}
-                    , React.createElement('label', { style: { fontSize: '12px', fontWeight: 600, color: 'var(--txt1)' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4780}}, "Header (JSON)" )
+                , React.createElement('div', { style: { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4784}}
+                  , React.createElement('div', { style: { display: 'flex', flexDirection: 'column', gap: '8px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4785}}
+                    , React.createElement('label', { style: { fontSize: '12px', fontWeight: 600, color: 'var(--txt1)' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4786}}, "Header (JSON)" )
                     , React.createElement('textarea', {
                       className: "ed-ta",
                       style: { minHeight: '120px', fontFamily: 'var(--font-mono)', fontSize: '11px' },
                       value: jwtHeader,
                       onChange: e => setJwtHeader(e.target.value),
-                      placeholder: "{\\n  \"alg\": \"HS256\",\\n  \"typ\": \"JWT\"\\n}"      , __self: this, __source: {fileName: _jsxFileName, lineNumber: 4781}}
+                      placeholder: "{\\n  \"alg\": \"HS256\",\\n  \"typ\": \"JWT\"\\n}"      , __self: this, __source: {fileName: _jsxFileName, lineNumber: 4787}}
                     )
                   )
 
-                  , React.createElement('div', { style: { display: 'flex', flexDirection: 'column', gap: '8px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4790}}
-                    , React.createElement('label', { style: { fontSize: '12px', fontWeight: 600, color: 'var(--txt1)' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4791}}, "Payload (JSON)" )
+                  , React.createElement('div', { style: { display: 'flex', flexDirection: 'column', gap: '8px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4796}}
+                    , React.createElement('label', { style: { fontSize: '12px', fontWeight: 600, color: 'var(--txt1)' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4797}}, "Payload (JSON)" )
                     , React.createElement('textarea', {
                       className: "ed-ta",
                       style: { minHeight: '120px', fontFamily: 'var(--font-mono)', fontSize: '11px' },
                       value: jwtPayload,
                       onChange: e => setJwtPayload(e.target.value),
-                      placeholder: "{\\n  \"sub\": \"1234567890\",\\n  \"name\": \"John Doe\",\\n  \"iat\": 1516239022\\n}"          , __self: this, __source: {fileName: _jsxFileName, lineNumber: 4792}}
+                      placeholder: "{\\n  \"sub\": \"1234567890\",\\n  \"name\": \"John Doe\",\\n  \"iat\": 1516239022\\n}"          , __self: this, __source: {fileName: _jsxFileName, lineNumber: 4798}}
                     )
                   )
                 )
 
-                , React.createElement('div', { style: { display: 'flex', flexDirection: 'column', gap: '8px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4802}}
-                  , React.createElement('label', { style: { fontSize: '12px', fontWeight: 600, color: 'var(--txt1)' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4803}}, "Signature")
+                , React.createElement('div', { style: { display: 'flex', flexDirection: 'column', gap: '8px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4808}}
+                  , React.createElement('label', { style: { fontSize: '12px', fontWeight: 600, color: 'var(--txt1)' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4809}}, "Signature")
                   , React.createElement('input', {
                     className: "inp",
                     style: { fontFamily: 'var(--font-mono)', fontSize: '11px' },
                     value: jwtSignature,
                     onChange: e => setJwtSignature(e.target.value),
-                    placeholder: "SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4804}}
+                    placeholder: "SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4810}}
                   )
                 )
 
@@ -4826,34 +4832,34 @@ function Blackwire() {
                     } catch (e) {
                       toast('Invalid JSON in header or payload', 'error');
                     }
-                  }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4813}}
+                  }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4819}}
 , "Encode JWT"
 
                 )
 
-                , React.createElement('div', { style: { marginTop: '20px', padding: '16px', background: 'var(--bg2)', border: '1px solid var(--brd)', borderRadius: '4px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4834}}
-                  , React.createElement('div', { style: { fontSize: '13px', fontWeight: 600, marginBottom: '12px', color: 'var(--cyan)' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4835}}, "Common JWT Attacks"  )
-                  , React.createElement('div', { style: { fontSize: '11px', color: 'var(--txt2)', lineHeight: '1.6', display: 'flex', flexDirection: 'column', gap: '12px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4836}}
-                    , React.createElement('div', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4837}}
-                      , React.createElement('div', { style: { fontWeight: 600, color: 'var(--txt1)', marginBottom: '4px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4838}}, "1. Algorithm Confusion (alg=none)"   )
-                      , React.createElement('div', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4839}}, "Change the \"alg\" field in the header to \"none\" and remove the signature. Some implementations don't verify signatures when alg is none."                     )
-                      , React.createElement('code', { style: { display: 'block', marginTop: '4px', padding: '6px', background: 'var(--bg3)', borderRadius: '2px', fontSize: '10px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4840}}, '{"alg": "none", "typ": "JWT"}')
+                , React.createElement('div', { style: { marginTop: '20px', padding: '16px', background: 'var(--bg2)', border: '1px solid var(--brd)', borderRadius: '4px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4840}}
+                  , React.createElement('div', { style: { fontSize: '13px', fontWeight: 600, marginBottom: '12px', color: 'var(--cyan)' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4841}}, "Common JWT Attacks"  )
+                  , React.createElement('div', { style: { fontSize: '11px', color: 'var(--txt2)', lineHeight: '1.6', display: 'flex', flexDirection: 'column', gap: '12px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4842}}
+                    , React.createElement('div', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4843}}
+                      , React.createElement('div', { style: { fontWeight: 600, color: 'var(--txt1)', marginBottom: '4px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4844}}, "1. Algorithm Confusion (alg=none)"   )
+                      , React.createElement('div', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4845}}, "Change the \"alg\" field in the header to \"none\" and remove the signature. Some implementations don't verify signatures when alg is none."                     )
+                      , React.createElement('code', { style: { display: 'block', marginTop: '4px', padding: '6px', background: 'var(--bg3)', borderRadius: '2px', fontSize: '10px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4846}}, '{"alg": "none", "typ": "JWT"}')
                     )
-                    , React.createElement('div', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4842}}
-                      , React.createElement('div', { style: { fontWeight: 600, color: 'var(--txt1)', marginBottom: '4px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4843}}, "2. Key Confusion Attack"   )
-                      , React.createElement('div', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4844}}, "Change \"alg\" from RS256 (asymmetric) to HS256 (symmetric). If the server uses the public key as HMAC secret, you can forge signatures."                     )
+                    , React.createElement('div', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4848}}
+                      , React.createElement('div', { style: { fontWeight: 600, color: 'var(--txt1)', marginBottom: '4px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4849}}, "2. Key Confusion Attack"   )
+                      , React.createElement('div', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4850}}, "Change \"alg\" from RS256 (asymmetric) to HS256 (symmetric). If the server uses the public key as HMAC secret, you can forge signatures."                     )
                     )
-                    , React.createElement('div', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4846}}
-                      , React.createElement('div', { style: { fontWeight: 600, color: 'var(--txt1)', marginBottom: '4px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4847}}, "3. Weak Secret Brute Force"    )
-                      , React.createElement('div', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4848}}, "If HS256/HS512 is used with a weak secret, the signature can be brute-forced offline. Use tools like hashcat or jwt_tool."                   )
+                    , React.createElement('div', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4852}}
+                      , React.createElement('div', { style: { fontWeight: 600, color: 'var(--txt1)', marginBottom: '4px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4853}}, "3. Weak Secret Brute Force"    )
+                      , React.createElement('div', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4854}}, "If HS256/HS512 is used with a weak secret, the signature can be brute-forced offline. Use tools like hashcat or jwt_tool."                   )
                     )
-                    , React.createElement('div', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4850}}
-                      , React.createElement('div', { style: { fontWeight: 600, color: 'var(--txt1)', marginBottom: '4px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4851}}, "4. JKU/X5U Header Injection"   )
-                      , React.createElement('div', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4852}}, "Add \"jku\" (JWK Set URL) or \"x5u\" (X.509 URL) headers pointing to attacker-controlled keys. If not validated, server may accept forged tokens."                     )
+                    , React.createElement('div', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4856}}
+                      , React.createElement('div', { style: { fontWeight: 600, color: 'var(--txt1)', marginBottom: '4px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4857}}, "4. JKU/X5U Header Injection"   )
+                      , React.createElement('div', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4858}}, "Add \"jku\" (JWK Set URL) or \"x5u\" (X.509 URL) headers pointing to attacker-controlled keys. If not validated, server may accept forged tokens."                     )
                     )
-                    , React.createElement('div', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4854}}
-                      , React.createElement('div', { style: { fontWeight: 600, color: 'var(--txt1)', marginBottom: '4px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4855}}, "5. Kid Header Injection"   )
-                      , React.createElement('div', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4856}}, "The \"kid\" (Key ID) parameter can sometimes be exploited for path traversal or SQL injection if used unsafely in key lookup."                    )
+                    , React.createElement('div', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4860}}
+                      , React.createElement('div', { style: { fontWeight: 600, color: 'var(--txt1)', marginBottom: '4px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4861}}, "5. Kid Header Injection"   )
+                      , React.createElement('div', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4862}}, "The \"kid\" (Key ID) parameter can sometimes be exploited for path traversal or SQL injection if used unsafely in key lookup."                    )
                     )
                   )
                 )
@@ -4863,44 +4869,44 @@ function Blackwire() {
         )
 
         , tab === 'sensitive' && curPrj && (
-          React.createElement('div', { className: "sens-cnt", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4866}}
-            , React.createElement('div', { className: "det-tabs", style: { justifyContent: 'flex-start', gap: 0 }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4867}}
-              , React.createElement('div', { className: 'det-tab' + (sensSubTab === 'logger' ? ' act' : ''), onClick: () => setSensSubTab('logger'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 4868}}, "Logger")
-              , React.createElement('div', { className: 'det-tab' + (sensSubTab === 'options' ? ' act' : ''), onClick: () => setSensSubTab('options'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 4869}}, "Options")
+          React.createElement('div', { className: "sens-cnt", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4872}}
+            , React.createElement('div', { className: "det-tabs", style: { justifyContent: 'flex-start', gap: 0 }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4873}}
+              , React.createElement('div', { className: 'det-tab' + (sensSubTab === 'logger' ? ' act' : ''), onClick: () => setSensSubTab('logger'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 4874}}, "Logger")
+              , React.createElement('div', { className: 'det-tab' + (sensSubTab === 'options' ? ' act' : ''), onClick: () => setSensSubTab('options'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 4875}}, "Options")
             )
 
             , sensSubTab === 'logger' && (
-              React.createElement(React.Fragment, {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4873}}
-                , React.createElement('div', { className: "sens-toolbar", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4874}}
-                  , React.createElement('button', { className: "btn btn-sm btn-g"  , onClick: runSensitiveScan, disabled: sensScanning || reqs.length === 0, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4875}}
+              React.createElement(React.Fragment, {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4879}}
+                , React.createElement('div', { className: "sens-toolbar", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4880}}
+                  , React.createElement('button', { className: "btn btn-sm btn-g"  , onClick: runSensitiveScan, disabled: sensScanning || reqs.length === 0, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4881}}
                     , sensScanning ? '...' : '\u25B6', " Scan"
                   )
-                  , React.createElement('button', { className: "btn btn-sm btn-d"  , onClick: stopSensitiveScan, disabled: !sensScanning, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4878}}
+                  , React.createElement('button', { className: "btn btn-sm btn-d"  , onClick: stopSensitiveScan, disabled: !sensScanning, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4884}}
                     , '\u25A0', " Stop"
                   )
-                  , React.createElement('button', { className: "btn btn-sm btn-s"  , onClick: () => { setSensResults([]); setSensSelResult(null); setSensSelDetail(null); setSensPct(0); }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4881}}, "Clear"
+                  , React.createElement('button', { className: "btn btn-sm btn-s"  , onClick: () => { setSensResults([]); setSensSelResult(null); setSensSelDetail(null); setSensPct(0); }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4887}}, "Clear"
 
                   )
-                  , React.createElement('div', { className: "sens-progress", style: { flex: 1 }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4884}}
-                    , React.createElement('div', { className: "sens-progress-bar", style: { width: sensPct + '%' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4885}} )
+                  , React.createElement('div', { className: "sens-progress", style: { flex: 1 }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4890}}
+                    , React.createElement('div', { className: "sens-progress-bar", style: { width: sensPct + '%' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4891}} )
                   )
-                  , React.createElement('span', { style: { fontSize: '10px', color: 'var(--txt2)', whiteSpace: 'nowrap' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4887}}
+                  , React.createElement('span', { style: { fontSize: '10px', color: 'var(--txt2)', whiteSpace: 'nowrap' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4893}}
                     , sensScanning ? sensPct + '%' : sensResults.length + ' findings'
                   )
                 )
 
-                , React.createElement('div', { className: "sens-filter-bar", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4892}}
+                , React.createElement('div', { className: "sens-filter-bar", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4898}}
                   , React.createElement('input', {
                     placeholder: "Filter results..." ,
                     value: sensFilter,
                     onChange: e => setSensFilter(e.target.value),
-                    style: { flex: 1, padding: '4px 8px', background: 'var(--bg3)', border: '1px solid var(--brd)', borderRadius: '4px', color: 'var(--txt)', fontSize: '11px', fontFamily: 'var(--font-mono)', outline: 'none' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4893}}
+                    style: { flex: 1, padding: '4px 8px', background: 'var(--bg3)', border: '1px solid var(--brd)', borderRadius: '4px', color: 'var(--txt)', fontSize: '11px', fontFamily: 'var(--font-mono)', outline: 'none' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4899}}
                   )
-                  , React.createElement('label', { style: { fontSize: '10px', color: 'var(--txt2)', display: 'flex', alignItems: 'center', gap: '4px', cursor: 'pointer' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4899}}
-                    , React.createElement('input', { type: "checkbox", checked: sensUnique, onChange: e => setSensUnique(e.target.checked), __self: this, __source: {fileName: _jsxFileName, lineNumber: 4900}} ), "Unique"
+                  , React.createElement('label', { style: { fontSize: '10px', color: 'var(--txt2)', display: 'flex', alignItems: 'center', gap: '4px', cursor: 'pointer' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4905}}
+                    , React.createElement('input', { type: "checkbox", checked: sensUnique, onChange: e => setSensUnique(e.target.checked), __self: this, __source: {fileName: _jsxFileName, lineNumber: 4906}} ), "Unique"
 
                   )
-                  , React.createElement('label', { style: { fontSize: '10px', color: 'var(--txt2)', display: 'flex', alignItems: 'center', gap: '4px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4903}}, "Entropy ≥"
+                  , React.createElement('label', { style: { fontSize: '10px', color: 'var(--txt2)', display: 'flex', alignItems: 'center', gap: '4px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4909}}, "Entropy ≥"
 
                     , React.createElement('input', {
                       type: "number",
@@ -4910,52 +4916,52 @@ function Blackwire() {
                       value: sensEntropyThreshold,
                       onChange: e => setSensEntropyThreshold(parseFloat(e.target.value) || 0),
                       style: { width: '50px', padding: '2px 4px', background: 'var(--bg3)', border: '1px solid var(--brd)', borderRadius: '4px', color: 'var(--txt)', fontSize: '10px', fontFamily: 'var(--font-mono)' },
-                      title: "Minimum entropy threshold to filter false positives (e.g., HTML tags). Default: 2.5"           , __self: this, __source: {fileName: _jsxFileName, lineNumber: 4905}}
+                      title: "Minimum entropy threshold to filter false positives (e.g., HTML tags). Default: 2.5"           , __self: this, __source: {fileName: _jsxFileName, lineNumber: 4911}}
                     )
                   )
-                  , React.createElement('span', { style: { fontSize: '10px', color: 'var(--txt3)' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4916}}
+                  , React.createElement('span', { style: { fontSize: '10px', color: 'var(--txt3)' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4922}}
                     , sensFiltered.length, sensFiltered.length !== sensResults.length ? ' / ' + sensResults.length : ''
                   )
                 )
 
-                , React.createElement('div', { className: "sens-results", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4921}}
-                  , React.createElement('div', { className: "sens-row sens-row-hdr" , __self: this, __source: {fileName: _jsxFileName, lineNumber: 4922}}
-                    , React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4923}}, "Category")
-                    , React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4924}}, "Match")
-                    , React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4925}}, "Pattern / URL"  )
+                , React.createElement('div', { className: "sens-results", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4927}}
+                  , React.createElement('div', { className: "sens-row sens-row-hdr" , __self: this, __source: {fileName: _jsxFileName, lineNumber: 4928}}
+                    , React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4929}}, "Category")
+                    , React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4930}}, "Match")
+                    , React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4931}}, "Pattern / URL"  )
                   )
                   , sensFiltered.length === 0 && !sensScanning && (
-                    React.createElement('div', { className: "empty", style: { padding: '40px 0' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4928}}
-                      , React.createElement('div', { className: "empty-i", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4929}}, sensResults.length === 0 ? '\uD83D\uDD0D' : '\uD83D\uDD0E')
-                      , React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4930}}, sensResults.length === 0 ? 'Click Scan to analyze captured traffic' : 'No results match your filter')
+                    React.createElement('div', { className: "empty", style: { padding: '40px 0' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4934}}
+                      , React.createElement('div', { className: "empty-i", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4935}}, sensResults.length === 0 ? '\uD83D\uDD0D' : '\uD83D\uDD0E')
+                      , React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4936}}, sensResults.length === 0 ? 'Click Scan to analyze captured traffic' : 'No results match your filter')
                     )
                   )
                   , sensFiltered.map((r, i) => (
-                    React.createElement('div', { key: i, className: 'sens-row' + (sensSelResult === r ? ' sel' : ''), onClick: () => loadSensDetail(r), __self: this, __source: {fileName: _jsxFileName, lineNumber: 4934}}
-                      , React.createElement('span', { className: "sens-cat", style: { background: (SENS_COLORS[r.category] || 'var(--txt3)') + '22', color: SENS_COLORS[r.category] || 'var(--txt3)' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4935}}
+                    React.createElement('div', { key: i, className: 'sens-row' + (sensSelResult === r ? ' sel' : ''), onClick: () => loadSensDetail(r), __self: this, __source: {fileName: _jsxFileName, lineNumber: 4940}}
+                      , React.createElement('span', { className: "sens-cat", style: { background: (SENS_COLORS[r.category] || 'var(--txt3)') + '22', color: SENS_COLORS[r.category] || 'var(--txt3)' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4941}}
                         , r.category
                       )
-                      , React.createElement('span', { className: "sens-match", title: r.match, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4938}}, r.match)
-                      , React.createElement('div', { style: { display: 'flex', flexDirection: 'column', gap: '2px', minWidth: 0 }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4939}}
-                        , React.createElement('span', { className: "sens-pname", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4940}}, r.patternName)
-                        , React.createElement('span', { className: "sens-purl", title: r.url, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4941}}, r.method, " " , r.url)
+                      , React.createElement('span', { className: "sens-match", title: r.match, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4944}}, r.match)
+                      , React.createElement('div', { style: { display: 'flex', flexDirection: 'column', gap: '2px', minWidth: 0 }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4945}}
+                        , React.createElement('span', { className: "sens-pname", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4946}}, r.patternName)
+                        , React.createElement('span', { className: "sens-purl", title: r.url, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4947}}, r.method, " " , r.url)
                       )
                     )
                   ))
                 )
 
                 , sensSelResult && (
-                  React.createElement('div', { className: "sens-detail", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4948}}
-                    , React.createElement('div', { className: "pnl-hdr", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4949}}
-                      , React.createElement('span', { style: { fontSize: '11px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4950}}
-                        , React.createElement('span', { className: "sens-cat", style: { background: (SENS_COLORS[sensSelResult.category] || 'var(--txt3)') + '22', color: SENS_COLORS[sensSelResult.category] || 'var(--txt3)', marginRight: '8px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4951}}
+                  React.createElement('div', { className: "sens-detail", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4954}}
+                    , React.createElement('div', { className: "pnl-hdr", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4955}}
+                      , React.createElement('span', { style: { fontSize: '11px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4956}}
+                        , React.createElement('span', { className: "sens-cat", style: { background: (SENS_COLORS[sensSelResult.category] || 'var(--txt3)') + '22', color: SENS_COLORS[sensSelResult.category] || 'var(--txt3)', marginRight: '8px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4957}}
                           , sensSelResult.category
                         )
-                        , sensSelResult.patternName, " — "  , React.createElement('span', { style: { color: 'var(--txt3)' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4954}}, sensSelResult.section)
+                        , sensSelResult.patternName, " — "  , React.createElement('span', { style: { color: 'var(--txt3)' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4960}}, sensSelResult.section)
                       )
-                      , React.createElement('button', { className: "btn btn-sm btn-s"  , onClick: () => { setSensSelResult(null); setSensSelDetail(null); }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4956}}, "Close")
+                      , React.createElement('button', { className: "btn btn-sm btn-s"  , onClick: () => { setSensSelResult(null); setSensSelDetail(null); }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4962}}, "Close")
                     )
-                    , React.createElement('div', { ref: sensDetailRef, style: { flex: 1, overflow: 'auto', padding: '10px', fontFamily: 'var(--font-mono)', fontSize: '11px', whiteSpace: 'pre-wrap', wordBreak: 'break-all' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4958}}
+                    , React.createElement('div', { ref: sensDetailRef, style: { flex: 1, overflow: 'auto', padding: '10px', fontFamily: 'var(--font-mono)', fontSize: '11px', whiteSpace: 'pre-wrap', wordBreak: 'break-all' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4964}}
                       , sensSelDetail ? (() => {
                         const secMap = {
                           reqUrl: sensSelDetail.url || '',
@@ -4975,7 +4981,7 @@ function Blackwire() {
                         }
                         const hl = highlightMatches(text, sensSelResult.match.replace(/\.\.\.$/, ''), false, 0);
                         return React.createElement('div', { dangerouslySetInnerHTML: { __html: hl.html } });
-                      })() : React.createElement('span', { style: { color: 'var(--txt3)' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4978}}, "Loading...")
+                      })() : React.createElement('span', { style: { color: 'var(--txt3)' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4984}}, "Loading...")
                     )
                   )
                 )
@@ -4983,24 +4989,24 @@ function Blackwire() {
             )
 
             , sensSubTab === 'options' && (
-              React.createElement('div', { style: { flex: 1, overflow: 'auto', padding: '16px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4986}}
-                , React.createElement('div', { className: "sens-opt-section", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4987}}
-                  , React.createElement('div', { style: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4988}}
-                    , React.createElement('span', { style: { fontWeight: 600, fontSize: '12px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4989}}, "Scanner Config" )
+              React.createElement('div', { style: { flex: 1, overflow: 'auto', padding: '16px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4992}}
+                , React.createElement('div', { className: "sens-opt-section", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4993}}
+                  , React.createElement('div', { style: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4994}}
+                    , React.createElement('span', { style: { fontWeight: 600, fontSize: '12px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4995}}, "Scanner Config" )
                   )
-                  , React.createElement('div', { style: { display: 'flex', gap: '16px', flexWrap: 'wrap', fontSize: '11px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4991}}
-                    , React.createElement('label', { style: { display: 'flex', alignItems: 'center', gap: '6px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4992}}, "Batch Size:"
+                  , React.createElement('div', { style: { display: 'flex', gap: '16px', flexWrap: 'wrap', fontSize: '11px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4997}}
+                    , React.createElement('label', { style: { display: 'flex', alignItems: 'center', gap: '6px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4998}}, "Batch Size:"
 
                       , React.createElement('input', { type: "number", min: "1", max: "20", value: sensBatch, onChange: e => setSensBatch(Math.max(1, parseInt(e.target.value) || 4)),
-                        style: { width: '50px', padding: '3px 6px', background: 'var(--bg3)', border: '1px solid var(--brd)', borderRadius: '4px', color: 'var(--txt)', fontSize: '11px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4994}} )
+                        style: { width: '50px', padding: '3px 6px', background: 'var(--bg3)', border: '1px solid var(--brd)', borderRadius: '4px', color: 'var(--txt)', fontSize: '11px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5000}} )
                     )
-                    , React.createElement('label', { style: { display: 'flex', alignItems: 'center', gap: '6px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4997}}, "Max Resp Size:"
+                    , React.createElement('label', { style: { display: 'flex', alignItems: 'center', gap: '6px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5003}}, "Max Resp Size:"
 
                       , React.createElement('input', { type: "number", min: "0", value: sensMaxSize, onChange: e => setSensMaxSize(parseInt(e.target.value) || 0),
-                        style: { width: '90px', padding: '3px 6px', background: 'var(--bg3)', border: '1px solid var(--brd)', borderRadius: '4px', color: 'var(--txt)', fontSize: '11px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 4999}} )
+                        style: { width: '90px', padding: '3px 6px', background: 'var(--bg3)', border: '1px solid var(--brd)', borderRadius: '4px', color: 'var(--txt)', fontSize: '11px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5005}} )
                     )
-                    , React.createElement('label', { style: { display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5002}}
-                      , React.createElement('input', { type: "checkbox", checked: sensScopeOnly, onChange: e => setSensScopeOnly(e.target.checked), __self: this, __source: {fileName: _jsxFileName, lineNumber: 5003}} ), "Scope only"
+                    , React.createElement('label', { style: { display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5008}}
+                      , React.createElement('input', { type: "checkbox", checked: sensScopeOnly, onChange: e => setSensScopeOnly(e.target.checked), __self: this, __source: {fileName: _jsxFileName, lineNumber: 5009}} ), "Scope only"
 
                     )
                   )
@@ -5012,12 +5018,12 @@ function Blackwire() {
                   { key: 'urls', label: 'URL Patterns', defaults: SENS_URLS },
                   { key: 'files', label: 'File Extension Patterns', defaults: SENS_FILES },
                 ].map(grp => (
-                  React.createElement('div', { key: grp.key, className: "sens-opt-section", __self: this, __source: {fileName: _jsxFileName, lineNumber: 5015}}
-                    , React.createElement('div', { style: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5016}}
-                      , React.createElement('span', { style: { fontWeight: 600, fontSize: '12px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5017}}, grp.label, " (" , sensPatterns[grp.key].filter(p => p.enabled).length, "/", sensPatterns[grp.key].length, ")")
-                      , React.createElement('div', { style: { display: 'flex', gap: '6px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5018}}
-                        , React.createElement('button', { className: "btn btn-sm btn-s"  , onClick: () => setSensPatterns(prev => ({ ...prev, [grp.key]: prev[grp.key].map(p => ({ ...p, enabled: true })) })), __self: this, __source: {fileName: _jsxFileName, lineNumber: 5019}}, "All")
-                        , React.createElement('button', { className: "btn btn-sm btn-s"  , onClick: () => setSensPatterns(prev => ({ ...prev, [grp.key]: prev[grp.key].map(p => ({ ...p, enabled: false })) })), __self: this, __source: {fileName: _jsxFileName, lineNumber: 5020}}, "None")
+                  React.createElement('div', { key: grp.key, className: "sens-opt-section", __self: this, __source: {fileName: _jsxFileName, lineNumber: 5021}}
+                    , React.createElement('div', { style: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5022}}
+                      , React.createElement('span', { style: { fontWeight: 600, fontSize: '12px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5023}}, grp.label, " (" , sensPatterns[grp.key].filter(p => p.enabled).length, "/", sensPatterns[grp.key].length, ")")
+                      , React.createElement('div', { style: { display: 'flex', gap: '6px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5024}}
+                        , React.createElement('button', { className: "btn btn-sm btn-s"  , onClick: () => setSensPatterns(prev => ({ ...prev, [grp.key]: prev[grp.key].map(p => ({ ...p, enabled: true })) })), __self: this, __source: {fileName: _jsxFileName, lineNumber: 5025}}, "All")
+                        , React.createElement('button', { className: "btn btn-sm btn-s"  , onClick: () => setSensPatterns(prev => ({ ...prev, [grp.key]: prev[grp.key].map(p => ({ ...p, enabled: false })) })), __self: this, __source: {fileName: _jsxFileName, lineNumber: 5026}}, "None")
                         , React.createElement('button', { className: "btn btn-sm btn-s"  , onClick: () => {
                           const name = prompt('Pattern name:');
                           if (!name) return;
@@ -5028,13 +5034,13 @@ function Blackwire() {
                             ...prev,
                             [grp.key]: [...prev[grp.key], { name, regex, category: category || 'Custom', sections: grp.key === 'files' ? ['reqUrl'] : ['respHeaders','respBody'], enabled: true }]
                           }));
-                        }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5021}}, "+ Add" )
-                        , React.createElement('button', { className: "btn btn-sm btn-s"  , onClick: () => setSensPatterns(prev => ({ ...prev, [grp.key]: grp.defaults.map(p => ({...p})) })), __self: this, __source: {fileName: _jsxFileName, lineNumber: 5032}}, "Reset")
+                        }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5027}}, "+ Add" )
+                        , React.createElement('button', { className: "btn btn-sm btn-s"  , onClick: () => setSensPatterns(prev => ({ ...prev, [grp.key]: grp.defaults.map(p => ({...p})) })), __self: this, __source: {fileName: _jsxFileName, lineNumber: 5038}}, "Reset")
                       )
                     )
-                    , React.createElement('div', { style: { maxHeight: '300px', overflow: 'auto' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5035}}
+                    , React.createElement('div', { style: { maxHeight: '300px', overflow: 'auto' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5041}}
                       , sensPatterns[grp.key].map((pat, pi) => (
-                        React.createElement('div', { key: pi, className: "sens-pat-row", __self: this, __source: {fileName: _jsxFileName, lineNumber: 5037}}
+                        React.createElement('div', { key: pi, className: "sens-pat-row", __self: this, __source: {fileName: _jsxFileName, lineNumber: 5043}}
                           , React.createElement('input', { type: "checkbox", checked: pat.enabled, onChange: e => {
                             const val = e.target.checked;
                             const gk = grp.key;
@@ -5043,16 +5049,16 @@ function Blackwire() {
                               ...prev,
                               [gk]: prev[gk].map((p, j) => j === idx ? { ...p, enabled: val } : p)
                             }));
-                          }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5038}} )
-                          , React.createElement('span', { style: { flex: '0 0 180px', fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }, title: pat.name, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5047}}, pat.name)
-                          , React.createElement('span', { style: { flex: 1, fontFamily: 'var(--font-mono)', color: 'var(--txt3)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontSize: '10px' }, title: pat.regex, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5048}}, pat.regex)
-                          , React.createElement('span', { className: "sens-section-badge", __self: this, __source: {fileName: _jsxFileName, lineNumber: 5049}}, pat.sections.join(', '))
+                          }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5044}} )
+                          , React.createElement('span', { style: { flex: '0 0 180px', fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }, title: pat.name, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5053}}, pat.name)
+                          , React.createElement('span', { style: { flex: 1, fontFamily: 'var(--font-mono)', color: 'var(--txt3)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontSize: '10px' }, title: pat.regex, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5054}}, pat.regex)
+                          , React.createElement('span', { className: "sens-section-badge", __self: this, __source: {fileName: _jsxFileName, lineNumber: 5055}}, pat.sections.join(', '))
                           , React.createElement('button', { className: "btn btn-sm btn-s"  , style: { padding: '1px 5px', fontSize: '9px' }, onClick: () => {
                             setSensPatterns(prev => {
                               const next = { ...prev, [grp.key]: prev[grp.key].filter((_, j) => j !== pi) };
                               return next;
                             });
-                          }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5050}}, '\u2715')
+                          }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5056}}, '\u2715')
                         )
                       ))
                     )
@@ -5064,52 +5070,52 @@ function Blackwire() {
         )
 
         , tab === 'intruder' && curPrj && (
-          React.createElement('div', { style: { display: 'flex', width: '100%', height: '100%' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5067}}
-            , React.createElement('div', { className: "rep-side", style: { width: '200px', minWidth: '160px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5068}}
-              , React.createElement('div', { className: "pnl-hdr", __self: this, __source: {fileName: _jsxFileName, lineNumber: 5069}}
-                , React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 5070}}, "Attacks")
-                , React.createElement('button', { className: "btn btn-sm btn-p"  , onClick: () => { setIntSelAttack(null); setIntMethod('GET'); setIntUrl(''); setIntHeaders(''); setIntBody(''); setIntResults([]); setIntDone(0); setIntTotal(0); setIntPct(0); setIntSelResult(null); setIntSubTab('positions'); }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5071}}, "+ New" )
+          React.createElement('div', { style: { display: 'flex', width: '100%', height: '100%' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5073}}
+            , React.createElement('div', { className: "rep-side", style: { width: '200px', minWidth: '160px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5074}}
+              , React.createElement('div', { className: "pnl-hdr", __self: this, __source: {fileName: _jsxFileName, lineNumber: 5075}}
+                , React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 5076}}, "Attacks")
+                , React.createElement('button', { className: "btn btn-sm btn-p"  , onClick: () => { setIntSelAttack(null); setIntMethod('GET'); setIntUrl(''); setIntHeaders(''); setIntBody(''); setIntResults([]); setIntDone(0); setIntTotal(0); setIntPct(0); setIntSelResult(null); setIntSubTab('positions'); }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5077}}, "+ New" )
               )
-              , React.createElement('div', { className: "rep-list", __self: this, __source: {fileName: _jsxFileName, lineNumber: 5073}}
+              , React.createElement('div', { className: "rep-list", __self: this, __source: {fileName: _jsxFileName, lineNumber: 5079}}
                 , intAttacks.map(a => (
-                  React.createElement('div', { key: a.id, className: 'rep-item' + (intSelAttack === a.id ? ' sel' : ''), onClick: () => loadIntAttack(a.id), __self: this, __source: {fileName: _jsxFileName, lineNumber: 5075}}
-                    , React.createElement('div', { style: { flex: 1, overflow: 'hidden' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5076}}
-                      , React.createElement('div', { style: { fontSize: 11, fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5077}}, a.name)
-                      , React.createElement('div', { style: { fontSize: 9, color: 'var(--txt3)' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5078}}, a.total, " results "  , '\u00b7', " " , a.created_at ? new Date(a.created_at).toLocaleDateString() : '')
+                  React.createElement('div', { key: a.id, className: 'rep-item' + (intSelAttack === a.id ? ' sel' : ''), onClick: () => loadIntAttack(a.id), __self: this, __source: {fileName: _jsxFileName, lineNumber: 5081}}
+                    , React.createElement('div', { style: { flex: 1, overflow: 'hidden' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5082}}
+                      , React.createElement('div', { style: { fontSize: 11, fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5083}}, a.name)
+                      , React.createElement('div', { style: { fontSize: 9, color: 'var(--txt3)' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5084}}, a.total, " results "  , '\u00b7', " " , a.created_at ? new Date(a.created_at).toLocaleDateString() : '')
                     )
                     , intSelAttack === a.id && (
-                      React.createElement('div', { style: { display: 'flex', gap: 2 }, onClick: e => e.stopPropagation(), __self: this, __source: {fileName: _jsxFileName, lineNumber: 5081}}
-                        , React.createElement('button', { className: "btn btn-sm btn-s"  , onClick: () => renameIntAttack(a.id), style: { padding: '2px 5px', fontSize: 10 }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5082}}, '\u270e')
-                        , React.createElement('button', { className: "btn btn-sm btn-d"  , onClick: () => deleteIntAttack(a.id), style: { padding: '2px 5px', fontSize: 10 }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5083}}, '\u2715')
+                      React.createElement('div', { style: { display: 'flex', gap: 2 }, onClick: e => e.stopPropagation(), __self: this, __source: {fileName: _jsxFileName, lineNumber: 5087}}
+                        , React.createElement('button', { className: "btn btn-sm btn-s"  , onClick: () => renameIntAttack(a.id), style: { padding: '2px 5px', fontSize: 10 }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5088}}, '\u270e')
+                        , React.createElement('button', { className: "btn btn-sm btn-d"  , onClick: () => deleteIntAttack(a.id), style: { padding: '2px 5px', fontSize: 10 }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5089}}, '\u2715')
                       )
                     )
                   )
                 ))
                 , intAttacks.length === 0 && (
-                  React.createElement('div', { style: { padding: 14, fontSize: 11, color: 'var(--txt3)', textAlign: 'center' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5089}}, "No saved attacks"  )
+                  React.createElement('div', { style: { padding: 14, fontSize: 11, color: 'var(--txt3)', textAlign: 'center' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5095}}, "No saved attacks"  )
                 )
               )
             )
-            , React.createElement('div', { className: "int-cnt", style: { flex: 1, minWidth: 0 }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5093}}
-            , React.createElement('div', { className: "det-tabs", style: { justifyContent: 'flex-start', gap: 0 }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5094}}
-              , React.createElement('div', { className: 'det-tab' + (intSubTab === 'positions' ? ' act' : ''), onClick: () => setIntSubTab('positions'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 5095}}, "Positions")
-              , React.createElement('div', { className: 'det-tab' + (intSubTab === 'payloads' ? ' act' : ''), onClick: () => setIntSubTab('payloads'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 5096}}, "Payloads")
-              , React.createElement('div', { className: 'det-tab' + (intSubTab === 'resource' ? ' act' : ''), onClick: () => setIntSubTab('resource'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 5097}}, "Resource Pool" )
-              , React.createElement('div', { className: 'det-tab' + (intSubTab === 'results' ? ' act' : ''), onClick: () => setIntSubTab('results'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 5098}}, "Results " , intResults.length > 0 ? '(' + intResults.length + ')' : '')
+            , React.createElement('div', { className: "int-cnt", style: { flex: 1, minWidth: 0 }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5099}}
+            , React.createElement('div', { className: "det-tabs", style: { justifyContent: 'flex-start', gap: 0 }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5100}}
+              , React.createElement('div', { className: 'det-tab' + (intSubTab === 'positions' ? ' act' : ''), onClick: () => setIntSubTab('positions'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 5101}}, "Positions")
+              , React.createElement('div', { className: 'det-tab' + (intSubTab === 'payloads' ? ' act' : ''), onClick: () => setIntSubTab('payloads'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 5102}}, "Payloads")
+              , React.createElement('div', { className: 'det-tab' + (intSubTab === 'resource' ? ' act' : ''), onClick: () => setIntSubTab('resource'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 5103}}, "Resource Pool" )
+              , React.createElement('div', { className: 'det-tab' + (intSubTab === 'results' ? ' act' : ''), onClick: () => setIntSubTab('results'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 5104}}, "Results " , intResults.length > 0 ? '(' + intResults.length + ')' : '')
             )
 
             , intSubTab === 'positions' && (
-              React.createElement('div', { className: "int-positions", __self: this, __source: {fileName: _jsxFileName, lineNumber: 5102}}
-                , React.createElement('div', { className: "int-section", __self: this, __source: {fileName: _jsxFileName, lineNumber: 5103}}
-                  , React.createElement('div', { style: { display: 'flex', alignItems: 'center', gap: 10, marginBottom: 10 }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5104}}
-                    , React.createElement('label', { style: { fontSize: 11, color: 'var(--txt2)' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5105}}, "Attack Type:" )
-                    , React.createElement('select', { className: "sel", value: intAttackType, onChange: e => setIntAttackType(e.target.value), style: { fontSize: 11, padding: '4px 8px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5106}}
-                      , React.createElement('option', { value: "targeted", __self: this, __source: {fileName: _jsxFileName, lineNumber: 5107}}, "Targeted")
-                      , React.createElement('option', { value: "broadcast", __self: this, __source: {fileName: _jsxFileName, lineNumber: 5108}}, "Broadcast")
-                      , React.createElement('option', { value: "parallel", __self: this, __source: {fileName: _jsxFileName, lineNumber: 5109}}, "Parallel")
-                      , React.createElement('option', { value: "matrix", __self: this, __source: {fileName: _jsxFileName, lineNumber: 5110}}, "Matrix")
+              React.createElement('div', { className: "int-positions", __self: this, __source: {fileName: _jsxFileName, lineNumber: 5108}}
+                , React.createElement('div', { className: "int-section", __self: this, __source: {fileName: _jsxFileName, lineNumber: 5109}}
+                  , React.createElement('div', { style: { display: 'flex', alignItems: 'center', gap: 10, marginBottom: 10 }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5110}}
+                    , React.createElement('label', { style: { fontSize: 11, color: 'var(--txt2)' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5111}}, "Attack Type:" )
+                    , React.createElement('select', { className: "sel", value: intAttackType, onChange: e => setIntAttackType(e.target.value), style: { fontSize: 11, padding: '4px 8px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5112}}
+                      , React.createElement('option', { value: "targeted", __self: this, __source: {fileName: _jsxFileName, lineNumber: 5113}}, "Targeted")
+                      , React.createElement('option', { value: "broadcast", __self: this, __source: {fileName: _jsxFileName, lineNumber: 5114}}, "Broadcast")
+                      , React.createElement('option', { value: "parallel", __self: this, __source: {fileName: _jsxFileName, lineNumber: 5115}}, "Parallel")
+                      , React.createElement('option', { value: "matrix", __self: this, __source: {fileName: _jsxFileName, lineNumber: 5116}}, "Matrix")
                     )
-                    , React.createElement('span', { style: { fontSize: 10, color: 'var(--txt3)', flex: 1 }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5112}}
+                    , React.createElement('span', { style: { fontSize: 10, color: 'var(--txt3)', flex: 1 }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5118}}
                       , intAttackType === 'targeted' && 'Tests each position one at a time with a single payload set'
                       , intAttackType === 'broadcast' && 'Same payload in all positions simultaneously'
                       , intAttackType === 'parallel' && 'Different payload per position, iterated in parallel (zip)'
@@ -5118,27 +5124,27 @@ function Blackwire() {
                   )
                 )
 
-                , React.createElement('div', { className: "int-section", __self: this, __source: {fileName: _jsxFileName, lineNumber: 5121}}
-                  , React.createElement('h4', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 5122}}, "Request")
-                  , React.createElement('div', { style: { display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5123}}
-                    , React.createElement('select', { className: "mth-sel", value: intMethod, onChange: e => setIntMethod(e.target.value), style: { fontSize: 11 }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5124}}
-                      , React.createElement('option', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 5125}}, "GET"), React.createElement('option', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 5125}}, "POST"), React.createElement('option', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 5125}}, "PUT"), React.createElement('option', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 5125}}, "PATCH"), React.createElement('option', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 5125}}, "DELETE"), React.createElement('option', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 5125}}, "HEAD"), React.createElement('option', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 5125}}, "OPTIONS")
+                , React.createElement('div', { className: "int-section", __self: this, __source: {fileName: _jsxFileName, lineNumber: 5127}}
+                  , React.createElement('h4', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 5128}}, "Request")
+                  , React.createElement('div', { style: { display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5129}}
+                    , React.createElement('select', { className: "mth-sel", value: intMethod, onChange: e => setIntMethod(e.target.value), style: { fontSize: 11 }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5130}}
+                      , React.createElement('option', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 5131}}, "GET"), React.createElement('option', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 5131}}, "POST"), React.createElement('option', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 5131}}, "PUT"), React.createElement('option', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 5131}}, "PATCH"), React.createElement('option', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 5131}}, "DELETE"), React.createElement('option', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 5131}}, "HEAD"), React.createElement('option', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 5131}}, "OPTIONS")
                     )
-                    , React.createElement('input', { className: "url-in", placeholder: "https://example.com/api/endpoint", value: intUrl, onChange: e => setIntUrl(e.target.value), style: { flex: 1 }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5127}} )
+                    , React.createElement('input', { className: "url-in", placeholder: "https://example.com/api/endpoint", value: intUrl, onChange: e => setIntUrl(e.target.value), style: { flex: 1 }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5133}} )
                   )
-                  , React.createElement('label', { style: { fontSize: 10, color: 'var(--txt3)', display: 'block', marginBottom: 4 }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5129}}, "Headers")
-                  , React.createElement('div', { className: "hdr-wrap", __self: this, __source: {fileName: _jsxFileName, lineNumber: 5130}}
-                    , React.createElement('pre', { className: "hdr-highlight int-editor" , 'aria-hidden': "true", dangerouslySetInnerHTML: { __html: (intHeaders ? colorizeHeaders(intHeaders) : '') + '\n' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5131}} )
+                  , React.createElement('label', { style: { fontSize: 10, color: 'var(--txt3)', display: 'block', marginBottom: 4 }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5135}}, "Headers")
+                  , React.createElement('div', { className: "hdr-wrap", __self: this, __source: {fileName: _jsxFileName, lineNumber: 5136}}
+                    , React.createElement('pre', { className: "hdr-highlight int-editor" , 'aria-hidden': "true", dangerouslySetInnerHTML: { __html: (intHeaders ? colorizeHeaders(intHeaders) : '') + '\n' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5137}} )
                     , React.createElement('textarea', { ref: intHeadersRef, className: "int-editor hdr-ta" , rows: 4, value: intHeaders, onChange: e => setIntHeaders(e.target.value),
-                      placeholder: 'Content-Type: application/json\nAuthorization: Bearer \u00a7token\u00a7', spellCheck: "false", __self: this, __source: {fileName: _jsxFileName, lineNumber: 5132}} )
+                      placeholder: 'Content-Type: application/json\nAuthorization: Bearer \u00a7token\u00a7', spellCheck: "false", __self: this, __source: {fileName: _jsxFileName, lineNumber: 5138}} )
                   )
-                  , React.createElement('label', { style: { fontSize: 10, color: 'var(--txt3)', display: 'block', marginBottom: 4, marginTop: 8 }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5135}}, "Body")
+                  , React.createElement('label', { style: { fontSize: 10, color: 'var(--txt3)', display: 'block', marginBottom: 4, marginTop: 8 }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5141}}, "Body")
                   , React.createElement('textarea', { ref: intBodyRef, className: "int-editor", rows: 6, value: intBody, onChange: e => setIntBody(e.target.value),
-                    placeholder: '{"username":"\u00a7user\u00a7","password":"\u00a7pass\u00a7"}', __self: this, __source: {fileName: _jsxFileName, lineNumber: 5136}} )
+                    placeholder: '{"username":"\u00a7user\u00a7","password":"\u00a7pass\u00a7"}', __self: this, __source: {fileName: _jsxFileName, lineNumber: 5142}} )
                 )
 
-                , React.createElement('div', { className: "int-section", __self: this, __source: {fileName: _jsxFileName, lineNumber: 5140}}
-                  , React.createElement('div', { style: { display: 'flex', alignItems: 'center', gap: 8 }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5141}}
+                , React.createElement('div', { className: "int-section", __self: this, __source: {fileName: _jsxFileName, lineNumber: 5146}}
+                  , React.createElement('div', { style: { display: 'flex', alignItems: 'center', gap: 8 }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5147}}
                     , React.createElement('button', { className: "btn btn-sm btn-p"  , onClick: () => {
                       const ref = intBodyRef.current || intHeadersRef.current;
                       if (!ref) return;
@@ -5150,18 +5156,18 @@ function Blackwire() {
                       const nv = val.substring(0, start) + '\u00a7' + selected + '\u00a7' + val.substring(end);
                       if (ref === intBodyRef.current) setIntBody(nv);
                       else setIntHeaders(nv);
-                    }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5142}}, '\u00a7', " Add "  , '\u00a7')
+                    }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5148}}, '\u00a7', " Add "  , '\u00a7')
                     , React.createElement('button', { className: "btn btn-sm btn-s"  , onClick: () => {
                       setIntUrl(intUrl.replace(/\u00a7[^\u00a7]*\u00a7/g, m => m.slice(1, -1)));
                       setIntHeaders(intHeaders.replace(/\u00a7[^\u00a7]*\u00a7/g, m => m.slice(1, -1)));
                       setIntBody(intBody.replace(/\u00a7[^\u00a7]*\u00a7/g, m => m.slice(1, -1)));
-                    }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5154}}, "Clear " , '\u00a7')
-                    , React.createElement('span', { style: { fontSize: 11, color: 'var(--txt2)' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5159}}, "Positions found: "  , React.createElement('strong', { style: { color: 'var(--orange)' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5159}}, intPositions.length))
+                    }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5160}}, "Clear " , '\u00a7')
+                    , React.createElement('span', { style: { fontSize: 11, color: 'var(--txt2)' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5165}}, "Positions found: "  , React.createElement('strong', { style: { color: 'var(--orange)' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5165}}, intPositions.length))
                   )
                   , intPositions.length > 0 && (
-                    React.createElement('div', { style: { display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 8 }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5162}}
+                    React.createElement('div', { style: { display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 8 }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5168}}
                       , intPositions.map((p, i) => (
-                        React.createElement('span', { key: i, className: "int-pos-tag", __self: this, __source: {fileName: _jsxFileName, lineNumber: 5164}}, "#", i + 1, ": " , p.name, " " , React.createElement('span', { style: { color: 'var(--txt3)', fontSize: 9 }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5164}}, "(", p.section, ")"))
+                        React.createElement('span', { key: i, className: "int-pos-tag", __self: this, __source: {fileName: _jsxFileName, lineNumber: 5170}}, "#", i + 1, ": " , p.name, " " , React.createElement('span', { style: { color: 'var(--txt3)', fontSize: 9 }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5170}}, "(", p.section, ")"))
                       ))
                     )
                   )
@@ -5170,20 +5176,20 @@ function Blackwire() {
             )
 
             , intSubTab === 'payloads' && (
-              React.createElement('div', { className: "int-payloads", __self: this, __source: {fileName: _jsxFileName, lineNumber: 5173}}
-                , React.createElement('div', { className: "int-section", __self: this, __source: {fileName: _jsxFileName, lineNumber: 5174}}
-                  , React.createElement('div', { style: { display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5175}}
-                    , React.createElement('label', { style: { fontSize: 11, color: 'var(--txt2)' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5176}}, "Payload Set:" )
-                    , React.createElement('select', { className: "sel", value: intSelPayloadSet, onChange: e => setIntSelPayloadSet(Number(e.target.value)), style: { fontSize: 11, padding: '4px 8px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5177}}
+              React.createElement('div', { className: "int-payloads", __self: this, __source: {fileName: _jsxFileName, lineNumber: 5179}}
+                , React.createElement('div', { className: "int-section", __self: this, __source: {fileName: _jsxFileName, lineNumber: 5180}}
+                  , React.createElement('div', { style: { display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5181}}
+                    , React.createElement('label', { style: { fontSize: 11, color: 'var(--txt2)' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5182}}, "Payload Set:" )
+                    , React.createElement('select', { className: "sel", value: intSelPayloadSet, onChange: e => setIntSelPayloadSet(Number(e.target.value)), style: { fontSize: 11, padding: '4px 8px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5183}}
                       , intPositions.map((p, i) => (
-                        React.createElement('option', { key: i, value: i, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5179}}, "Position #" , i + 1, ": " , p.name)
+                        React.createElement('option', { key: i, value: i, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5185}}, "Position #" , i + 1, ": " , p.name)
                       ))
                     )
                   )
                   , intPositions.length === 0 && (
-                    React.createElement('div', { className: "empty", style: { padding: 30 }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5184}}
-                      , React.createElement('div', { className: "empty-i", __self: this, __source: {fileName: _jsxFileName, lineNumber: 5185}}, '\u00a7')
-                      , React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 5186}}, "Add position markers in the Positions tab first"       )
+                    React.createElement('div', { className: "empty", style: { padding: 30 }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5190}}
+                      , React.createElement('div', { className: "empty-i", __self: this, __source: {fileName: _jsxFileName, lineNumber: 5191}}, '\u00a7')
+                      , React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 5192}}, "Add position markers in the Positions tab first"       )
                     )
                   )
                   , intPositions.length > 0 && (() => {
@@ -5268,65 +5274,65 @@ function Blackwire() {
             )
 
             , intSubTab === 'resource' && (
-              React.createElement('div', { className: "int-resource", __self: this, __source: {fileName: _jsxFileName, lineNumber: 5271}}
-                , React.createElement('div', { className: "int-section", __self: this, __source: {fileName: _jsxFileName, lineNumber: 5272}}
-                  , React.createElement('h4', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 5273}}, "Throttle Settings" )
-                  , React.createElement('div', { style: { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5274}}
-                    , React.createElement('label', { style: { fontSize: 11, color: 'var(--txt2)' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5275}}, "Concurrent Requests (1-50):"
+              React.createElement('div', { className: "int-resource", __self: this, __source: {fileName: _jsxFileName, lineNumber: 5277}}
+                , React.createElement('div', { className: "int-section", __self: this, __source: {fileName: _jsxFileName, lineNumber: 5278}}
+                  , React.createElement('h4', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 5279}}, "Throttle Settings" )
+                  , React.createElement('div', { style: { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5280}}
+                    , React.createElement('label', { style: { fontSize: 11, color: 'var(--txt2)' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5281}}, "Concurrent Requests (1-50):"
                       , React.createElement('input', { type: "number", className: "int-editor", style: { marginTop: 4, padding: 6, minHeight: 'auto' },
-                        value: intConcurrency, onChange: e => setIntConcurrency(Math.max(1, Math.min(50, Number(e.target.value) || 1))), min: 1, max: 50, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5276}} )
+                        value: intConcurrency, onChange: e => setIntConcurrency(Math.max(1, Math.min(50, Number(e.target.value) || 1))), min: 1, max: 50, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5282}} )
                     )
-                    , React.createElement('label', { style: { fontSize: 11, color: 'var(--txt2)' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5279}}, "Fixed Delay Between Batches (ms):"
+                    , React.createElement('label', { style: { fontSize: 11, color: 'var(--txt2)' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5285}}, "Fixed Delay Between Batches (ms):"
                       , React.createElement('input', { type: "number", className: "int-editor", style: { marginTop: 4, padding: 6, minHeight: 'auto' },
-                        value: intDelay, onChange: e => setIntDelay(Math.max(0, Number(e.target.value) || 0)), min: 0, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5280}} )
+                        value: intDelay, onChange: e => setIntDelay(Math.max(0, Number(e.target.value) || 0)), min: 0, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5286}} )
                     )
                   )
-                  , React.createElement('div', { style: { marginTop: 10 }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5284}}
-                    , React.createElement('label', { style: { fontSize: 11, display: 'flex', alignItems: 'center', gap: 6 }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5285}}
-                      , React.createElement('input', { type: "checkbox", checked: intRandomDelay, onChange: e => setIntRandomDelay(e.target.checked), __self: this, __source: {fileName: _jsxFileName, lineNumber: 5286}} ), "Random delay instead"
+                  , React.createElement('div', { style: { marginTop: 10 }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5290}}
+                    , React.createElement('label', { style: { fontSize: 11, display: 'flex', alignItems: 'center', gap: 6 }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5291}}
+                      , React.createElement('input', { type: "checkbox", checked: intRandomDelay, onChange: e => setIntRandomDelay(e.target.checked), __self: this, __source: {fileName: _jsxFileName, lineNumber: 5292}} ), "Random delay instead"
 
                     )
                     , intRandomDelay && (
-                      React.createElement('div', { style: { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginTop: 8, marginLeft: 20 }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5290}}
-                        , React.createElement('label', { style: { fontSize: 10, color: 'var(--txt3)' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5291}}, "Min (ms):"
+                      React.createElement('div', { style: { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginTop: 8, marginLeft: 20 }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5296}}
+                        , React.createElement('label', { style: { fontSize: 10, color: 'var(--txt3)' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5297}}, "Min (ms):"
                           , React.createElement('input', { type: "number", className: "int-editor", style: { marginTop: 4, padding: 6, minHeight: 'auto' },
-                            value: intDelayMin, onChange: e => setIntDelayMin(Number(e.target.value) || 0), __self: this, __source: {fileName: _jsxFileName, lineNumber: 5292}} )
+                            value: intDelayMin, onChange: e => setIntDelayMin(Number(e.target.value) || 0), __self: this, __source: {fileName: _jsxFileName, lineNumber: 5298}} )
                         )
-                        , React.createElement('label', { style: { fontSize: 10, color: 'var(--txt3)' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5295}}, "Max (ms):"
+                        , React.createElement('label', { style: { fontSize: 10, color: 'var(--txt3)' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5301}}, "Max (ms):"
                           , React.createElement('input', { type: "number", className: "int-editor", style: { marginTop: 4, padding: 6, minHeight: 'auto' },
-                            value: intDelayMax, onChange: e => setIntDelayMax(Number(e.target.value) || 0), __self: this, __source: {fileName: _jsxFileName, lineNumber: 5296}} )
+                            value: intDelayMax, onChange: e => setIntDelayMax(Number(e.target.value) || 0), __self: this, __source: {fileName: _jsxFileName, lineNumber: 5302}} )
                         )
                       )
                     )
                   )
                 )
 
-                , React.createElement('div', { className: "int-section", __self: this, __source: {fileName: _jsxFileName, lineNumber: 5304}}
-                  , React.createElement('h4', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 5305}}, "Connection Settings" )
-                  , React.createElement('div', { style: { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5306}}
-                    , React.createElement('label', { style: { fontSize: 11, color: 'var(--txt2)' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5307}}, "Request Timeout (seconds):"
+                , React.createElement('div', { className: "int-section", __self: this, __source: {fileName: _jsxFileName, lineNumber: 5310}}
+                  , React.createElement('h4', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 5311}}, "Connection Settings" )
+                  , React.createElement('div', { style: { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5312}}
+                    , React.createElement('label', { style: { fontSize: 11, color: 'var(--txt2)' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5313}}, "Request Timeout (seconds):"
                       , React.createElement('input', { type: "number", className: "int-editor", style: { marginTop: 4, padding: 6, minHeight: 'auto' },
-                        value: intTimeout, onChange: e => setIntTimeout(Math.max(1, Number(e.target.value) || 30)), min: 1, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5308}} )
+                        value: intTimeout, onChange: e => setIntTimeout(Math.max(1, Number(e.target.value) || 30)), min: 1, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5314}} )
                     )
-                    , React.createElement('label', { style: { fontSize: 11, color: 'var(--txt2)' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5311}}, "Max Retries on Error:"
+                    , React.createElement('label', { style: { fontSize: 11, color: 'var(--txt2)' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5317}}, "Max Retries on Error:"
                       , React.createElement('input', { type: "number", className: "int-editor", style: { marginTop: 4, padding: 6, minHeight: 'auto' },
-                        value: intMaxRetries, onChange: e => setIntMaxRetries(Math.max(0, Number(e.target.value) || 0)), min: 0, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5312}} )
+                        value: intMaxRetries, onChange: e => setIntMaxRetries(Math.max(0, Number(e.target.value) || 0)), min: 0, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5318}} )
                     )
                   )
-                  , React.createElement('label', { style: { fontSize: 11, display: 'flex', alignItems: 'center', gap: 6, marginTop: 10 }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5316}}
-                    , React.createElement('input', { type: "checkbox", checked: intFollowRedirects, onChange: e => setIntFollowRedirects(e.target.checked), __self: this, __source: {fileName: _jsxFileName, lineNumber: 5317}} ), "Follow redirects"
+                  , React.createElement('label', { style: { fontSize: 11, display: 'flex', alignItems: 'center', gap: 6, marginTop: 10 }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5322}}
+                    , React.createElement('input', { type: "checkbox", checked: intFollowRedirects, onChange: e => setIntFollowRedirects(e.target.checked), __self: this, __source: {fileName: _jsxFileName, lineNumber: 5323}} ), "Follow redirects"
 
                   )
                 )
 
-                , React.createElement('div', { className: "int-section", __self: this, __source: {fileName: _jsxFileName, lineNumber: 5322}}
-                  , React.createElement('h4', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 5323}}, "Attack Preview" )
-                  , React.createElement('div', { style: { fontSize: 11, color: 'var(--txt2)', lineHeight: 1.8 }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5324}}
-                    , React.createElement('div', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 5325}}, "Attack type: "  , React.createElement('strong', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 5325}}, intAttackType.replace('_', ' ')))
-                    , React.createElement('div', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 5326}}, "Positions: " , React.createElement('strong', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 5326}}, intPositions.length))
-                    , React.createElement('div', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 5327}}, "Total requests: "  , React.createElement('strong', { style: { color: 'var(--cyan)' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5327}}, intComputeTotal().toLocaleString()))
+                , React.createElement('div', { className: "int-section", __self: this, __source: {fileName: _jsxFileName, lineNumber: 5328}}
+                  , React.createElement('h4', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 5329}}, "Attack Preview" )
+                  , React.createElement('div', { style: { fontSize: 11, color: 'var(--txt2)', lineHeight: 1.8 }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5330}}
+                    , React.createElement('div', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 5331}}, "Attack type: "  , React.createElement('strong', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 5331}}, intAttackType.replace('_', ' ')))
+                    , React.createElement('div', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 5332}}, "Positions: " , React.createElement('strong', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 5332}}, intPositions.length))
+                    , React.createElement('div', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 5333}}, "Total requests: "  , React.createElement('strong', { style: { color: 'var(--cyan)' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5333}}, intComputeTotal().toLocaleString()))
                     , intComputeTotal() > 0 && intConcurrency > 0 && (
-                      React.createElement('div', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 5329}}, "Estimated time: "  , React.createElement('strong', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 5329}}, "~", (() => {
+                      React.createElement('div', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 5335}}, "Estimated time: "  , React.createElement('strong', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 5335}}, "~", (() => {
                         const total = intComputeTotal();
                         const batches = Math.ceil(total / intConcurrency);
                         const avgDelay = intRandomDelay ? (intDelayMin + intDelayMax) / 2 : intDelay;
@@ -5342,77 +5348,77 @@ function Blackwire() {
             )
 
             , intSubTab === 'results' && (
-              React.createElement('div', { className: "int-results-cnt", __self: this, __source: {fileName: _jsxFileName, lineNumber: 5345}}
-                , React.createElement('div', { className: "sens-toolbar", __self: this, __source: {fileName: _jsxFileName, lineNumber: 5346}}
-                  , React.createElement('button', { className: "btn btn-sm btn-p"  , onClick: runIntruderAttack, disabled: intRunning || intPositions.length === 0, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5347}}, '\u25b6', " Start Attack"  )
-                  , React.createElement('button', { className: "btn btn-sm btn-d"  , onClick: stopIntruderAttack, disabled: !intRunning, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5348}}, '\u25a0', " Stop" )
-                  , React.createElement('button', { className: "btn btn-sm btn-s"  , onClick: () => { setIntResults([]); setIntDone(0); setIntPct(0); setIntSelResult(null); }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5349}}, "Clear")
-                  , React.createElement('div', { className: "int-progress", style: { flex: 1, marginLeft: 8, marginRight: 8 }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5350}}
-                    , React.createElement('div', { className: "int-progress-bar", style: { width: intPct + '%' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5351}} )
+              React.createElement('div', { className: "int-results-cnt", __self: this, __source: {fileName: _jsxFileName, lineNumber: 5351}}
+                , React.createElement('div', { className: "sens-toolbar", __self: this, __source: {fileName: _jsxFileName, lineNumber: 5352}}
+                  , React.createElement('button', { className: "btn btn-sm btn-p"  , onClick: runIntruderAttack, disabled: intRunning || intPositions.length === 0, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5353}}, '\u25b6', " Start Attack"  )
+                  , React.createElement('button', { className: "btn btn-sm btn-d"  , onClick: stopIntruderAttack, disabled: !intRunning, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5354}}, '\u25a0', " Stop" )
+                  , React.createElement('button', { className: "btn btn-sm btn-s"  , onClick: () => { setIntResults([]); setIntDone(0); setIntPct(0); setIntSelResult(null); }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5355}}, "Clear")
+                  , React.createElement('div', { className: "int-progress", style: { flex: 1, marginLeft: 8, marginRight: 8 }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5356}}
+                    , React.createElement('div', { className: "int-progress-bar", style: { width: intPct + '%' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5357}} )
                   )
-                  , React.createElement('span', { style: { fontSize: 10, color: 'var(--txt3)', whiteSpace: 'nowrap' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5353}}, intPct, "%")
+                  , React.createElement('span', { style: { fontSize: 10, color: 'var(--txt3)', whiteSpace: 'nowrap' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5359}}, intPct, "%")
                 )
-                , React.createElement('div', { className: "int-stats", style: { padding: '4px 14px', background: 'var(--bg2)', borderBottom: '1px solid var(--brd)' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5355}}
-                  , React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 5356}}, intDone, "/", intTotal, " requests" )
-                  , intStartTime && intDone > 0 && React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 5357}}, (intDone / ((Date.now() - intStartTime) / 1000)).toFixed(1), " req/s" )
-                  , intStartTime && React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 5358}}, "Elapsed: " , Math.round((Date.now() - intStartTime) / 1000), "s")
-                  , React.createElement('div', { style: { flex: 1 }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5359}} )
+                , React.createElement('div', { className: "int-stats", style: { padding: '4px 14px', background: 'var(--bg2)', borderBottom: '1px solid var(--brd)' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5361}}
+                  , React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 5362}}, intDone, "/", intTotal, " requests" )
+                  , intStartTime && intDone > 0 && React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 5363}}, (intDone / ((Date.now() - intStartTime) / 1000)).toFixed(1), " req/s" )
+                  , intStartTime && React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 5364}}, "Elapsed: " , Math.round((Date.now() - intStartTime) / 1000), "s")
+                  , React.createElement('div', { style: { flex: 1 }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5365}} )
                   , React.createElement('input', { className: "int-editor", style: { minHeight: 'auto', padding: '3px 8px', width: 180, resize: 'none', fontSize: 10 },
-                    placeholder: "Filter results..." , value: intFilter, onChange: e => setIntFilter(e.target.value), __self: this, __source: {fileName: _jsxFileName, lineNumber: 5360}} )
+                    placeholder: "Filter results..." , value: intFilter, onChange: e => setIntFilter(e.target.value), __self: this, __source: {fileName: _jsxFileName, lineNumber: 5366}} )
                 )
-                , React.createElement('div', { className: "int-results", __self: this, __source: {fileName: _jsxFileName, lineNumber: 5363}}
+                , React.createElement('div', { className: "int-results", __self: this, __source: {fileName: _jsxFileName, lineNumber: 5369}}
                   , React.createElement('div', { className: "int-row int-row-hdr" , onClick: e => {
                     const col = e.target.dataset.col;
                     if (!col) return;
                     setIntSortCol(col);
                     setIntSortDir(prev => intSortCol === col ? (prev === 'asc' ? 'desc' : 'asc') : 'asc');
-                  }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5364}}
-                    , React.createElement('span', { 'data-col': "#", __self: this, __source: {fileName: _jsxFileName, lineNumber: 5370}}, "# " , intSortCol === '#' ? (intSortDir === 'asc' ? '\u25b2' : '\u25bc') : '')
-                    , React.createElement('span', { 'data-col': "payload", __self: this, __source: {fileName: _jsxFileName, lineNumber: 5371}}, "Payload " , intSortCol === 'payload' ? (intSortDir === 'asc' ? '\u25b2' : '\u25bc') : '')
-                    , React.createElement('span', { 'data-col': "status", __self: this, __source: {fileName: _jsxFileName, lineNumber: 5372}}, "Status " , intSortCol === 'status' ? (intSortDir === 'asc' ? '\u25b2' : '\u25bc') : '')
-                    , React.createElement('span', { 'data-col': "length", __self: this, __source: {fileName: _jsxFileName, lineNumber: 5373}}, "Length " , intSortCol === 'length' ? (intSortDir === 'asc' ? '\u25b2' : '\u25bc') : '')
-                    , React.createElement('span', { 'data-col': "time", __self: this, __source: {fileName: _jsxFileName, lineNumber: 5374}}, "Time " , intSortCol === 'time' ? (intSortDir === 'asc' ? '\u25b2' : '\u25bc') : '')
-                    , React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 5375}}, "Error")
+                  }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5370}}
+                    , React.createElement('span', { 'data-col': "#", __self: this, __source: {fileName: _jsxFileName, lineNumber: 5376}}, "# " , intSortCol === '#' ? (intSortDir === 'asc' ? '\u25b2' : '\u25bc') : '')
+                    , React.createElement('span', { 'data-col': "payload", __self: this, __source: {fileName: _jsxFileName, lineNumber: 5377}}, "Payload " , intSortCol === 'payload' ? (intSortDir === 'asc' ? '\u25b2' : '\u25bc') : '')
+                    , React.createElement('span', { 'data-col': "status", __self: this, __source: {fileName: _jsxFileName, lineNumber: 5378}}, "Status " , intSortCol === 'status' ? (intSortDir === 'asc' ? '\u25b2' : '\u25bc') : '')
+                    , React.createElement('span', { 'data-col': "length", __self: this, __source: {fileName: _jsxFileName, lineNumber: 5379}}, "Length " , intSortCol === 'length' ? (intSortDir === 'asc' ? '\u25b2' : '\u25bc') : '')
+                    , React.createElement('span', { 'data-col': "time", __self: this, __source: {fileName: _jsxFileName, lineNumber: 5380}}, "Time " , intSortCol === 'time' ? (intSortDir === 'asc' ? '\u25b2' : '\u25bc') : '')
+                    , React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 5381}}, "Error")
                   )
                   , intSorted.map(r => (
                     React.createElement('div', { key: r.num, className: 'int-row' + (intSelResult && intSelResult.num === r.num ? ' sel' : ''),
-                      onClick: () => setIntSelResult(prev => prev && prev.num === r.num ? null : r), __self: this, __source: {fileName: _jsxFileName, lineNumber: 5378}}
-                      , React.createElement('span', { style: { color: 'var(--txt3)' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5380}}, r.num)
-                      , React.createElement('span', { className: "int-payload-txt", title: r.payload, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5381}}, r.payload)
-                      , React.createElement('span', { className: 'int-status s' + String(r.status).charAt(0), __self: this, __source: {fileName: _jsxFileName, lineNumber: 5382}}, r.status || '-')
-                      , React.createElement('span', { style: { fontFamily: 'var(--font-mono)', fontSize: 10 }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5383}}, r.length > 0 ? r.length.toLocaleString() : '-')
-                      , React.createElement('span', { style: { fontFamily: 'var(--font-mono)', fontSize: 10 }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5384}}, r.time > 0 ? r.time + 'ms' : '-')
-                      , React.createElement('span', { style: { color: 'var(--red)', fontSize: 10, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }, title: r.error, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5385}}, r.error)
+                      onClick: () => setIntSelResult(prev => prev && prev.num === r.num ? null : r), __self: this, __source: {fileName: _jsxFileName, lineNumber: 5384}}
+                      , React.createElement('span', { style: { color: 'var(--txt3)' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5386}}, r.num)
+                      , React.createElement('span', { className: "int-payload-txt", title: r.payload, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5387}}, r.payload)
+                      , React.createElement('span', { className: 'int-status s' + String(r.status).charAt(0), __self: this, __source: {fileName: _jsxFileName, lineNumber: 5388}}, r.status || '-')
+                      , React.createElement('span', { style: { fontFamily: 'var(--font-mono)', fontSize: 10 }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5389}}, r.length > 0 ? r.length.toLocaleString() : '-')
+                      , React.createElement('span', { style: { fontFamily: 'var(--font-mono)', fontSize: 10 }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5390}}, r.time > 0 ? r.time + 'ms' : '-')
+                      , React.createElement('span', { style: { color: 'var(--red)', fontSize: 10, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }, title: r.error, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5391}}, r.error)
                     )
                   ))
                   , intResults.length === 0 && !intRunning && (
-                    React.createElement('div', { className: "empty", style: { padding: 40 }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5389}}
-                      , React.createElement('div', { className: "empty-i", __self: this, __source: {fileName: _jsxFileName, lineNumber: 5390}}, '\u26a1')
-                      , React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 5391}}, "Click \"Start Attack\" to begin"    )
+                    React.createElement('div', { className: "empty", style: { padding: 40 }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5395}}
+                      , React.createElement('div', { className: "empty-i", __self: this, __source: {fileName: _jsxFileName, lineNumber: 5396}}, '\u26a1')
+                      , React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 5397}}, "Click \"Start Attack\" to begin"    )
                     )
                   )
                 )
                 , intSelResult && (
-                  React.createElement('div', { className: "int-detail", __self: this, __source: {fileName: _jsxFileName, lineNumber: 5396}}
-                    , React.createElement('div', { className: "det-tabs", style: { justifyContent: 'flex-start', gap: 0, flexShrink: 0 }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5397}}
-                      , React.createElement('div', { className: "det-tab act" , style: { fontSize: 10 }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5398}}, "Request / Response #"   , intSelResult.num)
-                      , React.createElement('div', { style: { flex: 1 }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5399}} )
-                      , React.createElement('button', { className: "btn btn-sm btn-s"  , style: { margin: '2px 6px', fontSize: 9 }, onClick: () => toRep(intSelResult.request), __self: this, __source: {fileName: _jsxFileName, lineNumber: 5400}}, "Send to Repeater"  )
-                      , React.createElement('button', { className: "btn btn-sm btn-s"  , style: { margin: '2px 6px', fontSize: 9, padding: '2px 6px' }, onClick: () => setIntSelResult(null), __self: this, __source: {fileName: _jsxFileName, lineNumber: 5401}}, '\u2715')
+                  React.createElement('div', { className: "int-detail", __self: this, __source: {fileName: _jsxFileName, lineNumber: 5402}}
+                    , React.createElement('div', { className: "det-tabs", style: { justifyContent: 'flex-start', gap: 0, flexShrink: 0 }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5403}}
+                      , React.createElement('div', { className: "det-tab act" , style: { fontSize: 10 }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5404}}, "Request / Response #"   , intSelResult.num)
+                      , React.createElement('div', { style: { flex: 1 }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5405}} )
+                      , React.createElement('button', { className: "btn btn-sm btn-s"  , style: { margin: '2px 6px', fontSize: 9 }, onClick: () => toRep(intSelResult.request), __self: this, __source: {fileName: _jsxFileName, lineNumber: 5406}}, "Send to Repeater"  )
+                      , React.createElement('button', { className: "btn btn-sm btn-s"  , style: { margin: '2px 6px', fontSize: 9, padding: '2px 6px' }, onClick: () => setIntSelResult(null), __self: this, __source: {fileName: _jsxFileName, lineNumber: 5407}}, '\u2715')
                     )
-                    , React.createElement('div', { style: { display: 'flex', flex: 1, overflow: 'hidden' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5403}}
-                      , React.createElement('div', { style: { flex: 1, overflow: 'auto', padding: 10, borderRight: '1px solid var(--brd)' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5404}}
-                        , React.createElement('div', { style: { fontSize: 10, fontWeight: 600, color: 'var(--cyan)', marginBottom: 6 }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5405}}, "Request")
+                    , React.createElement('div', { style: { display: 'flex', flex: 1, overflow: 'hidden' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5409}}
+                      , React.createElement('div', { style: { flex: 1, overflow: 'auto', padding: 10, borderRight: '1px solid var(--brd)' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5410}}
+                        , React.createElement('div', { style: { fontSize: 10, fontWeight: 600, color: 'var(--cyan)', marginBottom: 6 }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5411}}, "Request")
                         , React.createElement('pre', { style: { fontFamily: 'var(--font-mono)', fontSize: 11, whiteSpace: 'pre-wrap', wordBreak: 'break-all', color: 'var(--txt)', margin: 0 },
-                          dangerouslySetInnerHTML: { __html: escapeHtml(intSelResult.request.method + ' ' + intSelResult.request.url) + '\n' + fmtHHtml(intSelResult.request.headers, intSelResult.request.url) + (intSelResult.request.body ? '\n\n' + escapeHtml(intSelResult.request.body) : '') }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5406}} )
+                          dangerouslySetInnerHTML: { __html: escapeHtml(intSelResult.request.method + ' ' + intSelResult.request.url) + '\n' + fmtHHtml(intSelResult.request.headers, intSelResult.request.url) + (intSelResult.request.body ? '\n\n' + escapeHtml(intSelResult.request.body) : '') }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5412}} )
                       )
-                      , React.createElement('div', { style: { flex: 1, overflow: 'auto', padding: 10 }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5409}}
-                        , React.createElement('div', { style: { fontSize: 10, fontWeight: 600, color: 'var(--green)', marginBottom: 6 }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5410}}, "Response")
+                      , React.createElement('div', { style: { flex: 1, overflow: 'auto', padding: 10 }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5415}}
+                        , React.createElement('div', { style: { fontSize: 10, fontWeight: 600, color: 'var(--green)', marginBottom: 6 }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5416}}, "Response")
                         , intSelResult.response.error ? (
-                          React.createElement('div', { style: { color: 'var(--red)', fontSize: 11 }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5412}}, intSelResult.response.error)
+                          React.createElement('div', { style: { color: 'var(--red)', fontSize: 11 }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5418}}, intSelResult.response.error)
                         ) : (
                           React.createElement('pre', { style: { fontFamily: 'var(--font-mono)', fontSize: 11, whiteSpace: 'pre-wrap', wordBreak: 'break-all', color: 'var(--txt)', margin: 0 },
-                            dangerouslySetInnerHTML: { __html: escapeHtml('HTTP ' + intSelResult.response.status_code + ' (' + intSelResult.time + 'ms, ' + intSelResult.length + ' bytes)') + '\n' + fmtHHtml(intSelResult.response.headers) + (intSelResult.response.body ? '\n\n' + escapeHtml(intSelResult.response.body) : '') }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5414}} )
+                            dangerouslySetInnerHTML: { __html: escapeHtml('HTTP ' + intSelResult.response.status_code + ' (' + intSelResult.time + 'ms, ' + intSelResult.length + ' bytes)') + '\n' + fmtHHtml(intSelResult.response.headers) + (intSelResult.response.body ? '\n\n' + escapeHtml(intSelResult.response.body) : '') }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5420}} )
                         )
                       )
                     )
@@ -5425,43 +5431,43 @@ function Blackwire() {
         )
 
         , tab === 'compare' && curPrj && (
-          React.createElement('div', { style: { display: 'flex', flexDirection: 'column', width: '100%', height: '100%' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5428}}
-            , React.createElement('div', { className: "det-tabs", style: { justifyContent: 'flex-start', gap: 0 }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5429}}
-              , React.createElement('div', { className: 'det-tab' + (cmpView === 'request' ? ' act' : ''), onClick: () => setCmpView('request'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 5430}}, "Request")
-              , React.createElement('div', { className: 'det-tab' + (cmpView === 'response' ? ' act' : ''), onClick: () => setCmpView('response'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 5431}}, "Response")
-              , React.createElement('div', { style: { flex: 1 }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5432}} )
-              , React.createElement('button', { className: "btn btn-sm btn-s"  , style: { margin: '4px 10px' }, onClick: () => { setCmpA(null); setCmpB(null); }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5433}}, "Clear All" )
+          React.createElement('div', { style: { display: 'flex', flexDirection: 'column', width: '100%', height: '100%' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5434}}
+            , React.createElement('div', { className: "det-tabs", style: { justifyContent: 'flex-start', gap: 0 }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5435}}
+              , React.createElement('div', { className: 'det-tab' + (cmpView === 'request' ? ' act' : ''), onClick: () => setCmpView('request'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 5436}}, "Request")
+              , React.createElement('div', { className: 'det-tab' + (cmpView === 'response' ? ' act' : ''), onClick: () => setCmpView('response'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 5437}}, "Response")
+              , React.createElement('div', { style: { flex: 1 }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5438}} )
+              , React.createElement('button', { className: "btn btn-sm btn-s"  , style: { margin: '4px 10px' }, onClick: () => { setCmpA(null); setCmpB(null); }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5439}}, "Clear All" )
             )
             , !cmpA && !cmpB ? (
-              React.createElement('div', { className: "empty", __self: this, __source: {fileName: _jsxFileName, lineNumber: 5436}}
-                , React.createElement('div', { className: "empty-i", __self: this, __source: {fileName: _jsxFileName, lineNumber: 5437}}, "↔")
-                , React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 5438}}, "Right-click a request and choose \"Send to Compare (A/B)\""        )
+              React.createElement('div', { className: "empty", __self: this, __source: {fileName: _jsxFileName, lineNumber: 5442}}
+                , React.createElement('div', { className: "empty-i", __self: this, __source: {fileName: _jsxFileName, lineNumber: 5443}}, "↔")
+                , React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 5444}}, "Right-click a request and choose \"Send to Compare (A/B)\""        )
               )
             ) : (
-              React.createElement('div', { className: "cmp-wrap", __self: this, __source: {fileName: _jsxFileName, lineNumber: 5441}}
-                , React.createElement('div', { className: "cmp-side", __self: this, __source: {fileName: _jsxFileName, lineNumber: 5442}}
-                  , React.createElement('div', { className: "pnl-hdr", __self: this, __source: {fileName: _jsxFileName, lineNumber: 5443}}
-                    , React.createElement('span', { style: { fontWeight: 600, color: 'var(--red)' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5444}}, "A " , cmpA ? React.createElement('span', { style: { fontWeight: 400, color: 'var(--txt2)' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5444}}, cmpA.method, " " , cmpA.url) : '(empty)')
-                    , React.createElement('button', { className: "btn btn-sm btn-s"  , onClick: () => setCmpA(null), __self: this, __source: {fileName: _jsxFileName, lineNumber: 5445}}, "Clear")
+              React.createElement('div', { className: "cmp-wrap", __self: this, __source: {fileName: _jsxFileName, lineNumber: 5447}}
+                , React.createElement('div', { className: "cmp-side", __self: this, __source: {fileName: _jsxFileName, lineNumber: 5448}}
+                  , React.createElement('div', { className: "pnl-hdr", __self: this, __source: {fileName: _jsxFileName, lineNumber: 5449}}
+                    , React.createElement('span', { style: { fontWeight: 600, color: 'var(--red)' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5450}}, "A " , cmpA ? React.createElement('span', { style: { fontWeight: 400, color: 'var(--txt2)' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5450}}, cmpA.method, " " , cmpA.url) : '(empty)')
+                    , React.createElement('button', { className: "btn btn-sm btn-s"  , onClick: () => setCmpA(null), __self: this, __source: {fileName: _jsxFileName, lineNumber: 5451}}, "Clear")
                   )
-                  , React.createElement('div', { className: "cmp-body", __self: this, __source: {fileName: _jsxFileName, lineNumber: 5447}}
+                  , React.createElement('div', { className: "cmp-body", __self: this, __source: {fileName: _jsxFileName, lineNumber: 5453}}
                     , cmpDiff.map((d, i) => {
                       const txt = d.type === 'added' ? null : (_nullishCoalesce(d.lineA, () => ( '')));
                       return React.createElement('div', { key: i, className: 'cmp-line ' + (d.type === 'equal' ? 'cmp-eq' : d.type === 'removed' ? 'cmp-rem' : 'cmp-blank'),
-                        dangerouslySetInnerHTML: { __html: txt == null ? '\u00A0' : colorizeHeaders(txt) }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5450}} );
+                        dangerouslySetInnerHTML: { __html: txt == null ? '\u00A0' : colorizeHeaders(txt) }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5456}} );
                     })
                   )
                 )
-                , React.createElement('div', { className: "cmp-side", __self: this, __source: {fileName: _jsxFileName, lineNumber: 5455}}
-                  , React.createElement('div', { className: "pnl-hdr", __self: this, __source: {fileName: _jsxFileName, lineNumber: 5456}}
-                    , React.createElement('span', { style: { fontWeight: 600, color: 'var(--green)' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5457}}, "B " , cmpB ? React.createElement('span', { style: { fontWeight: 400, color: 'var(--txt2)' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5457}}, cmpB.method, " " , cmpB.url) : '(empty)')
-                    , React.createElement('button', { className: "btn btn-sm btn-s"  , onClick: () => setCmpB(null), __self: this, __source: {fileName: _jsxFileName, lineNumber: 5458}}, "Clear")
+                , React.createElement('div', { className: "cmp-side", __self: this, __source: {fileName: _jsxFileName, lineNumber: 5461}}
+                  , React.createElement('div', { className: "pnl-hdr", __self: this, __source: {fileName: _jsxFileName, lineNumber: 5462}}
+                    , React.createElement('span', { style: { fontWeight: 600, color: 'var(--green)' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5463}}, "B " , cmpB ? React.createElement('span', { style: { fontWeight: 400, color: 'var(--txt2)' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5463}}, cmpB.method, " " , cmpB.url) : '(empty)')
+                    , React.createElement('button', { className: "btn btn-sm btn-s"  , onClick: () => setCmpB(null), __self: this, __source: {fileName: _jsxFileName, lineNumber: 5464}}, "Clear")
                   )
-                  , React.createElement('div', { className: "cmp-body", __self: this, __source: {fileName: _jsxFileName, lineNumber: 5460}}
+                  , React.createElement('div', { className: "cmp-body", __self: this, __source: {fileName: _jsxFileName, lineNumber: 5466}}
                     , cmpDiff.map((d, i) => {
                       const txt = d.type === 'removed' ? null : (_nullishCoalesce(d.lineB, () => ( '')));
                       return React.createElement('div', { key: i, className: 'cmp-line ' + (d.type === 'equal' ? 'cmp-eq' : d.type === 'added' ? 'cmp-add' : 'cmp-blank'),
-                        dangerouslySetInnerHTML: { __html: txt == null ? '\u00A0' : colorizeHeaders(txt) }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5463}} );
+                        dangerouslySetInnerHTML: { __html: txt == null ? '\u00A0' : colorizeHeaders(txt) }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5469}} );
                     })
                   )
                 )
@@ -5471,93 +5477,98 @@ function Blackwire() {
         )
       )
 
-      , React.createElement('div', { className: "toast-c", __self: this, __source: {fileName: _jsxFileName, lineNumber: 5474}}
+      , React.createElement('div', { className: "toast-c", __self: this, __source: {fileName: _jsxFileName, lineNumber: 5480}}
         , toasts.map(t => (
-          React.createElement('div', { key: t.id, className: 'toast ' + t.type, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5476}}, t.message)
+          React.createElement('div', { key: t.id, className: 'toast ' + t.type, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5482}}, t.message)
         ))
       )
 
       , contextMenu && (
-        React.createElement('div', { ref: ctxMenuRef, className: "context-menu", style: { left: contextMenu.x, top: contextMenu.y }, onClick: e => e.stopPropagation(), __self: this, __source: {fileName: _jsxFileName, lineNumber: 5481}}
+        React.createElement('div', { ref: ctxMenuRef, className: "context-menu", style: { left: contextMenu.x, top: contextMenu.y }, onClick: e => e.stopPropagation(), __self: this, __source: {fileName: _jsxFileName, lineNumber: 5487}}
           , (_optionalChain([contextMenu, 'access', _81 => _81.normalized, 'optionalAccess', _82 => _82.body]) || contextMenu.source === 'selection') && (
-            React.createElement('div', { className: "context-menu-item", onClick: () => handleContextAction('send-to-cipher'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 5483}}, "Send to Cipher"
+            React.createElement('div', { className: "context-menu-item", onClick: () => handleContextAction('send-to-cipher'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 5489}}, "Send to Cipher"
 
             )
           )
           , contextMenu.source !== 'websocket' && (
-            React.createElement('div', { className: "context-menu-item", onClick: () => handleContextAction('repeater'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 5488}}, "Send to Repeater"
+            React.createElement('div', { className: "context-menu-item", onClick: () => handleContextAction('repeater'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 5494}}, "Send to Repeater"
 
             )
           )
           , contextMenu.source !== 'websocket' && (
-            React.createElement('div', { className: "context-menu-item", onClick: () => handleContextAction('intruder'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 5493}}, "Send to Intruder"
+            React.createElement('div', { className: "context-menu-item", onClick: () => handleContextAction('intruder'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 5499}}, "Send to Intruder"
 
             )
           )
-          , React.createElement('div', { className: "context-menu-item", onClick: () => handleContextAction('add-to-collection'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 5497}}, "Add to Collection"
+          , React.createElement('div', { className: "context-menu-item", onClick: () => handleContextAction('add-to-collection'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 5503}}, "Add to Collection"
 
           )
           , contextMenu.source !== 'websocket' && contextMenu.source !== 'selection' && (
-            React.createElement(React.Fragment, {__self: this, __source: {fileName: _jsxFileName, lineNumber: 5501}}
-              , React.createElement('div', { className: "context-menu-item", onClick: () => handleContextAction('compare-a'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 5502}}, "Send to Compare (A)"
+            React.createElement(React.Fragment, {__self: this, __source: {fileName: _jsxFileName, lineNumber: 5507}}
+              , React.createElement('div', { className: "context-menu-item", onClick: () => handleContextAction('compare-a'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 5508}}, "Send to Compare (A)"
 
               )
-              , React.createElement('div', { className: "context-menu-item", onClick: () => handleContextAction('compare-b'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 5505}}, "Send to Compare (B)"
+              , React.createElement('div', { className: "context-menu-item", onClick: () => handleContextAction('compare-b'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 5511}}, "Send to Compare (B)"
 
               )
             )
           )
-          , React.createElement('div', { className: "context-menu-divider", __self: this, __source: {fileName: _jsxFileName, lineNumber: 5510}} )
-          , React.createElement('div', { className: "context-menu-item", onClick: () => handleContextAction('copy-url'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 5511}}, "Copy URL"
+          , React.createElement('div', { className: "context-menu-divider", __self: this, __source: {fileName: _jsxFileName, lineNumber: 5516}} )
+          , React.createElement('div', { className: "context-menu-item", onClick: () => handleContextAction('copy-url'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 5517}}, "Copy URL"
 
           )
           , contextMenu.source !== 'websocket' && (
-            React.createElement('div', { className: "context-menu-item", onClick: () => handleContextAction('copy-curl'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 5515}}, "Copy as cURL"
+            React.createElement('div', { className: "context-menu-item", onClick: () => handleContextAction('copy-curl'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 5521}}, "Copy as cURL"
 
             )
           )
-          , React.createElement('div', { className: "context-menu-item", onClick: () => handleContextAction('copy-body'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 5519}}, "Copy Body"
+          , React.createElement('div', { className: "context-menu-item", onClick: () => handleContextAction('copy-body'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 5525}}, "Copy Body"
 
           )
           , contextMenu.source !== 'websocket' && contextMenu.source !== 'selection' && _optionalChain([contextMenu, 'access', _83 => _83.normalized, 'optionalAccess', _84 => _84.body]) && (
-            React.createElement('div', { className: "context-menu-item", onClick: () => handleContextAction('download-body'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 5523}}, "Download Body"
+            React.createElement('div', { className: "context-menu-item", onClick: () => handleContextAction('download-body'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 5529}}, "Download Body"
 
             )
           )
           , contextMenu.source !== 'websocket' && contextMenu.source !== 'selection' && (
-            React.createElement('div', { className: "context-menu-item", onClick: () => handleContextAction('replay-browser'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 5528}}, "Replay in Browser"
+            React.createElement('div', { className: "context-menu-item", onClick: () => handleContextAction('replay-browser'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 5534}}, "Replay in Browser"
+
+            )
+          )
+          , contextMenu.source !== 'websocket' && contextMenu.source !== 'selection' && (
+            React.createElement('div', { className: "context-menu-item", onClick: () => handleContextAction('render-browser'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 5539}}, "Render in Browser"
 
             )
           )
           , _optionalChain([contextMenu, 'access', _85 => _85.normalized, 'optionalAccess', _86 => _86.url]) && (
-            React.createElement(React.Fragment, {__self: this, __source: {fileName: _jsxFileName, lineNumber: 5533}}
-              , React.createElement('div', { className: "context-menu-divider", __self: this, __source: {fileName: _jsxFileName, lineNumber: 5534}} )
-              , React.createElement('div', { className: "context-menu-item", onClick: () => handleContextAction('scope-include'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 5535}}, "Add host to Scope"
+            React.createElement(React.Fragment, {__self: this, __source: {fileName: _jsxFileName, lineNumber: 5544}}
+              , React.createElement('div', { className: "context-menu-divider", __self: this, __source: {fileName: _jsxFileName, lineNumber: 5545}} )
+              , React.createElement('div', { className: "context-menu-item", onClick: () => handleContextAction('scope-include'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 5546}}, "Add host to Scope"
 
               )
-              , React.createElement('div', { className: "context-menu-item", onClick: () => handleContextAction('scope-exclude'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 5538}}, "Exclude host to Scope"
+              , React.createElement('div', { className: "context-menu-item", onClick: () => handleContextAction('scope-exclude'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 5549}}, "Exclude host to Scope"
 
               )
             )
           )
           , contextMenu.source === 'history' && (
-            React.createElement(React.Fragment, {__self: this, __source: {fileName: _jsxFileName, lineNumber: 5544}}
-              , React.createElement('div', { className: "context-menu-divider", __self: this, __source: {fileName: _jsxFileName, lineNumber: 5545}} )
-              , React.createElement('div', { className: "context-menu-item", onClick: () => handleContextAction('favorite'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 5546}}
+            React.createElement(React.Fragment, {__self: this, __source: {fileName: _jsxFileName, lineNumber: 5555}}
+              , React.createElement('div', { className: "context-menu-divider", __self: this, __source: {fileName: _jsxFileName, lineNumber: 5556}} )
+              , React.createElement('div', { className: "context-menu-item", onClick: () => handleContextAction('favorite'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 5557}}
                 , contextMenu.request.saved ? 'Unmark' : 'Mark', " as Favorite"
               )
-              , React.createElement('div', { className: "context-menu-item", onClick: () => handleContextAction('delete'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 5549}}, "Delete"
+              , React.createElement('div', { className: "context-menu-item", onClick: () => handleContextAction('delete'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 5560}}, "Delete"
 
               )
             )
           )
           , contextMenu.source === 'repeater' && (
-            React.createElement(React.Fragment, {__self: this, __source: {fileName: _jsxFileName, lineNumber: 5555}}
-              , React.createElement('div', { className: "context-menu-divider", __self: this, __source: {fileName: _jsxFileName, lineNumber: 5556}} )
-              , React.createElement('div', { className: "context-menu-item", onClick: () => handleContextAction('rename'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 5557}}, "Rename"
+            React.createElement(React.Fragment, {__self: this, __source: {fileName: _jsxFileName, lineNumber: 5566}}
+              , React.createElement('div', { className: "context-menu-divider", __self: this, __source: {fileName: _jsxFileName, lineNumber: 5567}} )
+              , React.createElement('div', { className: "context-menu-item", onClick: () => handleContextAction('rename'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 5568}}, "Rename"
 
               )
-              , React.createElement('div', { className: "context-menu-item", onClick: () => handleContextAction('delete'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 5560}}, "Delete"
+              , React.createElement('div', { className: "context-menu-item", onClick: () => handleContextAction('delete'), __self: this, __source: {fileName: _jsxFileName, lineNumber: 5571}}, "Delete"
 
               )
             )
@@ -5567,56 +5578,56 @@ function Blackwire() {
 
       , showCollPick && (
         React.createElement('div', { style: { position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.7)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1001 },
-             onClick: () => setShowCollPick(null), __self: this, __source: {fileName: _jsxFileName, lineNumber: 5569}}
+             onClick: () => setShowCollPick(null), __self: this, __source: {fileName: _jsxFileName, lineNumber: 5580}}
           , React.createElement('div', { style: { background: 'var(--bg2)', border: '1px solid var(--brd)', borderRadius: '8px', padding: '20px', minWidth: '300px' },
-               onClick: e => e.stopPropagation(), __self: this, __source: {fileName: _jsxFileName, lineNumber: 5571}}
-            , React.createElement('h3', { style: { fontSize: '14px', marginBottom: '12px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5573}}, "Add to Collection"  )
-            , colls.length === 0 && React.createElement('div', { style: { color: 'var(--txt3)', fontSize: '12px', marginBottom: '10px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5574}}, "No collections yet. Create one in the Collections tab."        )
+               onClick: e => e.stopPropagation(), __self: this, __source: {fileName: _jsxFileName, lineNumber: 5582}}
+            , React.createElement('h3', { style: { fontSize: '14px', marginBottom: '12px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5584}}, "Add to Collection"  )
+            , colls.length === 0 && React.createElement('div', { style: { color: 'var(--txt3)', fontSize: '12px', marginBottom: '10px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5585}}, "No collections yet. Create one in the Collections tab."        )
             , colls.map(c => (
-              React.createElement('div', { key: c.id, className: "coll-pick-item", onClick: () => addToCollection(c.id, showCollPick), __self: this, __source: {fileName: _jsxFileName, lineNumber: 5576}}
-                , c.name, " " , React.createElement('span', { style: { color: 'var(--txt3)', fontSize: '10px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5577}}, "(", c.item_count, " items)" )
+              React.createElement('div', { key: c.id, className: "coll-pick-item", onClick: () => addToCollection(c.id, showCollPick), __self: this, __source: {fileName: _jsxFileName, lineNumber: 5587}}
+                , c.name, " " , React.createElement('span', { style: { color: 'var(--txt3)', fontSize: '10px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5588}}, "(", c.item_count, " items)" )
               )
             ))
-            , React.createElement('button', { className: "btn btn-sm btn-s"  , style: { marginTop: '10px' }, onClick: () => setShowCollPick(null), __self: this, __source: {fileName: _jsxFileName, lineNumber: 5580}}, "Cancel")
+            , React.createElement('button', { className: "btn btn-sm btn-s"  , style: { marginTop: '10px' }, onClick: () => setShowCollPick(null), __self: this, __source: {fileName: _jsxFileName, lineNumber: 5591}}, "Cancel")
           )
         )
       )
 
       , showProxyCfg && (
-        React.createElement('div', { style: { position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.7)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1001 }, onClick: () => setShowProxyCfg(false), __self: this, __source: {fileName: _jsxFileName, lineNumber: 5586}}
-          , React.createElement('div', { style: { background: 'var(--bg2)', border: '1px solid var(--brd)', borderRadius: '8px', padding: '24px', minWidth: '500px', maxHeight: '80vh', overflowY: 'auto' }, onClick: e => e.stopPropagation(), __self: this, __source: {fileName: _jsxFileName, lineNumber: 5587}}
-            , React.createElement('h3', { style: { fontSize: '16px', marginBottom: '16px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5588}}, "Proxy Configuration" )
-            , React.createElement('div', { style: { marginBottom: '16px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5589}}
-              , React.createElement('label', { style: { display: 'block', fontSize: '12px', color: 'var(--txt2)', marginBottom: '6px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5590}}, "Port")
-              , React.createElement('input', { className: "inp", type: "number", value: pxPort, onChange: e => setPxPort(parseInt(e.target.value) || 8080), min: "1", max: "65535", __self: this, __source: {fileName: _jsxFileName, lineNumber: 5591}} )
-            )
-            , React.createElement('div', { style: { marginBottom: '16px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5593}}
-              , React.createElement('label', { style: { display: 'block', fontSize: '12px', color: 'var(--txt2)', marginBottom: '6px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5594}}, "Mode")
-              , React.createElement('select', { className: "sel", value: pxMode, onChange: e => setPxMode(e.target.value), style: { width: '100%' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5595}}
-                , React.createElement('option', { value: "regular", __self: this, __source: {fileName: _jsxFileName, lineNumber: 5596}}, "Regular")
-                , React.createElement('option', { value: "transparent", __self: this, __source: {fileName: _jsxFileName, lineNumber: 5597}}, "Transparent")
-                , React.createElement('option', { value: "socks5", __self: this, __source: {fileName: _jsxFileName, lineNumber: 5598}}, "SOCKS5")
-                , React.createElement('option', { value: "reverse:http://example.com", __self: this, __source: {fileName: _jsxFileName, lineNumber: 5599}}, "Reverse Proxy" )
-                , React.createElement('option', { value: "upstream:http://proxy.example.com:8080", __self: this, __source: {fileName: _jsxFileName, lineNumber: 5600}}, "Upstream Proxy" )
-              )
-              , React.createElement('div', { style: { fontSize: '10px', color: 'var(--txt3)', marginTop: '4px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5602}}, "Select proxy operating mode"   )
+        React.createElement('div', { style: { position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.7)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1001 }, onClick: () => setShowProxyCfg(false), __self: this, __source: {fileName: _jsxFileName, lineNumber: 5597}}
+          , React.createElement('div', { style: { background: 'var(--bg2)', border: '1px solid var(--brd)', borderRadius: '8px', padding: '24px', minWidth: '500px', maxHeight: '80vh', overflowY: 'auto' }, onClick: e => e.stopPropagation(), __self: this, __source: {fileName: _jsxFileName, lineNumber: 5598}}
+            , React.createElement('h3', { style: { fontSize: '16px', marginBottom: '16px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5599}}, "Proxy Configuration" )
+            , React.createElement('div', { style: { marginBottom: '16px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5600}}
+              , React.createElement('label', { style: { display: 'block', fontSize: '12px', color: 'var(--txt2)', marginBottom: '6px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5601}}, "Port")
+              , React.createElement('input', { className: "inp", type: "number", value: pxPort, onChange: e => setPxPort(parseInt(e.target.value) || 8080), min: "1", max: "65535", __self: this, __source: {fileName: _jsxFileName, lineNumber: 5602}} )
             )
             , React.createElement('div', { style: { marginBottom: '16px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5604}}
-              , React.createElement('label', { style: { display: 'block', fontSize: '12px', color: 'var(--txt2)', marginBottom: '6px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5605}}, "Additional Arguments" )
-              , React.createElement('input', { className: "inp", type: "text", value: pxArgs, onChange: e => setPxArgs(e.target.value), placeholder: "--ssl-insecure --verbose" , __self: this, __source: {fileName: _jsxFileName, lineNumber: 5606}} )
-              , React.createElement('div', { style: { fontSize: '10px', color: 'var(--txt3)', marginTop: '4px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5607}}, "Extra mitmproxy arguments (e.g., --ssl-insecure --verbose)"     )
+              , React.createElement('label', { style: { display: 'block', fontSize: '12px', color: 'var(--txt2)', marginBottom: '6px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5605}}, "Mode")
+              , React.createElement('select', { className: "sel", value: pxMode, onChange: e => setPxMode(e.target.value), style: { width: '100%' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5606}}
+                , React.createElement('option', { value: "regular", __self: this, __source: {fileName: _jsxFileName, lineNumber: 5607}}, "Regular")
+                , React.createElement('option', { value: "transparent", __self: this, __source: {fileName: _jsxFileName, lineNumber: 5608}}, "Transparent")
+                , React.createElement('option', { value: "socks5", __self: this, __source: {fileName: _jsxFileName, lineNumber: 5609}}, "SOCKS5")
+                , React.createElement('option', { value: "reverse:http://example.com", __self: this, __source: {fileName: _jsxFileName, lineNumber: 5610}}, "Reverse Proxy" )
+                , React.createElement('option', { value: "upstream:http://proxy.example.com:8080", __self: this, __source: {fileName: _jsxFileName, lineNumber: 5611}}, "Upstream Proxy" )
+              )
+              , React.createElement('div', { style: { fontSize: '10px', color: 'var(--txt3)', marginTop: '4px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5613}}, "Select proxy operating mode"   )
             )
-            , React.createElement('div', { style: { marginBottom: '16px', padding: '12px', background: 'var(--bg3)', borderRadius: '6px', fontSize: '11px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5609}}
-              , React.createElement('div', { style: { fontWeight: '600', marginBottom: '8px', color: 'var(--txt2)' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5610}}, "Common Configurations:" )
-              , React.createElement('div', { style: { marginBottom: '4px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5611}}, React.createElement('strong', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 5611}}, "Transparent:"), " Intercept traffic at network level (requires iptables)"       )
-              , React.createElement('div', { style: { marginBottom: '4px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5612}}, React.createElement('strong', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 5612}}, "SOCKS5:"), " Run as SOCKS5 proxy server"     )
-              , React.createElement('div', { style: { marginBottom: '4px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5613}}, React.createElement('strong', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 5613}}, "Reverse:"), " Act as reverse proxy for specific server"       )
-              , React.createElement('div', { style: { marginBottom: '4px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5614}}, React.createElement('strong', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 5614}}, "Upstream:"), " Chain with another proxy"    )
-              , React.createElement('div', { style: { marginTop: '8px', color: 'var(--txt3)', fontSize: '10px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5615}}, "Docs: " , React.createElement('a', { href: "https://docs.mitmproxy.org/stable/concepts-modes/", target: "_blank", style: { color: 'var(--cyan)' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5615}}, "mitmproxy.org/modes"))
+            , React.createElement('div', { style: { marginBottom: '16px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5615}}
+              , React.createElement('label', { style: { display: 'block', fontSize: '12px', color: 'var(--txt2)', marginBottom: '6px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5616}}, "Additional Arguments" )
+              , React.createElement('input', { className: "inp", type: "text", value: pxArgs, onChange: e => setPxArgs(e.target.value), placeholder: "--ssl-insecure --verbose" , __self: this, __source: {fileName: _jsxFileName, lineNumber: 5617}} )
+              , React.createElement('div', { style: { fontSize: '10px', color: 'var(--txt3)', marginTop: '4px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5618}}, "Extra mitmproxy arguments (e.g., --ssl-insecure --verbose)"     )
             )
-            , React.createElement('div', { style: { display: 'flex', gap: '10px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5617}}
-              , React.createElement('button', { className: "btn btn-p" , onClick: saveProxyCfg, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5618}}, "Save")
-              , React.createElement('button', { className: "btn btn-s" , onClick: () => setShowProxyCfg(false), __self: this, __source: {fileName: _jsxFileName, lineNumber: 5619}}, "Cancel")
+            , React.createElement('div', { style: { marginBottom: '16px', padding: '12px', background: 'var(--bg3)', borderRadius: '6px', fontSize: '11px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5620}}
+              , React.createElement('div', { style: { fontWeight: '600', marginBottom: '8px', color: 'var(--txt2)' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5621}}, "Common Configurations:" )
+              , React.createElement('div', { style: { marginBottom: '4px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5622}}, React.createElement('strong', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 5622}}, "Transparent:"), " Intercept traffic at network level (requires iptables)"       )
+              , React.createElement('div', { style: { marginBottom: '4px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5623}}, React.createElement('strong', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 5623}}, "SOCKS5:"), " Run as SOCKS5 proxy server"     )
+              , React.createElement('div', { style: { marginBottom: '4px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5624}}, React.createElement('strong', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 5624}}, "Reverse:"), " Act as reverse proxy for specific server"       )
+              , React.createElement('div', { style: { marginBottom: '4px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5625}}, React.createElement('strong', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 5625}}, "Upstream:"), " Chain with another proxy"    )
+              , React.createElement('div', { style: { marginTop: '8px', color: 'var(--txt3)', fontSize: '10px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5626}}, "Docs: " , React.createElement('a', { href: "https://docs.mitmproxy.org/stable/concepts-modes/", target: "_blank", style: { color: 'var(--cyan)' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5626}}, "mitmproxy.org/modes"))
+            )
+            , React.createElement('div', { style: { display: 'flex', gap: '10px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5628}}
+              , React.createElement('button', { className: "btn btn-p" , onClick: saveProxyCfg, __self: this, __source: {fileName: _jsxFileName, lineNumber: 5629}}, "Save")
+              , React.createElement('button', { className: "btn btn-s" , onClick: () => setShowProxyCfg(false), __self: this, __source: {fileName: _jsxFileName, lineNumber: 5630}}, "Cancel")
             )
           )
         )
@@ -5628,4 +5639,4 @@ function Blackwire() {
 }
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(React.createElement(Blackwire, {__self: this, __source: {fileName: _jsxFileName, lineNumber: 5631}} ));
+root.render(React.createElement(Blackwire, {__self: this, __source: {fileName: _jsxFileName, lineNumber: 5642}} ));

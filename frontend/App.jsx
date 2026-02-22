@@ -2689,6 +2689,12 @@ function Blackwire() {
           toast('Opening replay...', 'success');
         }
         break;
+      case 'render-browser':
+        if (source === 'history' && req.id) {
+          window.open(API + '/api/requests/' + req.id + '/render', '_blank');
+          toast('Rendering response...', 'success');
+        }
+        break;
       case 'send-to-cipher':
         if (norm.body) {
           setChepyIn(norm.body);
@@ -5527,6 +5533,11 @@ function Blackwire() {
           {contextMenu.source !== 'websocket' && contextMenu.source !== 'selection' && (
             <div className="context-menu-item" onClick={() => handleContextAction('replay-browser')}>
               Replay in Browser
+            </div>
+          )}
+          {contextMenu.source !== 'websocket' && contextMenu.source !== 'selection' && (
+            <div className="context-menu-item" onClick={() => handleContextAction('render-browser')}>
+              Render in Browser
             </div>
           )}
           {contextMenu.normalized?.url && (
