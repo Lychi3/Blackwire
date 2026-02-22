@@ -15,8 +15,16 @@ import re
 import shutil
 import importlib.util
 import shlex
-import base64
-import xml.etree.ElementTree as ET
+from datetime import datetime
+from pathlib import Path
+from typing import Optional, List, Dict
+from contextlib import asynccontextmanager
+from urllib.parse import urlparse
+
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect, HTTPException, Body
+from fastapi.middleware.cors import CORSMiddleware
+from starlette.middleware.gzip import GZipMiddleware
+from fastapi.responses import HTMLResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 import aiosqlite
@@ -30,6 +38,16 @@ FRONTEND_DIR = BASE_DIR / "frontend"
 APP_JSX_PATH = FRONTEND_DIR / "App.jsx"
 APP_COMPILED_PATH = FRONTEND_DIR / "App.compiled.js"
 THEMES_JS_PATH = FRONTEND_DIR / "themes.js"
+
+WEBHOOKSITE_BASE = "https://webhook.site"
+WEBHOOKSITE_API_BASE = "https://webhook.site"
+
+connections: List[WebSocket] = []
+proxy_process: Optional[subprocess.Popen] = None
+intercepted_requests: Dict[str, dict] = {}
+intercepted_responses: Dict[str, dict] = {}
+intercept_enabled: bool = False
+intercept_responses_enabled: bool = False
 scope_rules: List[dict] = []
 current_project: Optional[str] = None
 extensions_config: Dict[str, dict] = {}
@@ -92,23 +110,6 @@ class CollectionItemCreate(BaseModel):
 
 class CollectionItemExecute(BaseModel):
     variables: dict = {}
-
-class SessionMacro(BaseModel):
-    name: str
-    description: Optional[str] = ""
-    steps: List[dict]
-    enabled: bool = True
-
-class SessionRule(BaseModel):
-    name: str
-    description: Optional[str] = ""
-    rule_type: str  # 'extract' or 'update'
-    extract_regex: Optional[str] = None
-    extract_from: Optional[str] = "response_body"  # 'response_body', 'response_headers', 'request'
-    header_name: Optional[str] = None
-    cookie_name: Optional[str] = None
-    variable_name: Optional[str] = None
-    enabled: bool = True
 
 CHEPY_OPERATIONS = {
     "Encoding": [
@@ -183,94 +184,107 @@ CHEPY_OPERATIONS = {
 }
 
 
-def _build_raw_request(method: str, url: str, headers_json: str, body: str = None) -> bytes:
-    """Reconstruct raw HTTP request from structured fields."""
-    parsed = urlparse(url)
-    path = parsed.path or "/"
-    if parsed.query:
-        path += "?" + parsed.query
-    lines = [f"{method} {path} HTTP/1.1"]
-    try:
-        headers = json.loads(headers_json) if headers_json else {}
-    except (json.JSONDecodeError, TypeError):
-        headers = {}
-    if "Host" not in headers and "host" not in headers:
-        headers["Host"] = parsed.netloc
-    for k, v in headers.items():
-        lines.append(f"{k}: {v}")
-    raw = "\r\n".join(lines) + "\r\n\r\n"
-    if body:
-        raw += body
-    return raw.encode("utf-8", errors="replace")
+def get_project_path(name: str) -> Path:
+    return PROJECTS_DIR / name
 
+def get_project_db(name: str) -> Path:
+    return get_project_path(name) / "blackwire.db"
 
-def _build_raw_response(status: int, headers_json: str, body: str = None) -> bytes:
-    """Reconstruct raw HTTP response from structured fields."""
-    lines = [f"HTTP/1.1 {status or 0} OK"]
-    try:
-        headers = json.loads(headers_json) if headers_json else {}
-    except (json.JSONDecodeError, TypeError):
-        headers = {}
-    for k, v in headers.items():
-        lines.append(f"{k}: {v}")
-    raw = "\r\n".join(lines) + "\r\n\r\n"
-    if body:
-        raw += body
-    return raw.encode("utf-8", errors="replace")
+def get_current_project() -> Optional[str]:
+    global current_project
+    if current_project:
+        return current_project
+    if CURRENT_PROJECT_FILE.exists():
+        current_project = CURRENT_PROJECT_FILE.read_text().strip()
+        return current_project
+    return None
 
+def set_current_project(name: Optional[str]):
+    global current_project
+    current_project = name
+    if name:
+        CURRENT_PROJECT_FILE.write_text(name)
+    elif CURRENT_PROJECT_FILE.exists():
+        CURRENT_PROJECT_FILE.unlink()
 
-def _parse_raw_request(raw: bytes) -> dict:
-    """Parse a raw HTTP request into structured fields."""
-    try:
-        text = raw.decode("utf-8", errors="replace")
-    except Exception:
-        text = str(raw)
-    parts = text.split("\r\n\r\n", 1)
-    head = parts[0]
-    body = parts[1] if len(parts) > 1 else ""
-    lines = head.split("\r\n")
-    if not lines:
-        return {"method": "GET", "url": "/", "headers": {}, "body": ""}
-    request_line = lines[0].split(" ", 2)
-    method = request_line[0] if request_line else "GET"
-    path = request_line[1] if len(request_line) > 1 else "/"
-    headers = {}
-    for line in lines[1:]:
-        if ": " in line:
-            k, v = line.split(": ", 1)
-            headers[k] = v
-    return {"method": method, "path": path, "headers": headers, "body": body}
+async def get_project_config(name: str) -> Optional[dict]:
+    config_path = get_project_path(name) / "config.json"
+    if config_path.exists():
+        return json.loads(config_path.read_text())
+    return None
 
+async def save_project_config(name: str, config: dict):
+    config_path = get_project_path(name) / "config.json"
+    config_path.write_text(json.dumps(config, indent=2))
 
-def _parse_raw_response(raw: bytes) -> dict:
-    """Parse a raw HTTP response into structured fields."""
-    try:
-        text = raw.decode("utf-8", errors="replace")
-    except Exception:
-        text = str(raw)
-    parts = text.split("\r\n\r\n", 1)
-    head = parts[0]
-    body = parts[1] if len(parts) > 1 else ""
-    lines = head.split("\r\n")
-    status = 0
-    if lines:
-        status_parts = lines[0].split(" ", 2)
-        try:
-            status = int(status_parts[1]) if len(status_parts) > 1 else 0
-        except ValueError:
-            status = 0
-    headers = {}
-    for line in lines[1:]:
-        if ": " in line:
-            k, v = line.split(": ", 1)
-            headers[k] = v
-    return {"status": status, "headers": headers, "body": body}
-
+async def load_project_settings(name: str):
+    global scope_rules, intercept_enabled, extensions_config
     config = await get_project_config(name)
     if config:
         scope_rules = config.get("scope_rules", [])
         intercept_enabled = config.get("intercept_enabled", False)
-        intercept_responses_enabled = config.get("intercept_responses_enabled", False)
+        extensions_config = config.get("extensions", {})
+
+
+def webhook_headers(api_key: Optional[str]) -> dict:
+    headers = {"Accept": "application/json", "Content-Type": "application/json"}
+    if api_key:
+        headers["Api-Key"] = api_key
+    return headers
+
+
+async def save_extension_config(project: str, name: str, config: dict):
+    global extensions_config
+    extensions_config[name] = config
+    proj_config = await get_project_config(project)
+    if not proj_config:
+        raise HTTPException(status_code=404, detail="Project not found")
+    proj_config["extensions"] = extensions_config
+    await save_project_config(project, proj_config)
+    await update_proxy_config()
+
+
+def load_extension_metadata() -> List[dict]:
+    meta_list: List[dict] = []
+    if not EXTENSIONS_DIR.exists():
+        return meta_list
+    for path in sorted(EXTENSIONS_DIR.glob("*.py")):
+        if path.name.startswith("_") or path.name == "__init__.py":
+            continue
+        meta = {
+            "name": path.stem,
+            "title": path.stem.replace("_", " ").title(),
+            "description": "",
+            "tabs": [],
+        }
+        try:
+            spec = importlib.util.spec_from_file_location(f"blackwire_ext_meta_{path.stem}", path)
+            if spec and spec.loader:
+                module = importlib.util.module_from_spec(spec)
+                spec.loader.exec_module(module)
+                if hasattr(module, "EXTENSION_META"):
+                    meta.update(module.EXTENSION_META)
+                elif hasattr(module, "Extension"):
+                    ext = module.Extension()
+                    meta["name"] = getattr(ext, "name", meta["name"])
+        except Exception as e:
+            logger.warning("Failed to load extension metadata from %s: %s", path.name, e)
+        meta_list.append(meta)
+    return meta_list
+
+
+async def init_db(name: str):
+    project_path = get_project_path(name)
+    project_path.mkdir(parents=True, exist_ok=True)
+    db_path = get_project_db(name)
+    
+    async with aiosqlite.connect(db_path) as db:
+        await db.execute("""CREATE TABLE IF NOT EXISTS requests (
+            id INTEGER PRIMARY KEY AUTOINCREMENT, method TEXT NOT NULL, url TEXT NOT NULL,
+            headers TEXT NOT NULL, body TEXT, response_status INTEGER, response_headers TEXT,
+            response_body TEXT, timestamp TEXT NOT NULL, request_type TEXT DEFAULT 'http',
+            tags TEXT DEFAULT '[]', notes TEXT, saved INTEGER DEFAULT 0, in_scope INTEGER DEFAULT 1,
+            hash TEXT UNIQUE)""")
         await db.execute("""CREATE TABLE IF NOT EXISTS repeater (
             id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, method TEXT NOT NULL,
             url TEXT NOT NULL, headers TEXT NOT NULL, body TEXT, created_at TEXT NOT NULL,
@@ -297,14 +311,13 @@ def _parse_raw_response(raw: bytes) -> dict:
             total INTEGER DEFAULT 0, created_at TEXT NOT NULL)""")
         await db.execute("""CREATE TABLE IF NOT EXISTS session_macros (
             id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL,
-            description TEXT DEFAULT '', steps TEXT NOT NULL,
-            created_at TEXT NOT NULL, enabled INTEGER DEFAULT 1)""")
-        await db.execute("""CREATE TABLE IF NOT EXISTS session_rules (
-            id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL,
-            description TEXT DEFAULT '', rule_type TEXT NOT NULL,
-            extract_regex TEXT, extract_from TEXT, header_name TEXT,
-            cookie_name TEXT, variable_name TEXT, enabled INTEGER DEFAULT 1,
+            description TEXT DEFAULT '', requests TEXT NOT NULL DEFAULT '[]',
             created_at TEXT NOT NULL)""")
+        await db.execute("""CREATE TABLE IF NOT EXISTS session_rules (
+            id INTEGER PRIMARY KEY AUTOINCREMENT, enabled INTEGER DEFAULT 1,
+            name TEXT NOT NULL, when_stage TEXT NOT NULL, target TEXT NOT NULL,
+            header_name TEXT, regex_pattern TEXT NOT NULL, extract_group INTEGER DEFAULT 1,
+            variable_name TEXT NOT NULL, created_at TEXT NOT NULL)""")
         # Performance indexes
         await db.execute("CREATE INDEX IF NOT EXISTS idx_req_saved ON requests(saved)")
         await db.execute("CREATE INDEX IF NOT EXISTS idx_req_scope ON requests(in_scope)")
@@ -312,6 +325,161 @@ def _parse_raw_response(raw: bytes) -> dict:
         await db.execute("CREATE INDEX IF NOT EXISTS idx_req_ts ON requests(timestamp)")
         await db.execute("CREATE INDEX IF NOT EXISTS idx_req_status ON requests(response_status)")
         await db.execute("CREATE INDEX IF NOT EXISTS idx_req_id_desc ON requests(id DESC)")
+        await db.commit()
+
+async def get_db():
+    project = get_current_project()
+    if not project:
+        raise HTTPException(status_code=400, detail="No project selected")
+    return aiosqlite.connect(get_project_db(project))
+
+
+def match_scope(url: str, rules: List[dict]) -> bool:
+    logger.debug('Scope check: url=%s rules=%d', url, len(rules))
+    if not rules:
+        return True
+    parsed = urlparse(url)
+    host = parsed.netloc
+    in_scope = False
+    has_include = any(r.get("rule_type") == "include" and r.get("enabled", True) for r in rules)
+    for rule in rules:
+        if not rule.get("enabled", True):
+            continue
+        pattern = rule.get("pattern", "")
+        rule_type = rule.get("rule_type", "include")
+        regex = pattern.replace(".", r"\.").replace("*", ".*")
+        try:
+            if re.match(regex, host) or re.match(regex, url):
+                if rule_type == "include":
+                    in_scope = True
+                elif rule_type == "exclude":
+                    return False
+        except:
+            continue
+    return in_scope if has_include else True
+
+
+# --- HTTPQL Compiler (AST → SQL) ---
+
+HTTPQL_FIELD_MAP = {
+    ("req", "method"):  "method",
+    ("req", "host"):    "SUBSTR(url, INSTR(url, '://') + 3, CASE WHEN INSTR(SUBSTR(url, INSTR(url, '://') + 3), '/') > 0 THEN INSTR(SUBSTR(url, INSTR(url, '://') + 3), '/') - 1 ELSE LENGTH(SUBSTR(url, INSTR(url, '://') + 3)) END)",
+    ("req", "path"):    "CASE WHEN INSTR(SUBSTR(url, INSTR(url, '://') + 3), '/') > 0 THEN SUBSTR(url, INSTR(url, '://') + 3 + INSTR(SUBSTR(url, INSTR(url, '://') + 3), '/') - 1) ELSE '/' END",
+    ("req", "port"):    "CAST(CASE WHEN INSTR(SUBSTR(url, INSTR(url, '://') + 3), ':') > 0 AND INSTR(SUBSTR(url, INSTR(url, '://') + 3), ':') < COALESCE(NULLIF(INSTR(SUBSTR(url, INSTR(url, '://') + 3), '/'), 0), 9999) THEN SUBSTR(SUBSTR(url, INSTR(url, '://') + 3), INSTR(SUBSTR(url, INSTR(url, '://') + 3), ':') + 1, COALESCE(NULLIF(INSTR(SUBSTR(url, INSTR(url, '://') + 3 + INSTR(SUBSTR(url, INSTR(url, '://') + 3), ':')), '/'), 0), 5) - 1) WHEN url LIKE 'https%' THEN '443' ELSE '80' END AS INTEGER)",
+    ("req", "ext"):     None,  # special-cased in compiler
+    ("req", "query"):   "CASE WHEN INSTR(url, '?') > 0 THEN SUBSTR(url, INSTR(url, '?') + 1) ELSE '' END",
+    ("req", "raw"):     "(COALESCE(headers, '') || ' ' || COALESCE(body, ''))",
+    ("req", "len"):     "LENGTH(COALESCE(headers, '') || COALESCE(body, ''))",
+    ("req", "tls"):     None,  # special-cased
+    ("resp", "code"):   "response_status",
+    ("resp", "raw"):    "(COALESCE(response_headers, '') || ' ' || COALESCE(response_body, ''))",
+    ("resp", "len"):    "LENGTH(COALESCE(response_headers, '') || COALESCE(response_body, ''))",
+}
+
+HTTPQL_NUMERIC = {("req", "len"), ("req", "port"), ("resp", "code"), ("resp", "len")}
+HTTPQL_STRING_OPS = {"eq", "ne", "cont", "ncont", "like", "nlike", "regex", "nregex"}
+HTTPQL_NUMERIC_OPS = {"eq", "ne", "gt", "gte", "lt", "lte"}
+
+def _httpql_compile_comparison(ns: str, field: str, op: str, value: str):
+    """Compile a single HTTPQL comparison to (sql_fragment, params)."""
+    # Special: req.tls
+    if (ns, field) == ("req", "tls"):
+        bval = 1 if value.lower() in ("true", "1", "yes") else 0
+        if op == "eq":
+            return ("(url LIKE 'https%') = ?", [bval])
+        elif op == "ne":
+            return ("(url LIKE 'https%') != ?", [bval])
+        raise ValueError(f"Operator '{op}' not valid for req.tls")
+
+    # Special: req.ext
+    if (ns, field) == ("req", "ext"):
+        ext_v = value if value.startswith(".") else "." + value
+        if op == "eq":
+            return ("(url LIKE ? OR url LIKE ?)", [f"%{ext_v}", f"%{ext_v}?%"])
+        elif op == "ne":
+            return ("(url NOT LIKE ? AND url NOT LIKE ?)", [f"%{ext_v}", f"%{ext_v}?%"])
+        elif op == "cont":
+            return ("url LIKE ?", [f"%{ext_v}%"])
+        elif op == "ncont":
+            return ("url NOT LIKE ?", [f"%{ext_v}%"])
+        raise ValueError(f"Operator '{op}' not valid for req.ext")
+
+    col = HTTPQL_FIELD_MAP.get((ns, field))
+    if col is None:
+        raise ValueError(f"Unknown field: {ns}.{field}")
+
+    is_numeric = (ns, field) in HTTPQL_NUMERIC
+
+    if op == "eq":
+        return (f"CAST({col} AS INTEGER) = CAST(? AS INTEGER)", [value]) if is_numeric else (f"{col} = ?", [value])
+    elif op == "ne":
+        return (f"CAST({col} AS INTEGER) != CAST(? AS INTEGER)", [value]) if is_numeric else (f"{col} != ?", [value])
+    elif op == "gt":
+        return (f"CAST({col} AS INTEGER) > CAST(? AS INTEGER)", [value])
+    elif op == "gte":
+        return (f"CAST({col} AS INTEGER) >= CAST(? AS INTEGER)", [value])
+    elif op == "lt":
+        return (f"CAST({col} AS INTEGER) < CAST(? AS INTEGER)", [value])
+    elif op == "lte":
+        return (f"CAST({col} AS INTEGER) <= CAST(? AS INTEGER)", [value])
+    elif op == "cont":
+        return (f"{col} LIKE '%' || ? || '%'", [value])
+    elif op == "ncont":
+        return (f"{col} NOT LIKE '%' || ? || '%'", [value])
+    elif op == "like":
+        return (f"{col} LIKE ?", [value])
+    elif op == "nlike":
+        return (f"{col} NOT LIKE ?", [value])
+    elif op == "regex":
+        return (f"HTTPQL_REGEX({col}, ?)", [value])
+    elif op == "nregex":
+        return (f"NOT HTTPQL_REGEX({col}, ?)", [value])
+    raise ValueError(f"Unknown operator: {op}")
+
+
+def compile_httpql_ast(node: dict, presets_map: dict = None):
+    """Recursively compile an HTTPQL AST node to (sql, params)."""
+    t = node.get("type")
+    if t == "comparison":
+        return _httpql_compile_comparison(node["namespace"], node["field"], node["operator"], node["value"])
+    elif t in ("and", "or"):
+        parts, params = [], []
+        for child in node["children"]:
+            sql, p = compile_httpql_ast(child, presets_map)
+            parts.append(f"({sql})")
+            params.extend(p)
+        joiner = " AND " if t == "and" else " OR "
+        return (joiner.join(parts), params)
+    elif t == "shorthand":
+        expanded = {"type": "or", "children": [
+            {"type": "comparison", "namespace": "req", "field": "raw", "operator": "cont", "value": node["value"]},
+            {"type": "comparison", "namespace": "resp", "field": "raw", "operator": "cont", "value": node["value"]},
+        ]}
+        return compile_httpql_ast(expanded, presets_map)
+    elif t == "preset":
+        if presets_map and node["name"] in presets_map:
+            return compile_httpql_ast(presets_map[node["name"]], presets_map)
+        raise ValueError(f"Unknown preset: '{node['name']}'")
+    raise ValueError(f"Unknown AST node type: {t}")
+
+
+async def get_db_with_regex():
+    """Get DB connection with HTTPQL_REGEX function for regex operator support."""
+    project = get_current_project()
+    if not project:
+        raise HTTPException(status_code=400, detail="No project selected")
+    db = await aiosqlite.connect(get_project_db(project))
+    def _regex_fn(value, pattern):
+        if value is None:
+            return False
+        try:
+            return bool(re.search(pattern, str(value)))
+        except re.error:
+            return False
+    await db.create_function("HTTPQL_REGEX", 2, _regex_fn)
+    return db
+
+
 class GitManager:
     def __init__(self, name: str):
         self.repo_path = get_project_path(name)
@@ -396,12 +564,128 @@ class GitManager:
 async def update_proxy_config():
     config = {
         "intercept_enabled": intercept_enabled,
-        "intercept_responses": intercept_responses_enabled,
+        "scope_rules": scope_rules,
+        "project": get_current_project(),
+        "extensions": extensions_config,
+    }
+    (Path(__file__).parent / ".proxy_config.json").write_text(json.dumps(config))
+    logger.debug('Proxy config updated at %s: %s', Path(__file__).parent / '.proxy_config.json', config)
+
+
+def _stream_pipe(pipe, level_fn, label: str):
+    """Read lines from a subprocess pipe and log them.
+
+    NOTE: We spawn mitmproxy with text=True, so readline() returns str, not bytes.
+    """
+    try:
+        if not pipe:
+            return
+        for line in iter(pipe.readline, ''):  # '' == EOF en text mode
+            if not line:
+                break
+            line = line.rstrip()
+            if line:
+                level_fn('[%s] %s', label, line)
+    except Exception as e:
+        logger.debug('Pipe reader for %s stopped: %s', label, e)
+
+async def start_proxy(port: int = 8080, mode: str = "regular", extra_args: str = ""):
+    global proxy_process
+    logger.debug('start_proxy called (port=%s)', port)
+    if proxy_process and proxy_process.poll() is None:
+        return {"status": "already_running", "port": port}
+    
+    await update_proxy_config()
+    addon_path = Path(__file__).parent / "mitm_addon.py"
+    logger.info('Starting mitmproxy (port=%s) with addon=%s', port, addon_path)
+    
+    # Use mitmdump (headless) instead of mitmproxy UI; running the dump module directly does nothing.
+    mitmdump_bin = Path(sys.executable).with_name("mitmdump")
+    if not mitmdump_bin.exists():
+        resolved = shutil.which("mitmdump")
+        mitmdump_bin = Path(resolved) if resolved else None
+    if not mitmdump_bin:
+        logger.error("mitmdump binary not found near current Python. Verify the venv/paths.")
+        return {"status": "failed", "error": "mitmdump not found in venv or PATH"}
+    extra = shlex.split(extra_args) if extra_args else []
+    cmd = [str(mitmdump_bin), "--mode", mode, "-p", str(port),
+           "-s", str(addon_path), "--set", "connection_strategy=lazy", "--ssl-insecure"]
+    if extra:
+        cmd.extend(extra)
+    logger.debug('mitmproxy command: %s', ' '.join(cmd))
+    
+    logger.debug('Spawning mitmproxy subprocess...')
+    logger.info("Launching proxy subprocess: %s", " ".join(map(str, cmd)))
+    proxy_process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+    # Give the process a moment to initialize and bind the port
+    await asyncio.sleep(1.0)
+    if proxy_process.poll() is None:
+        # Stream mitmproxy stdout/stderr into our logs for easier debugging
+        threading.Thread(target=_stream_pipe, args=(proxy_process.stdout, logger.info, "mitm:stdout"), daemon=True).start()
+        threading.Thread(target=_stream_pipe, args=(proxy_process.stderr, logger.error, "mitm:stderr"), daemon=True).start()
+    else:
+        # Process already exited; capture whatever it printed
+        try:
+            stdout, stderr = proxy_process.communicate(timeout=1.0)
+        except Exception:
+            stdout, stderr = "", ""
+        logger.error("Proxy exited immediately (returncode=%s). stdout=%r stderr=%r", proxy_process.returncode, stdout, stderr)
+        return {"status": "failed", "error": (stderr or stdout or "Proxy exited immediately")}
+    # If still running after startup window, report started
+    return {"status": "started", "port": port, "pid": proxy_process.pid}
+async def stop_proxy():
+    global proxy_process
+    logger.debug('stop_proxy called')
+    if proxy_process:
+        proxy_process.terminate()
+        logger.info('Stopping mitmproxy (pid=%s)...', proxy_process.pid)
+        try:
+            proxy_process.wait(timeout=5)
+        except:
+            proxy_process.kill()
+        proxy_process = None
+        return {"status": "stopped"}
+    return {"status": "not_running"}
+
+
+def transpile_jsx():
+    """Pre-transpile App.jsx → App.compiled.js using sucrase (fast JSX transform)."""
+    if not APP_JSX_PATH.exists():
+        return
+    node_script = (
+        "const {transform}=require('sucrase'),fs=require('fs');"
+        f"const code=fs.readFileSync({str(APP_JSX_PATH)!r},'utf8');"
+        "const r=transform(code,{transforms:['jsx'],production:true});"
+        "const wrapped='(function(){\\n'+r.code+'\\n})();';"
+        f"fs.writeFileSync({str(APP_COMPILED_PATH)!r},wrapped,'utf8');"
+        "console.log('OK:'+r.code.length)"
+    )
+    try:
+        result = subprocess.run(
+            ["node", "-e", node_script],
+            capture_output=True, text=True, timeout=30, cwd=str(BASE_DIR)
+        )
+        if result.returncode == 0:
+            logging.info("Transpiled App.jsx → App.compiled.js (%s)", result.stdout.strip())
+        else:
+            logging.error("sucrase transpile failed: %s", result.stderr[:500])
+    except Exception as e:
+        logging.error("Transpile error: %s", e)
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     PROJECTS_DIR.mkdir(parents=True, exist_ok=True)
     setup_logging()
     transpile_jsx()
+    project = get_current_project()
+    if project:
+        await init_db(project)
+        await load_project_settings(project)
+    yield
+    await stop_proxy()
+
+app = FastAPI(title="Blackwire API", lifespan=lifespan)
+app.add_middleware(GZipMiddleware, minimum_size=500)
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_credentials=True, allow_methods=["*"], allow_headers=["*"])
 
 # Usar el frontend.html original que tiene toda la funcionalidad
@@ -499,7 +783,18 @@ async def select_project(name: str):
     await init_db(name)
     scope_rules = config.get("scope_rules", [])
     intercept_enabled = config.get("intercept_enabled", False)
-    intercept_responses_enabled = config.get("intercept_responses_enabled", False)
+    extensions_config = config.get("extensions", {})
+    return {"status": "selected", "project": name}
+
+@app.put("/api/projects/{name}")
+async def update_project(name: str, config: dict = Body(...)):
+    if not get_project_path(name).exists():
+        raise HTTPException(status_code=404, detail="Project not found")
+    await save_project_config(name, config)
+    logger.info('Updated project %s config', name)
+    return {"status": "updated", "name": name}
+
+
 @app.get("/api/extensions")
 async def get_extensions():
     project = get_current_project()
@@ -652,6 +947,141 @@ async def delete_project(name: str):
     shutil.rmtree(get_project_path(name))
     return {"status": "deleted"}
 
+@app.get("/api/projects/{name}/export")
+async def export_project(name: str):
+    from fastapi.responses import Response
+    if not get_project_path(name).exists():
+        raise HTTPException(status_code=404, detail="Project not found")
+
+    # Leer config del proyecto
+    config = await get_project_config(name)
+
+    # Leer todos los datos de la DB
+    async with await get_db() as db:
+        # Requests
+        cursor = await db.execute("SELECT * FROM requests")
+        requests = []
+        for row in await cursor.fetchall():
+            requests.append({
+                "id": row[0], "method": row[1], "url": row[2],
+                "headers": row[3], "body": row[4],
+                "response_status": row[5], "response_headers": row[6], "response_body": row[7],
+                "timestamp": row[8], "request_type": row[9], "saved": row[10], "in_scope": row[11]
+            })
+
+        # Repeater
+        cursor = await db.execute("SELECT * FROM repeater")
+        repeater = []
+        for row in await cursor.fetchall():
+            repeater.append({
+                "id": row[0], "name": row[1], "method": row[2], "url": row[3],
+                "headers": row[4], "body": row[5], "created_at": row[6], "last_response": row[7]
+            })
+
+        # Collections
+        cursor = await db.execute("SELECT * FROM collections")
+        collections = []
+        for row in await cursor.fetchall():
+            collections.append({"id": row[0], "name": row[1], "created_at": row[2]})
+
+        # Collection items
+        cursor = await db.execute("SELECT * FROM collection_items")
+        collection_items = []
+        for row in await cursor.fetchall():
+            collection_items.append({
+                "id": row[0], "collection_id": row[1], "request_id": row[2], "order_index": row[3]
+            })
+
+        # Session rules
+        cursor = await db.execute("SELECT * FROM session_rules")
+        session_rules = []
+        for row in await cursor.fetchall():
+            session_rules.append({
+                "id": row[0], "enabled": row[1], "name": row[2], "when": row[3],
+                "target": row[4], "header": row[5], "regex": row[6], "group": row[7], "variable": row[8]
+            })
+
+    # Crear JSON de export
+    export_data = {
+        "version": "1.0",
+        "project_name": name,
+        "exported_at": datetime.now().isoformat(),
+        "config": config,
+        "data": {
+            "requests": requests,
+            "repeater": repeater,
+            "collections": collections,
+            "collection_items": collection_items,
+            "session_rules": session_rules
+        }
+    }
+
+    filename = f"blackwire-{name}-{datetime.now().strftime('%Y%m%d-%H%M%S')}.json"
+    return Response(
+        content=json.dumps(export_data, indent=2),
+        media_type='application/json',
+        headers={'Content-Disposition': f'attachment; filename="{filename}"'}
+    )
+
+@app.post("/api/projects/{name}/import")
+async def import_project(name: str, data: dict = Body(...)):
+    if not get_project_path(name).exists():
+        raise HTTPException(status_code=404, detail="Project not found")
+
+    # Validar estructura
+    if "version" not in data or "data" not in data:
+        raise HTTPException(status_code=400, detail="Invalid import format")
+
+    async with await get_db() as db:
+        # Limpiar datos actuales (opcional - comentar si se quiere merge)
+        # await db.execute("DELETE FROM requests")
+        # await db.execute("DELETE FROM repeater")
+        # await db.execute("DELETE FROM collections")
+        # await db.execute("DELETE FROM collection_items")
+        # await db.execute("DELETE FROM session_rules")
+
+        # Importar requests
+        for req in data["data"].get("requests", []):
+            await db.execute("""
+                INSERT INTO requests (method, url, headers, body, response_status, response_headers,
+                    response_body, timestamp, request_type, saved, in_scope)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """, (req["method"], req["url"], req["headers"], req["body"],
+                  req["response_status"], req["response_headers"], req["response_body"],
+                  req["timestamp"], req["request_type"], req["saved"], req["in_scope"]))
+
+        # Importar repeater
+        for rep in data["data"].get("repeater", []):
+            await db.execute("""
+                INSERT INTO repeater (name, method, url, headers, body, created_at, last_response)
+                VALUES (?, ?, ?, ?, ?, ?, ?)
+            """, (rep["name"], rep["method"], rep["url"], rep["headers"], rep["body"],
+                  rep["created_at"], rep["last_response"]))
+
+        # Importar collections
+        for coll in data["data"].get("collections", []):
+            await db.execute("""
+                INSERT INTO collections (name, created_at) VALUES (?, ?)
+            """, (coll["name"], coll["created_at"]))
+
+        # Importar collection items
+        for item in data["data"].get("collection_items", []):
+            await db.execute("""
+                INSERT INTO collection_items (collection_id, request_id, order_index)
+                VALUES (?, ?, ?)
+            """, (item["collection_id"], item["request_id"], item["order_index"]))
+
+        # Importar session rules
+        for rule in data["data"].get("session_rules", []):
+            await db.execute("""
+                INSERT INTO session_rules (enabled, name, `when`, target, header, regex, `group`, variable)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            """, (rule["enabled"], rule["name"], rule["when"], rule["target"],
+                  rule["header"], rule["regex"], rule["group"], rule["variable"]))
+
+        await db.commit()
+
+    return {"status": "imported", "message": f"Successfully imported data into {name}"}
 
 @app.get("/api/scope")
 async def get_scope():
@@ -700,12 +1130,7 @@ async def toggle_scope_rule(rule_id: str):
 
 @app.get("/api/intercept/status")
 async def get_intercept_status():
-    return {
-        "enabled": intercept_enabled,
-        "responses_enabled": intercept_responses_enabled,
-        "pending_count": len(intercepted_requests),
-        "pending_responses_count": len(intercepted_responses),
-    }
+    return {"enabled": intercept_enabled, "pending_count": len(intercepted_requests)}
 
 @app.post("/api/intercept/toggle")
 async def toggle_intercept():
@@ -762,19 +1187,14 @@ async def drop_all():
     intercepted_requests.clear()
     return {"status": "dropped", "count": count}
 
-
 @app.post("/api/intercept/toggle_responses")
 async def toggle_intercept_responses():
     global intercept_responses_enabled
     intercept_responses_enabled = not intercept_responses_enabled
-    logger.info('Response intercept toggled -> %s', intercept_responses_enabled)
-    project = get_current_project()
-    if project:
-        config = await get_project_config(project)
-        config["intercept_responses_enabled"] = intercept_responses_enabled
-        await save_project_config(project, config)
-    await update_proxy_config()
-    await broadcast({"type": "intercept_responses_status", "enabled": intercept_responses_enabled})
+    await broadcast({
+        "type": "intercept_responses_toggled",
+        "enabled": intercept_responses_enabled
+    })
     return {"enabled": intercept_responses_enabled}
 
 @app.get("/api/intercept/pending_responses")
@@ -782,44 +1202,68 @@ async def get_pending_responses():
     return list(intercepted_responses.values())
 
 @app.post("/api/intercept_response/{response_id}/forward")
-async def forward_response(response_id: str, modified: Optional[dict] = Body(None)):
-    if response_id not in intercepted_responses:
-        raise HTTPException(status_code=404)
-    intercepted_responses.pop(response_id)
-    action_file = Path(__file__).parent / f".action_{response_id}.json"
-    action_file.write_text(json.dumps({"action": "forward", "modified": modified}))
-    await broadcast({"type": "intercept_response_forwarded", "response_id": response_id})
+async def forward_response(response_id: str):
+    if response_id in intercepted_responses:
+        (Path(__file__).parent / f".action_resp_{response_id}.json").write_text(json.dumps({"action": "forward"}))
+        del intercepted_responses[response_id]
+        await broadcast({"type": "response_forwarded", "id": response_id})
     return {"status": "forwarded"}
 
 @app.post("/api/intercept_response/{response_id}/drop")
 async def drop_response(response_id: str):
-    if response_id not in intercepted_responses:
-        raise HTTPException(status_code=404)
-    intercepted_responses.pop(response_id)
-    action_file = Path(__file__).parent / f".action_{response_id}.json"
-    action_file.write_text(json.dumps({"action": "drop"}))
-    await broadcast({"type": "intercept_response_dropped", "response_id": response_id})
+    if response_id in intercepted_responses:
+        (Path(__file__).parent / f".action_resp_{response_id}.json").write_text(json.dumps({"action": "drop"}))
+        del intercepted_responses[response_id]
+        await broadcast({"type": "response_dropped", "id": response_id})
     return {"status": "dropped"}
 
 @app.post("/api/intercept_response/forward-all")
 async def forward_all_responses():
     for rid in list(intercepted_responses.keys()):
-        (Path(__file__).parent / f".action_{rid}.json").write_text(json.dumps({"action": "forward"}))
+        (Path(__file__).parent / f".action_resp_{rid}.json").write_text(json.dumps({"action": "forward"}))
     count = len(intercepted_responses)
     intercepted_responses.clear()
-    await broadcast({"type": "intercept_response_all_forwarded"})
+    await broadcast({"type": "intercept_all_responses_forwarded"})
     return {"status": "forwarded", "count": count}
 
 @app.post("/api/intercept_response/drop-all")
 async def drop_all_responses():
     for rid in list(intercepted_responses.keys()):
-        (Path(__file__).parent / f".action_{rid}.json").write_text(json.dumps({"action": "drop"}))
+        (Path(__file__).parent / f".action_resp_{rid}.json").write_text(json.dumps({"action": "drop"}))
     count = len(intercepted_responses)
     intercepted_responses.clear()
-    await broadcast({"type": "intercept_response_all_dropped"})
     return {"status": "dropped", "count": count}
 
 
+@app.post("/api/proxy/start")
+async def api_start_proxy(port: int = 8080, mode: str = "regular", extra: str = ""):
+    if not get_current_project():
+        raise HTTPException(status_code=400, detail="Select a project first")
+    return await start_proxy(port, mode, extra)
+
+@app.post("/api/proxy/stop")
+async def api_stop_proxy():
+    return await stop_proxy()
+
+@app.get("/api/proxy/status")
+async def proxy_status():
+    running = proxy_process is not None and proxy_process.poll() is None
+    return {"running": running, "intercept_enabled": intercept_enabled}
+
+@app.post("/api/shutdown")
+async def shutdown_server():
+    """Gracefully shut down the entire server."""
+    await stop_proxy()
+    # Schedule shutdown after response is sent
+    asyncio.get_event_loop().call_later(0.5, lambda: os._exit(0))
+    return {"status": "shutting_down"}
+
+
+REQ_LIST_COLS = "id, method, url, response_status, timestamp, request_type, saved, in_scope"
+
+def _row_to_list_item(r):
+    return {"id": r[0], "method": r[1], "url": r[2], "response_status": r[3],
+            "timestamp": r[4], "request_type": r[5], "saved": bool(r[6]), "in_scope": bool(r[7])}
 
 @app.get("/api/requests")
 async def get_requests(limit: int = 500, saved_only: bool = False, in_scope_only: bool = False, search: str = ""):
@@ -932,33 +1376,33 @@ async def toggle_save(rid: int):
         await db.commit()
         return {"saved": not row[0]}
 
-@app.get("/api/requests/{rid}/download-body")
-async def download_response_body(rid: int, filename: str = "response.txt"):
-    from fastapi.responses import Response
+@app.delete("/api/requests/{rid}")
+async def delete_req(rid: int):
     async with await get_db() as db:
-        cursor = await db.execute("SELECT response_body FROM requests WHERE id = ?", (rid,))
-        row = await cursor.fetchone()
-        if not row or not row[0]:
-            raise HTTPException(status_code=404, detail="No response body")
-    return Response(
-        content=row[0].encode('utf-8') if isinstance(row[0], str) else row[0],
-        media_type="application/octet-stream",
-        headers={"Content-Disposition": f'attachment; filename="{filename}"'}
-    )
+        await db.execute("DELETE FROM requests WHERE id = ?", (rid,))
+        await db.commit()
+        return {"status": "deleted"}
+
+@app.delete("/api/requests")
+async def clear_history(keep_saved: bool = True):
+    async with await get_db() as db:
+        if keep_saved:
+            await db.execute("DELETE FROM requests WHERE saved = 0")
+        else:
+            await db.execute("DELETE FROM requests")
+        await db.commit()
+        return {"status": "cleared"}
 
 @app.get("/api/requests/{rid}/render")
 async def render_response(rid: int):
-    """Render response body as HTML for preview."""
+    from fastapi.responses import Response
     async with await get_db() as db:
         cursor = await db.execute("SELECT response_body, response_headers FROM requests WHERE id = ?", (rid,))
         row = await cursor.fetchone()
         if not row or not row[0]:
             raise HTTPException(status_code=404, detail="No response body")
-
         body = row[0]
         headers_json = row[1]
-
-        # Parse response headers to get content-type
         content_type = "text/html"
         if headers_json:
             try:
@@ -966,8 +1410,6 @@ async def render_response(rid: int):
                 content_type = headers.get("content-type", headers.get("Content-Type", "text/html"))
             except:
                 pass
-
-        from fastapi.responses import Response
         return Response(
             content=body.encode('utf-8') if isinstance(body, str) else body,
             media_type=content_type
@@ -975,192 +1417,417 @@ async def render_response(rid: int):
 
 @app.get("/api/requests/{rid}/replay")
 async def replay_request(rid: int):
-    """Generate an HTML page that replays the request in the browser."""
     async with await get_db() as db:
         cursor = await db.execute("SELECT method, url, headers, body FROM requests WHERE id = ?", (rid,))
         row = await cursor.fetchone()
         if not row:
             raise HTTPException(status_code=404, detail="Request not found")
 
-        method = row[0]
-        url = row[1]
-        headers_json = row[2]
-        body = row[3] or ""
+        method, url, headers_json, body = row
+        headers = json.loads(headers_json) if headers_json else {}
 
-        headers = {}
-        if headers_json:
-            try:
-                headers = json.loads(headers_json)
-            except:
-                pass
-
-        # Create HTML page that replays the request
-        html = f"""<!DOCTYPE html>
+        html_content = f"""<!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Replay Request - {method} {url}</title>
+    <title>Replay Request</title>
     <style>
-        body {{
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            max-width: 900px;
-            margin: 40px auto;
-            padding: 20px;
-            background: #f5f5f5;
-        }}
-        .container {{
-            background: white;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }}
-        h1 {{
-            color: #333;
-            margin-top: 0;
-            font-size: 24px;
-        }}
-        .info {{
-            background: #e3f2fd;
-            padding: 15px;
-            border-radius: 4px;
-            margin-bottom: 20px;
-            border-left: 4px solid #2196F3;
-        }}
-        .info strong {{
-            color: #1976D2;
-        }}
-        pre {{
-            background: #f5f5f5;
-            padding: 15px;
-            border-radius: 4px;
-            overflow-x: auto;
-            font-size: 13px;
-            border: 1px solid #ddd;
-        }}
-        .btn {{
-            background: #4CAF50;
-            color: white;
-            padding: 12px 24px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 16px;
-            font-weight: 500;
-            transition: background 0.3s;
-        }}
-        .btn:hover {{
-            background: #45a049;
-        }}
-        .btn:disabled {{
-            background: #ccc;
-            cursor: not-allowed;
-        }}
-        .status {{
-            margin-top: 20px;
-            padding: 15px;
-            border-radius: 4px;
-            display: none;
-        }}
-        .status.success {{
-            background: #d4edda;
-            border: 1px solid #c3e6cb;
-            color: #155724;
-        }}
-        .status.error {{
-            background: #f8d7da;
-            border: 1px solid #f5c6cb;
-            color: #721c24;
-        }}
-        .warning {{
-            background: #fff3cd;
-            border: 1px solid #ffeaa7;
-            color: #856404;
-            padding: 15px;
-            border-radius: 4px;
-            margin-bottom: 20px;
-        }}
-        .section {{
-            margin-bottom: 25px;
-        }}
-        .section h2 {{
-            font-size: 18px;
-            color: #555;
-            margin-bottom: 10px;
-            border-bottom: 2px solid #eee;
-            padding-bottom: 5px;
-        }}
+        body {{ font-family: monospace; margin: 20px; background: #1e1e1e; color: #d4d4d4; }}
+        h2 {{ color: #4fc3f7; }}
+        pre {{ background: #2d2d30; padding: 10px; border-radius: 4px; overflow-x: auto; }}
+        button {{ background: #0e639c; color: white; border: none; padding: 10px 20px; cursor: pointer; border-radius: 4px; }}
+        button:hover {{ background: #1177bb; }}
+        #response {{ margin-top: 20px; }}
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>🔄 Request Replay</h1>
-
-        <div class="info">
-            <strong>Method:</strong> {method}<br>
-            <strong>URL:</strong> {url}
-        </div>
-
-        <div class="warning">
-            ⚠️ <strong>Warning:</strong> This will send a real HTTP request to the target server.
-            Note that some headers (like Host, Origin) may be modified or blocked by the browser for security reasons.
-        </div>
-
-        <div class="section">
-            <h2>Headers</h2>
-            <pre>{json.dumps(headers, indent=2)}</pre>
-        </div>
-
-        {"<div class='section'><h2>Body</h2><pre>" + body[:1000] + ("..." if len(body) > 1000 else "") + "</pre></div>" if body else ""}
-
-        <button class="btn" onclick="replayRequest()" id="replayBtn">Send Request</button>
-
-        <div class="status" id="status"></div>
-    </div>
+    <h2>Replay Request</h2>
+    <pre id="request-info">
+Method: {method}
+URL: {url}
+Headers: {json.dumps(headers, indent=2)}
+Body: {body or '(empty)'}
+    </pre>
+    <button onclick="sendRequest()">Send Request</button>
+    <div id="response"></div>
 
     <script>
-        async function replayRequest() {{
-            const btn = document.getElementById('replayBtn');
-            const status = document.getElementById('status');
-
-            btn.disabled = true;
-            btn.textContent = 'Sending...';
-            status.style.display = 'none';
+        async function sendRequest() {{
+            const responseDiv = document.getElementById('response');
+            responseDiv.innerHTML = '<p>Sending...</p>';
 
             try {{
-                const options = {{
-                    method: {json.dumps(method)},
+                const resp = await fetch('{url}', {{
+                    method: '{method}',
                     headers: {json.dumps(headers)},
-                }};
+                    body: {json.dumps(body) if body else 'null'}
+                }});
 
-                {"options.body = " + json.dumps(body) + ";" if body and method not in ['GET', 'HEAD'] else ""}
-
-                const response = await fetch({json.dumps(url)}, options);
-                const responseText = await response.text();
-
-                status.className = 'status success';
-                status.style.display = 'block';
-                status.innerHTML = '<strong>✓ Success!</strong><br>' +
-                    'Status: ' + response.status + ' ' + response.statusText + '<br>' +
-                    'Response length: ' + responseText.length + ' bytes<br>' +
-                    '<pre style="margin-top:10px; max-height:300px; overflow:auto;">' +
-                    responseText.substring(0, 1000).replace(/</g, '&lt;').replace(/>/g, '&gt;') +
-                    (responseText.length > 1000 ? '...' : '') + '</pre>';
-
-            }} catch (error) {{
-                status.className = 'status error';
-                status.style.display = 'block';
-                status.innerHTML = '<strong>✗ Error</strong><br>' + error.message;
-            }} finally {{
-                btn.disabled = false;
-                btn.textContent = 'Send Request';
+                const text = await resp.text();
+                responseDiv.innerHTML = '<h2>Response</h2><pre>Status: ' + resp.status + '\\n\\n' + text + '</pre>';
+            }} catch(e) {{
+                responseDiv.innerHTML = '<p style="color: #f48771;">Error: ' + e.message + '</p>';
             }}
         }}
     </script>
 </body>
 </html>"""
+        return HTMLResponse(content=html_content)
 
-        return HTMLResponse(content=html)
+@app.get("/api/requests/{rid}/download-body")
+async def download_request_body(rid: int):
+    from fastapi.responses import Response
+    async with await get_db() as db:
+        cursor = await db.execute("SELECT body, url FROM requests WHERE id = ?", (rid,))
+        row = await cursor.fetchone()
+        if not row:
+            raise HTTPException(status_code=404, detail="Request not found")
 
+        body, url = row
+        if not body:
+            raise HTTPException(status_code=404, detail="No body in this request")
+
+        # Intentar determinar la extensión del archivo según el tipo de contenido
+        filename = f"request_{rid}_body.txt"
+        try:
+            # Intentar parsear como JSON
+            json.loads(body)
+            filename = f"request_{rid}_body.json"
+        except:
+            # Si no es JSON, usar .txt
+            pass
+
+        return Response(
+            content=body.encode('utf-8') if isinstance(body, str) else body,
+            media_type='application/octet-stream',
+            headers={
+                'Content-Disposition': f'attachment; filename="{filename}"'
+            }
+        )
+
+@app.get("/api/repeater")
+async def get_repeater():
+    async with await get_db() as db:
+        cursor = await db.execute("SELECT * FROM repeater ORDER BY id DESC")
+        rows = await cursor.fetchall()
+        return [{"id": r[0], "name": r[1], "method": r[2], "url": r[3], "headers": json.loads(r[4]),
+            "body": r[5], "created_at": r[6], "last_response": json.loads(r[7]) if r[7] else None} for r in rows]
+
+@app.post("/api/repeater")
+async def create_repeater(req: RepeaterRequest):
+    async with await get_db() as db:
+        await db.execute("INSERT INTO repeater (name, method, url, headers, body, created_at) VALUES (?,?,?,?,?,?)",
+            (req.name, req.method, req.url, json.dumps(req.headers), req.body, datetime.now().isoformat()))
+        await db.commit()
+        return {"status": "created"}
+
+@app.put("/api/repeater/{item_id}")
+async def update_repeater(item_id: int, data: dict = Body(...)):
+    async with await get_db() as db:
+        if "name" in data:
+            await db.execute("UPDATE repeater SET name = ? WHERE id = ?", (data["name"], item_id))
+        if "method" in data:
+            await db.execute("UPDATE repeater SET method = ? WHERE id = ?", (data["method"], item_id))
+        if "url" in data:
+            await db.execute("UPDATE repeater SET url = ? WHERE id = ?", (data["url"], item_id))
+        if "headers" in data:
+            await db.execute("UPDATE repeater SET headers = ? WHERE id = ?", (json.dumps(data["headers"]), item_id))
+        if "body" in data:
+            await db.execute("UPDATE repeater SET body = ? WHERE id = ?", (data["body"], item_id))
+        if "last_response" in data:
+            await db.execute("UPDATE repeater SET last_response = ? WHERE id = ?", (json.dumps(data["last_response"]), item_id))
+        await db.commit()
+        return {"status": "updated"}
+
+@app.delete("/api/repeater/{item_id}")
+async def delete_repeater(item_id: int):
+    async with await get_db() as db:
+        await db.execute("DELETE FROM repeater WHERE id = ?", (item_id,))
+        await db.commit()
+        return {"status": "deleted"}
+
+@app.post("/api/repeater/send-raw")
+async def send_raw(data: dict = Body(...)):
+    try:
+        follow = data.get("follow_redirects", False)
+        async with httpx.AsyncClient(verify=False, timeout=30, follow_redirects=follow, max_redirects=30) as client:
+            start = datetime.now()
+            resp = await client.request(method=data.get("method", "GET"), url=data.get("url", ""),
+                headers=data.get("headers", {}), content=data.get("body", "").encode() if data.get("body") else None)
+            elapsed = (datetime.now() - start).total_seconds()
+            # Detectar si es una redirección (3xx con Location header)
+            is_redirect = 300 <= resp.status_code < 400
+            redirect_url = resp.headers.get("location", None) if is_redirect else None
+            # Si se siguieron redirects, incluir la cadena
+            redirect_chain = []
+            if follow and resp.history:
+                for hr in resp.history:
+                    redirect_chain.append({
+                        "status_code": hr.status_code,
+                        "url": str(hr.url),
+                        "location": hr.headers.get("location", "")
+                    })
+            return {
+                "status_code": resp.status_code, "headers": dict(resp.headers), "body": resp.text,
+                "elapsed": elapsed, "size": len(resp.content),
+                "is_redirect": is_redirect, "redirect_url": redirect_url,
+                "redirect_chain": redirect_chain, "final_url": str(resp.url)
+            }
+    except Exception as e:
+        return {"error": str(e)}
+
+
+# --- Chepy ---
+@app.get("/api/chepy/operations")
+async def get_chepy_operations():
+    return {"operations": CHEPY_OPERATIONS}
+
+@app.post("/api/chepy/bake")
+async def bake_chepy(recipe: ChepyRecipe):
+    from chepy_compat import run_operation
+    try:
+        value = recipe.input
+        for op in recipe.operations:
+            if op.name.startswith("_"):
+                return {"error": f"Unknown operation: {op.name}"}
+            allowed = False
+            for cat_ops in CHEPY_OPERATIONS.values():
+                if any(o["name"] == op.name for o in cat_ops):
+                    allowed = True
+                    break
+            if not allowed:
+                return {"error": f"Operation not allowed: {op.name}"}
+            args = {k: v for k, v in op.args.items() if v != ""}
+            value = run_operation(op.name, value, args)
+        return {"output": value}
+    except Exception as e:
+        return {"error": str(e)}
+
+
+# --- WebSocket Viewer ---
+@app.get("/api/websocket/connections")
+async def get_ws_connections(limit: int = 500):
+    async with await get_db() as db:
+        cursor = await db.execute(
+            """SELECT url, COUNT(*) as frame_count,
+               MIN(timestamp) as first_seen, MAX(timestamp) as last_seen
+               FROM requests WHERE request_type = 'websocket'
+               GROUP BY url ORDER BY last_seen DESC LIMIT ?""", (limit,))
+        rows = await cursor.fetchall()
+        return [{"url": r[0], "frame_count": r[1],
+                 "first_seen": r[2], "last_seen": r[3]} for r in rows]
+
+@app.get("/api/websocket/frames")
+async def get_ws_frames(url: str, limit: int = 500):
+    async with await get_db() as db:
+        cursor = await db.execute(
+            """SELECT id, body, response_body, timestamp
+               FROM requests WHERE request_type = 'websocket' AND url = ?
+               ORDER BY id ASC LIMIT ?""", (url, limit))
+        rows = await cursor.fetchall()
+        return [{"id": r[0], "content": r[1],
+                 "direction": "up" if "\u2191" in (r[2] or "") else "down",
+                 "timestamp": r[3]} for r in rows]
+
+@app.post("/api/websocket/resend")
+async def resend_ws_frame(data: WsResendRequest):
+    import websockets
+    try:
+        extra_headers = data.headers or {}
+        async with websockets.connect(data.url,
+                additional_headers=extra_headers,
+                open_timeout=10, close_timeout=5) as ws:
+            await ws.send(data.message)
+            try:
+                response = await asyncio.wait_for(ws.recv(), timeout=5.0)
+                return {"status": "sent", "response": str(response)}
+            except asyncio.TimeoutError:
+                return {"status": "sent", "response": None,
+                        "note": "No response within 5s"}
+    except Exception as e:
+        return {"error": str(e)}
+
+
+# --- Collections ---
+def resolve_jsonpath(data, path):
+    """Simple dot-notation path resolver: $.key.subkey.0.field"""
+    if not path.startswith('$.'):
+        return None
+    keys = path[2:].split('.')
+    current = data
+    for key in keys:
+        if isinstance(current, dict):
+            current = current.get(key)
+        elif isinstance(current, list):
+            try:
+                current = current[int(key)]
+            except (ValueError, IndexError):
+                return None
+        else:
+            return None
+        if current is None:
+            return None
+    return current
+
+def substitute_variables(text, variables):
+    """Replace {{varname}} placeholders with variable values."""
+    if not text:
+        return text
+    for name, value in variables.items():
+        text = text.replace('{{' + name + '}}', str(value))
+    return text
+
+@app.get("/api/collections")
+async def list_collections():
+    async with await get_db() as db:
+        cursor = await db.execute(
+            "SELECT id, name, description, created_at FROM collections ORDER BY id DESC")
+        rows = await cursor.fetchall()
+        result = []
+        for r in rows:
+            cnt = await db.execute(
+                "SELECT COUNT(*) FROM collection_items WHERE collection_id = ?", (r[0],))
+            count = (await cnt.fetchone())[0]
+            result.append({"id": r[0], "name": r[1], "description": r[2],
+                           "created_at": r[3], "item_count": count})
+        return result
+
+@app.post("/api/collections")
+async def create_collection(data: CollectionCreate):
+    async with await get_db() as db:
+        await db.execute(
+            "INSERT INTO collections (name, description, created_at) VALUES (?,?,?)",
+            (data.name, data.description, datetime.now().isoformat()))
+        await db.commit()
+        cursor = await db.execute("SELECT last_insert_rowid()")
+        cid = (await cursor.fetchone())[0]
+        return {"status": "created", "id": cid}
+
+@app.put("/api/collections/{cid}")
+async def update_collection(cid: int, data: dict = Body(...)):
+    async with await get_db() as db:
+        fields, params = [], []
+        if "name" in data:
+            fields.append("name = ?"); params.append(data["name"])
+        if "description" in data:
+            fields.append("description = ?"); params.append(data["description"])
+        if fields:
+            params.append(cid)
+            await db.execute(f"UPDATE collections SET {', '.join(fields)} WHERE id = ?", params)
+            await db.commit()
+        return {"status": "updated"}
+
+@app.delete("/api/collections/{cid}")
+async def delete_collection(cid: int):
+    async with await get_db() as db:
+        await db.execute("DELETE FROM collection_items WHERE collection_id = ?", (cid,))
+        await db.execute("DELETE FROM collections WHERE id = ?", (cid,))
+        await db.commit()
+        return {"status": "deleted"}
+
+@app.get("/api/collections/{cid}/items")
+async def get_collection_items(cid: int):
+    async with await get_db() as db:
+        cursor = await db.execute(
+            """SELECT id, collection_id, position, method, url, headers, body, var_extracts, created_at
+               FROM collection_items WHERE collection_id = ? ORDER BY position ASC""", (cid,))
+        rows = await cursor.fetchall()
+        return [{"id": r[0], "collection_id": r[1], "position": r[2], "method": r[3],
+                 "url": r[4], "headers": json.loads(r[5]), "body": r[6],
+                 "var_extracts": json.loads(r[7]), "created_at": r[8]} for r in rows]
+
+@app.post("/api/collections/{cid}/items")
+async def add_collection_item(cid: int, data: CollectionItemCreate):
+    async with await get_db() as db:
+        if data.position is None:
+            cursor = await db.execute(
+                "SELECT COALESCE(MAX(position), 0) + 1 FROM collection_items WHERE collection_id = ?", (cid,))
+            data.position = (await cursor.fetchone())[0]
+        await db.execute(
+            """INSERT INTO collection_items (collection_id, position, method, url, headers, body, var_extracts, created_at)
+               VALUES (?,?,?,?,?,?,?,?)""",
+            (cid, data.position, data.method, data.url, json.dumps(data.headers),
+             data.body, json.dumps(data.var_extracts), datetime.now().isoformat()))
+        await db.commit()
+        return {"status": "created"}
+
+@app.put("/api/collections/{cid}/items/{iid}")
+async def update_collection_item(cid: int, iid: int, data: dict = Body(...)):
+    async with await get_db() as db:
+        fields, params = [], []
+        for key in ["method", "url", "body"]:
+            if key in data:
+                fields.append(f"{key} = ?"); params.append(data[key])
+        if "headers" in data:
+            fields.append("headers = ?"); params.append(json.dumps(data["headers"]))
+        if "var_extracts" in data:
+            fields.append("var_extracts = ?"); params.append(json.dumps(data["var_extracts"]))
+        if "position" in data:
+            fields.append("position = ?"); params.append(data["position"])
+        if fields:
+            params.append(iid)
+            await db.execute(f"UPDATE collection_items SET {', '.join(fields)} WHERE id = ?", params)
+            await db.commit()
+        return {"status": "updated"}
+
+@app.delete("/api/collections/{cid}/items/{iid}")
+async def delete_collection_item(cid: int, iid: int):
+    async with await get_db() as db:
+        await db.execute("DELETE FROM collection_items WHERE id = ?", (iid,))
+        await db.commit()
+        return {"status": "deleted"}
+
+@app.post("/api/collections/{cid}/items/{iid}/execute")
+async def execute_collection_item(cid: int, iid: int, data: CollectionItemExecute):
+    async with await get_db() as db:
+        cursor = await db.execute(
+            """SELECT method, url, headers, body, var_extracts
+               FROM collection_items WHERE id = ? AND collection_id = ?""", (iid, cid))
+        row = await cursor.fetchone()
+        if not row:
+            raise HTTPException(status_code=404, detail="Item not found")
+
+    method = substitute_variables(row[0], data.variables)
+    url = substitute_variables(row[1], data.variables)
+    headers = json.loads(row[2])
+    headers = {k: substitute_variables(v, data.variables) for k, v in headers.items()}
+    body = substitute_variables(row[3], data.variables)
+    var_extracts = json.loads(row[4])
+
+    try:
+        async with httpx.AsyncClient(verify=False, timeout=30) as client:
+            start = datetime.now()
+            resp = await client.request(method=method, url=url, headers=headers,
+                content=body.encode() if body else None)
+            elapsed = (datetime.now() - start).total_seconds()
+
+            extracted = {}
+            resp_body_text = resp.text
+            for ve in var_extracts:
+                vname = ve.get("name")
+                source = ve.get("source", "body")
+                path = ve.get("path", "")
+                if not vname or not path:
+                    continue
+                if source == "body":
+                    try:
+                        parsed = json.loads(resp_body_text)
+                        val = resolve_jsonpath(parsed, path)
+                        if val is not None:
+                            extracted[vname] = val
+                    except json.JSONDecodeError:
+                        pass
+                elif source == "header":
+                    extracted[vname] = resp.headers.get(path, "")
+
+            return {
+                "status_code": resp.status_code,
+                "headers": dict(resp.headers),
+                "body": resp_body_text,
+                "elapsed": elapsed,
+                "size": len(resp.content),
+                "extracted_variables": extracted
+            }
     except Exception as e:
         return {"error": str(e)}
 
@@ -1220,21 +1887,23 @@ async def receive_request(data: dict = Body(...)):
         return {"status": "no_project"}
     in_scope = match_scope(data["url"], scope_rules)
     logger.debug('Internal capture: %s %s (in_scope=%s)', data.get('method'), data.get('url'), in_scope)
-    ts = datetime.now().isoformat()
     async with aiosqlite.connect(get_project_db(project)) as db:
-        h = hashlib.md5(f"{data['method']}{data['url']}{data.get('body','')}{ts}".encode()).hexdigest()
-        await db.execute("""INSERT INTO requests (method,url,headers,body,response_status,response_headers,
-            response_body,timestamp,request_type,in_scope,hash) VALUES (?,?,?,?,?,?,?,?,?,?,?)""",
-            (data["method"], data["url"], json.dumps(data.get("headers", {})), data.get("body"),
-            data.get("response_status"), json.dumps(data.get("response_headers", {})) if data.get("response_headers") else None,
-            data.get("response_body"), ts, data.get("request_type", "http"), 1 if in_scope else 0, h))
-        await db.commit()
-        cursor = await db.execute("SELECT last_insert_rowid()")
-        rid = (await cursor.fetchone())[0]
-        await broadcast({"type": "new_request", "data": {"id": rid, "method": data["method"], "url": data["url"],
-            "response_status": data.get("response_status"), "request_type": data.get("request_type", "http"),
-            "saved": False, "in_scope": in_scope, "timestamp": ts}})
-        return {"status": "received", "id": rid}
+        h = hashlib.md5(f"{data['method']}{data['url']}{data.get('body','')}".encode()).hexdigest()
+        try:
+            await db.execute("""INSERT INTO requests (method,url,headers,body,response_status,response_headers,
+                response_body,timestamp,request_type,in_scope,hash) VALUES (?,?,?,?,?,?,?,?,?,?,?)""",
+                (data["method"], data["url"], json.dumps(data.get("headers", {})), data.get("body"),
+                data.get("response_status"), json.dumps(data.get("response_headers", {})) if data.get("response_headers") else None,
+                data.get("response_body"), datetime.now().isoformat(), data.get("request_type", "http"), 1 if in_scope else 0, h))
+            await db.commit()
+            cursor = await db.execute("SELECT last_insert_rowid()")
+            rid = (await cursor.fetchone())[0]
+            await broadcast({"type": "new_request", "data": {"id": rid, "method": data["method"], "url": data["url"],
+                "response_status": data.get("response_status"), "request_type": data.get("request_type", "http"),
+                "saved": False, "in_scope": in_scope, "timestamp": datetime.now().isoformat()}})
+            return {"status": "received", "id": rid}
+        except aiosqlite.IntegrityError:
+            return {"status": "duplicate"}
 
 @app.post("/api/internal/intercept")
 async def receive_intercept(data: dict = Body(...)):
@@ -1244,159 +1913,6 @@ async def receive_intercept(data: dict = Body(...)):
         "headers": data.get("headers", {}), "body": data.get("body"), "timestamp": datetime.now().isoformat()}
     await broadcast({"type": "intercept_new", "data": intercepted_requests[rid]})
     return {"status": "intercepted", "request_id": rid}
-
-@app.post("/api/internal/intercept_response")
-async def receive_intercept_response(data: dict = Body(...)):
-    rid = data.get("request_id", hashlib.md5(str(datetime.now()).encode()).hexdigest()[:12])
-    logger.debug('Response intercept incoming: %s %s %s', data.get('method'), data.get('url'), data.get('status_code'))
-    intercepted_responses[rid] = {
-        "id": rid,
-        "method": data["method"],
-        "url": data["url"],
-        "req_headers": data.get("req_headers", {}),
-        "req_body": data.get("req_body"),
-        "status_code": data.get("status_code"),
-        "headers": data.get("headers", {}),
-        "body": data.get("body"),
-        "timestamp": datetime.now().isoformat(),
-    }
-    await broadcast({"type": "intercept_response_new", "data": intercepted_responses[rid]})
-    return {"status": "intercepted", "response_id": rid}
-
-
-# --- Session Handling: Macros ---
-@app.get("/api/session/macros")
-async def list_macros():
-    async with await get_db() as db:
-        cursor = await db.execute("SELECT id, name, description, steps, enabled, created_at FROM session_macros ORDER BY id DESC")
-        rows = await cursor.fetchall()
-        return [{"id": r[0], "name": r[1], "description": r[2], "steps": json.loads(r[3]), "enabled": bool(r[4]), "created_at": r[5]} for r in rows]
-
-@app.post("/api/session/macros")
-async def create_macro(macro: SessionMacro):
-    async with await get_db() as db:
-        await db.execute(
-            "INSERT INTO session_macros (name, description, steps, enabled, created_at) VALUES (?,?,?,?,?)",
-            (macro.name, macro.description, json.dumps(macro.steps), 1 if macro.enabled else 0, datetime.now().isoformat())
-        )
-        await db.commit()
-        return {"status": "created"}
-
-@app.put("/api/session/macros/{macro_id}")
-async def update_macro(macro_id: int, data: dict = Body(...)):
-    async with await get_db() as db:
-        if "name" in data:
-            await db.execute("UPDATE session_macros SET name = ? WHERE id = ?", (data["name"], macro_id))
-        if "description" in data:
-            await db.execute("UPDATE session_macros SET description = ? WHERE id = ?", (data["description"], macro_id))
-        if "steps" in data:
-            await db.execute("UPDATE session_macros SET steps = ? WHERE id = ?", (json.dumps(data["steps"]), macro_id))
-        if "enabled" in data:
-            await db.execute("UPDATE session_macros SET enabled = ? WHERE id = ?", (1 if data["enabled"] else 0, macro_id))
-        await db.commit()
-        return {"status": "updated"}
-
-@app.delete("/api/session/macros/{macro_id}")
-async def delete_macro(macro_id: int):
-    async with await get_db() as db:
-        await db.execute("DELETE FROM session_macros WHERE id = ?", (macro_id,))
-        await db.commit()
-        return {"status": "deleted"}
-
-@app.post("/api/session/macros/{macro_id}/execute")
-async def execute_macro(macro_id: int):
-    """Execute a macro (sequence of requests) and return results."""
-    async with await get_db() as db:
-        cursor = await db.execute("SELECT steps FROM session_macros WHERE id = ?", (macro_id,))
-        row = await cursor.fetchone()
-        if not row:
-            raise HTTPException(status_code=404, detail="Macro not found")
-
-        steps = json.loads(row[0])
-        results = []
-
-        async with httpx.AsyncClient(verify=False, timeout=30) as client:
-            for i, step in enumerate(steps):
-                try:
-                    method = step.get("method", "GET")
-                    url = step.get("url", "")
-                    headers = step.get("headers", {})
-                    body = step.get("body", "")
-
-                    resp = await client.request(
-                        method=method,
-                        url=url,
-                        headers=headers,
-                        content=body.encode() if body else None
-                    )
-
-                    results.append({
-                        "step": i + 1,
-                        "status_code": resp.status_code,
-                        "headers": dict(resp.headers),
-                        "body": resp.text[:1000],  # Limit body size
-                        "error": None
-                    })
-                except Exception as e:
-                    results.append({
-                        "step": i + 1,
-                        "error": str(e)
-                    })
-
-        return {"results": results}
-
-
-# --- Session Handling: Rules ---
-@app.get("/api/session/rules")
-async def list_session_rules():
-    async with await get_db() as db:
-        cursor = await db.execute("""
-            SELECT id, name, description, rule_type, extract_regex, extract_from,
-                   header_name, cookie_name, variable_name, enabled, created_at
-            FROM session_rules ORDER BY id DESC
-        """)
-        rows = await cursor.fetchall()
-        return [{
-            "id": r[0], "name": r[1], "description": r[2], "rule_type": r[3],
-            "extract_regex": r[4], "extract_from": r[5], "header_name": r[6],
-            "cookie_name": r[7], "variable_name": r[8], "enabled": bool(r[9]),
-            "created_at": r[10]
-        } for r in rows]
-
-@app.post("/api/session/rules")
-async def create_session_rule(rule: SessionRule):
-    async with await get_db() as db:
-        await db.execute("""
-            INSERT INTO session_rules
-            (name, description, rule_type, extract_regex, extract_from, header_name,
-             cookie_name, variable_name, enabled, created_at)
-            VALUES (?,?,?,?,?,?,?,?,?,?)
-        """, (
-            rule.name, rule.description, rule.rule_type, rule.extract_regex,
-            rule.extract_from, rule.header_name, rule.cookie_name, rule.variable_name,
-            1 if rule.enabled else 0, datetime.now().isoformat()
-        ))
-        await db.commit()
-        return {"status": "created"}
-
-@app.put("/api/session/rules/{rule_id}")
-async def update_session_rule(rule_id: int, data: dict = Body(...)):
-    async with await get_db() as db:
-        for key in ["name", "description", "rule_type", "extract_regex", "extract_from",
-                    "header_name", "cookie_name", "variable_name"]:
-            if key in data:
-                await db.execute(f"UPDATE session_rules SET {key} = ? WHERE id = ?", (data[key], rule_id))
-        if "enabled" in data:
-            await db.execute("UPDATE session_rules SET enabled = ? WHERE id = ?", (1 if data["enabled"] else 0, rule_id))
-        await db.commit()
-        return {"status": "updated"}
-
-@app.delete("/api/session/rules/{rule_id}")
-async def delete_session_rule(rule_id: int):
-    async with await get_db() as db:
-        await db.execute("DELETE FROM session_rules WHERE id = ?", (rule_id,))
-        await db.commit()
-        return {"status": "deleted"}
 
 
 # --- Intruder Attacks ---
@@ -1453,6 +1969,142 @@ async def delete_intruder_attack(aid: int):
         await db.execute("DELETE FROM intruder_attacks WHERE id = ?", (aid,))
         await db.commit()
         return {"status": "deleted"}
+
+# --- Session Macros Endpoints ---
+
+@app.get("/api/session/macros")
+async def get_session_macros():
+    async with await get_db() as db:
+        cursor = await db.execute("SELECT id, name, description, requests, created_at FROM session_macros ORDER BY created_at DESC")
+        rows = await cursor.fetchall()
+        return [{"id": r[0], "name": r[1], "description": r[2], "requests": json.loads(r[3]), "created_at": r[4]} for r in rows]
+
+@app.post("/api/session/macros")
+async def create_session_macro(data: dict = Body(...)):
+    async with await get_db() as db:
+        cursor = await db.execute(
+            "INSERT INTO session_macros (name, description, requests, created_at) VALUES (?, ?, ?, ?)",
+            (data["name"], data.get("description", ""), json.dumps(data.get("requests", [])), datetime.now().isoformat())
+        )
+        await db.commit()
+        return {"id": cursor.lastrowid}
+
+@app.put("/api/session/macros/{macro_id}")
+async def update_session_macro(macro_id: int, data: dict = Body(...)):
+    async with await get_db() as db:
+        fields = []
+        vals = []
+        if "name" in data:
+            fields.append("name = ?")
+            vals.append(data["name"])
+        if "description" in data:
+            fields.append("description = ?")
+            vals.append(data["description"])
+        if "requests" in data:
+            fields.append("requests = ?")
+            vals.append(json.dumps(data["requests"]))
+        if fields:
+            vals.append(macro_id)
+            await db.execute("UPDATE session_macros SET " + ", ".join(fields) + " WHERE id = ?", vals)
+            await db.commit()
+        return {"status": "updated"}
+
+@app.delete("/api/session/macros/{macro_id}")
+async def delete_session_macro(macro_id: int):
+    async with await get_db() as db:
+        await db.execute("DELETE FROM session_macros WHERE id = ?", (macro_id,))
+        await db.commit()
+        return {"status": "deleted"}
+
+@app.post("/api/session/macros/{macro_id}/execute")
+async def execute_session_macro(macro_id: int):
+    async with await get_db() as db:
+        cursor = await db.execute("SELECT requests FROM session_macros WHERE id = ?", (macro_id,))
+        row = await cursor.fetchone()
+        if not row:
+            raise HTTPException(status_code=404, detail="Macro not found")
+
+        requests_data = json.loads(row[0])
+        results = []
+
+        async with httpx.AsyncClient(verify=False, follow_redirects=False, timeout=30.0) as client:
+            for req in requests_data:
+                try:
+                    resp = await client.request(
+                        method=req.get("method", "GET"),
+                        url=req.get("url", ""),
+                        headers=json.loads(req.get("headers", "{}")),
+                        content=req.get("body", "").encode() if req.get("body") else None
+                    )
+                    results.append({
+                        "status": "success",
+                        "status_code": resp.status_code,
+                        "headers": dict(resp.headers),
+                        "body": resp.text
+                    })
+                except Exception as e:
+                    results.append({
+                        "status": "error",
+                        "error": str(e)
+                    })
+
+        return {"results": results}
+
+# --- Session Rules Endpoints ---
+
+@app.get("/api/session/rules")
+async def get_session_rules():
+    async with await get_db() as db:
+        cursor = await db.execute(
+            """SELECT id, enabled, name, when_stage, target, header_name, regex_pattern,
+               extract_group, variable_name, created_at FROM session_rules ORDER BY created_at DESC"""
+        )
+        rows = await cursor.fetchall()
+        return [{
+            "id": r[0], "enabled": bool(r[1]), "name": r[2], "when": r[3],
+            "target": r[4], "header": r[5], "regex": r[6],
+            "group": r[7], "variable": r[8], "created_at": r[9]
+        } for r in rows]
+
+@app.post("/api/session/rules")
+async def create_session_rule(data: dict = Body(...)):
+    async with await get_db() as db:
+        cursor = await db.execute(
+            """INSERT INTO session_rules (enabled, name, when_stage, target, header_name,
+               regex_pattern, extract_group, variable_name, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+            (
+                data.get("enabled", True), data["name"], data["when"], data["target"],
+                data.get("header", ""), data["regex"], data.get("group", 1),
+                data["variable"], datetime.now().isoformat()
+            )
+        )
+        await db.commit()
+        return {"id": cursor.lastrowid}
+
+@app.put("/api/session/rules/{rule_id}")
+async def update_session_rule(rule_id: int, data: dict = Body(...)):
+    async with await get_db() as db:
+        fields = []
+        vals = []
+        for key, col in [("enabled", "enabled"), ("name", "name"), ("when", "when_stage"),
+                         ("target", "target"), ("header", "header_name"), ("regex", "regex_pattern"),
+                         ("group", "extract_group"), ("variable", "variable_name")]:
+            if key in data:
+                fields.append(f"{col} = ?")
+                vals.append(data[key])
+        if fields:
+            vals.append(rule_id)
+            await db.execute("UPDATE session_rules SET " + ", ".join(fields) + " WHERE id = ?", vals)
+            await db.commit()
+        return {"status": "updated"}
+
+@app.delete("/api/session/rules/{rule_id}")
+async def delete_session_rule(rule_id: int):
+    async with await get_db() as db:
+        await db.execute("DELETE FROM session_rules WHERE id = ?", (rule_id,))
+        await db.commit()
+        return {"status": "deleted"}
+
 
 if __name__ == "__main__":
     import uvicorn
