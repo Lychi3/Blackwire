@@ -3103,7 +3103,7 @@ function Blackwire() {
 .context-menu-item{padding:8px 12px;font-size:12px;color:var(--txt);cursor:pointer;border-radius:4px;transition:all .15s ease}
 .context-menu-item:hover{background:var(--bgh)}
 .context-menu-divider{height:1px;background:var(--brd);margin:4px 0}
-.chepy-cnt{display:flex;width:100%;height:100%}.chepy-col{display:flex;flex-direction:column;overflow:hidden}
+.chepy-cnt{display:flex;flex-direction:column;width:100%;height:100%}.chepy-col{display:flex;flex-direction:column;overflow:hidden}
 .chepy-in-col{flex-shrink:0;border-right:1px solid var(--brd)}.chepy-recipe-col{flex-shrink:0;border-right:1px solid var(--brd)}.chepy-out-col{flex:1;min-width:0}
 .chepy-add{display:flex;flex-direction:column;border-bottom:1px solid var(--brd);max-height:40%}.chepy-ops-list{flex:1;overflow:auto;padding:0 8px 8px}
 .chepy-avail-op{padding:5px 10px;font-size:11px;cursor:pointer;border-radius:4px;color:var(--txt2);font-family:var(--font-mono)}.chepy-avail-op:hover{background:var(--bg3);color:var(--cyan)}
@@ -3124,7 +3124,7 @@ function Blackwire() {
 .ws-frame-item:hover{background:var(--bgh)}.ws-frame-item.sel{background:var(--bg3);border-left:3px solid var(--cyan)}
 .ws-dir{font-weight:700;font-size:14px;width:20px;text-align:center}.ws-dir-up{color:var(--green)}.ws-dir-down{color:var(--orange)}
 .ws-frame-body{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-family:var(--font-mono)}
-.coll-cnt{display:flex;width:100%;height:100%}
+.coll-cnt{display:flex;flex-direction:column;width:100%;height:100%}
 .coll-side{flex-shrink:0;border-right:1px solid var(--brd)}.coll-steps{flex-shrink:0;border-right:1px solid var(--brd)}.coll-exec{flex:1;display:flex;flex-direction:column;min-width:0}
 .coll-item{display:flex;justify-content:space-between;padding:10px 14px;border-bottom:1px solid var(--brd);cursor:pointer;font-size:12px}
 .coll-item:hover{background:var(--bgh)}.coll-item.sel{background:var(--bg3);border-left:3px solid var(--purple)}
@@ -4352,7 +4352,7 @@ function Blackwire() {
             </div>
 
             {collSubTab === 'collections' && (
-              <React.Fragment>
+              <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
                 <div className="coll-side panel" style={{ width: collSideW + 'px' }}>
                   <div className="pnl-hdr">
                     <span>Collections</span>
@@ -4527,7 +4527,7 @@ function Blackwire() {
                 <div className="empty"><span>{selColl ? 'No steps - add requests from History' : 'Select a collection'}</span></div>
               )}
             </div>
-              </React.Fragment>
+              </div>
             )}
 
             {collSubTab === 'session-rules' && (
@@ -4633,7 +4633,7 @@ function Blackwire() {
             </div>
 
             {chepySubTab === 'cipher' && (
-              <React.Fragment>
+              <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
                 <div className="chepy-col chepy-in-col" style={{ width: chepyInW + '%' }}>
                   <div className="pnl-hdr">
                     <span>Input</span>
@@ -4748,7 +4748,7 @@ function Blackwire() {
                 <div className="code">{chepyOut || 'Output will appear here after baking'}</div>
               )}
             </div>
-              </React.Fragment>
+              </div>
             )}
 
             {chepySubTab === 'jwt' && (
