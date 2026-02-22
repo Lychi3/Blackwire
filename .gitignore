@@ -3,3 +3,14 @@ projects
 data
 backend/__pycache__
 backend/.proxy_config.json
+
+# Archivos temporales y de configuración
+.backend.pid
+.current_project
+.proxy_port
+
+# Backups y carpetas de desarrollo
+.recovery_backups/
+bkp/
+.claude/
+*.BROKEN_*
