@@ -3252,10 +3252,10 @@ function Blackwire() {
               ) : (
                 React.createElement('button', { className: "btn btn-d" , onClick: stopPx, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3253}}, "■ Stop" )
               )
-              , React.createElement('button', { className: "btn btn-s" , onClick: launchBr, disabled: !pxRun, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3255}}, "Web")
+              , React.createElement('button', { className: "btn btn-s" , onClick: launchBr, disabled: !pxRun, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3255}}, "🌐")
             )
           )
-          , React.createElement('button', { className: "btn btn-sm btn-s"  , title: "Shutdown server" , onClick: () => { if (confirm('Shut down Blackwire server?')) api.post('/api/shutdown'); }, style: { marginLeft: '4px', color: 'var(--red)', fontSize: '14px', padding: '4px 8px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3258}}, "◯")
+          , React.createElement('button', { className: "btn btn-sm btn-s"  , title: "Shutdown server" , onClick: () => { if (confirm('Shut down Blackwire server?')) api.post('/api/shutdown'); }, style: { marginLeft: '4px', color: 'var(--red)', fontSize: '14px', padding: '4px 8px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3258}}, "⏻")
         )
       )
 
@@ -3744,7 +3744,7 @@ function Blackwire() {
                   , React.createElement('div', { className: "pnl-cnt", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3744}}
                     , Object.keys(siteTree).length === 0 ? (
                       React.createElement('div', { className: "empty", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3746}}
-                        , React.createElement('div', { className: "empty-i", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3747}}, "Web")
+                        , React.createElement('div', { className: "empty-i", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3747}}, "🌐")
                         , React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 3748}}, "No requests captured"  )
                       )
                     ) : (

@@ -3252,10 +3252,10 @@ function Blackwire() {
               ) : (
                 <button className="btn btn-d" onClick={stopPx}>■ Stop</button>
               )}
-              <button className="btn btn-s" onClick={launchBr} disabled={!pxRun}>Web</button>
+              <button className="btn btn-s" onClick={launchBr} disabled={!pxRun}>🌐</button>
             </React.Fragment>
           )}
-          <button className="btn btn-sm btn-s" title="Shutdown server" onClick={() => { if (confirm('Shut down Blackwire server?')) api.post('/api/shutdown'); }} style={{ marginLeft: '4px', color: 'var(--red)', fontSize: '14px', padding: '4px 8px' }}>◯</button>
+          <button className="btn btn-sm btn-s" title="Shutdown server" onClick={() => { if (confirm('Shut down Blackwire server?')) api.post('/api/shutdown'); }} style={{ marginLeft: '4px', color: 'var(--red)', fontSize: '14px', padding: '4px 8px' }}>⏻</button>
         </div>
       </header>
 
@@ -3744,7 +3744,7 @@ function Blackwire() {
                   <div className="pnl-cnt">
                     {Object.keys(siteTree).length === 0 ? (
                       <div className="empty">
-                        <div className="empty-i">Web</div>
+                        <div className="empty-i">🌐</div>
                         <span>No requests captured</span>
                       </div>
                     ) : (
