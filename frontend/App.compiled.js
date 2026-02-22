@@ -3209,10 +3209,10 @@ function Blackwire() {
               ) : (
                 React.createElement('button', { className: "btn btn-d" , onClick: stopPx, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3210}}, "■ Stop" )
               )
-              , React.createElement('button', { className: "btn btn-s" , onClick: launchBr, disabled: !pxRun, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3212}}, "🌐")
+              , React.createElement('button', { className: "btn btn-s" , onClick: launchBr, disabled: !pxRun, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3212}}, "Web")
             )
           )
-          , React.createElement('button', { className: "btn btn-sm btn-s"  , title: "Shutdown server" , onClick: () => { if (confirm('Shut down Blackwire server?')) api.post('/api/shutdown'); }, style: { marginLeft: '4px', color: 'var(--red)', fontSize: '14px', padding: '4px 8px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3215}}, "⏻")
+          , React.createElement('button', { className: "btn btn-sm btn-s"  , title: "Shutdown server" , onClick: () => { if (confirm('Shut down Blackwire server?')) api.post('/api/shutdown'); }, style: { marginLeft: '4px', color: 'var(--red)', fontSize: '14px', padding: '4px 8px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3215}}, "◯")
         )
       )
 
@@ -3241,7 +3241,7 @@ function Blackwire() {
               , React.createElement('h2', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 3241}}, "Projects")
               , React.createElement('div', { style: { display: 'flex', gap: '8px' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3242}}
                 , React.createElement('button', { className: "btn btn-p" , onClick: () => setShowNew(true), __self: this, __source: {fileName: _jsxFileName, lineNumber: 3243}}, "+ New" )
-                , React.createElement('button', { className: "btn btn-s" , onClick: importAsNewProject, title: "Import project from file"   , __self: this, __source: {fileName: _jsxFileName, lineNumber: 3244}}, "📥 Import" )
+                , React.createElement('button', { className: "btn btn-s" , onClick: importAsNewProject, title: "Import project from file"   , __self: this, __source: {fileName: _jsxFileName, lineNumber: 3244}}, "↓ Import" )
               )
             )
             , showNew && (
@@ -3266,7 +3266,7 @@ function Blackwire() {
                     , React.createElement('div', { className: "prj-date", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3266}}, p.created_at ? new Date(p.created_at).toLocaleDateString() : '')
                   )
                   , React.createElement('div', { onClick: e => e.stopPropagation(), style: { display: 'flex', gap: '4px', alignItems: 'center' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3268}}
-                    , React.createElement('button', { className: "btn btn-sm btn-s"  , onClick: () => exportProject(p.name), title: "Export complete project to file"    , __self: this, __source: {fileName: _jsxFileName, lineNumber: 3269}}, "📤")
+                    , React.createElement('button', { className: "btn btn-sm btn-s"  , onClick: () => exportProject(p.name), title: "Export complete project to file"    , __self: this, __source: {fileName: _jsxFileName, lineNumber: 3269}}, "↑")
                     , React.createElement('div', { style: { position: 'relative', display: 'inline-block' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 3270}}
                       , React.createElement('button', {
                         className: "btn btn-sm btn-s"  ,
@@ -3276,7 +3276,7 @@ function Blackwire() {
                           menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
                         },
                         title: "Import options" , __self: this, __source: {fileName: _jsxFileName, lineNumber: 3271}}
-, "📥 ▼"
+, "↓ ▼"
 
                       )
                       , React.createElement('div', {
@@ -3305,7 +3305,7 @@ function Blackwire() {
                           onClick: (e) => { e.stopPropagation(); importProject(p.name, false); },
                           onMouseEnter: (e) => e.currentTarget.style.background = 'var(--bg3)',
                           onMouseLeave: (e) => e.currentTarget.style.background = 'transparent', __self: this, __source: {fileName: _jsxFileName, lineNumber: 3297}}
-, "📥 Merge Data"
+, "↓ Merge Data"
 
                         )
                         , React.createElement('div', {
@@ -3323,7 +3323,7 @@ function Blackwire() {
                         )
                       )
                     )
-                    , React.createElement('button', { className: "btn btn-sm btn-d"  , onClick: () => delPrj(p.name), __self: this, __source: {fileName: _jsxFileName, lineNumber: 3326}}, "🗑")
+                    , React.createElement('button', { className: "btn btn-sm btn-d"  , onClick: () => delPrj(p.name), __self: this, __source: {fileName: _jsxFileName, lineNumber: 3326}}, "×")
                   )
                 )
               ))
@@ -3399,7 +3399,7 @@ function Blackwire() {
                       ))
                       , filtered.length === 0 && (
                         React.createElement('div', { className: "empty", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3401}}
-                          , React.createElement('div', { className: "empty-i", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3402}}, "📭")
+                          , React.createElement('div', { className: "empty-i", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3402}}, "□")
                           , React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 3403}}, "No requests" )
                         )
                       )
@@ -3424,7 +3424,7 @@ function Blackwire() {
                           , React.createElement('button', { className: 'btn btn-sm ' + (selReq.saved ? 'btn-g' : 'btn-s'), onClick: () => togSave(selReq.id), __self: this, __source: {fileName: _jsxFileName, lineNumber: 3424}}
                             , selReq.saved ? '★' : '☆'
                           )
-                          , React.createElement('button', { className: "btn btn-sm btn-d"  , onClick: () => delReq(selReq.id), __self: this, __source: {fileName: _jsxFileName, lineNumber: 3427}}, "🗑")
+                          , React.createElement('button', { className: "btn btn-sm btn-d"  , onClick: () => delReq(selReq.id), __self: this, __source: {fileName: _jsxFileName, lineNumber: 3427}}, "×")
                         )
                       )
                       , React.createElement('div', { className: "det-tabs", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3430}}
@@ -3632,7 +3632,7 @@ function Blackwire() {
                   , React.createElement('div', { className: "pnl-cnt", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3632}}
                     , Object.keys(siteTree).length === 0 ? (
                       React.createElement('div', { className: "empty", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3634}}
-                        , React.createElement('div', { className: "empty-i", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3635}}, "🌐")
+                        , React.createElement('div', { className: "empty-i", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3635}}, "Web")
                         , React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 3636}}, "No requests captured"  )
                       )
                     ) : (
@@ -3850,7 +3850,7 @@ function Blackwire() {
                   , React.createElement('span', { className: "rul-pat", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3850}}, r.pattern)
                   , React.createElement('div', { className: "rul-acts", __self: this, __source: {fileName: _jsxFileName, lineNumber: 3851}}
                     , React.createElement('button', { className: "btn btn-sm btn-s"  , onClick: () => togRule(r.id), __self: this, __source: {fileName: _jsxFileName, lineNumber: 3852}}, r.enabled ? 'Disable' : 'Enable')
-                    , React.createElement('button', { className: "btn btn-sm btn-d"  , onClick: () => delRule(r.id), __self: this, __source: {fileName: _jsxFileName, lineNumber: 3853}}, "🗑")
+                    , React.createElement('button', { className: "btn btn-sm btn-d"  , onClick: () => delRule(r.id), __self: this, __source: {fileName: _jsxFileName, lineNumber: 3853}}, "×")
                   )
                 )
               ))
@@ -4076,7 +4076,7 @@ function Blackwire() {
                   ))
                   , filteredWhk.length === 0 && (
                     React.createElement('div', { className: "empty", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4078}}
-                      , React.createElement('div', { className: "empty-i", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4079}}, "🔗")
+                      , React.createElement('div', { className: "empty-i", __self: this, __source: {fileName: _jsxFileName, lineNumber: 4079}}, "○")
                       , React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 4080}}, _optionalChain([webhookExt, 'optionalAccess', _76 => _76.config, 'optionalAccess', _77 => _77.token_id]) ? 'No webhook requests yet' : 'Create a webhook URL first')
                     )
                   )

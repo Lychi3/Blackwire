@@ -3209,10 +3209,10 @@ function Blackwire() {
               ) : (
                 <button className="btn btn-d" onClick={stopPx}>■ Stop</button>
               )}
-              <button className="btn btn-s" onClick={launchBr} disabled={!pxRun}>🌐</button>
+              <button className="btn btn-s" onClick={launchBr} disabled={!pxRun}>Web</button>
             </React.Fragment>
           )}
-          <button className="btn btn-sm btn-s" title="Shutdown server" onClick={() => { if (confirm('Shut down Blackwire server?')) api.post('/api/shutdown'); }} style={{ marginLeft: '4px', color: 'var(--red)', fontSize: '14px', padding: '4px 8px' }}>⏻</button>
+          <button className="btn btn-sm btn-s" title="Shutdown server" onClick={() => { if (confirm('Shut down Blackwire server?')) api.post('/api/shutdown'); }} style={{ marginLeft: '4px', color: 'var(--red)', fontSize: '14px', padding: '4px 8px' }}>◯</button>
         </div>
       </header>
 
@@ -3241,7 +3241,7 @@ function Blackwire() {
               <h2>Projects</h2>
               <div style={{ display: 'flex', gap: '8px' }}>
                 <button className="btn btn-p" onClick={() => setShowNew(true)}>+ New</button>
-                <button className="btn btn-s" onClick={importAsNewProject} title="Import project from file">📥 Import</button>
+                <button className="btn btn-s" onClick={importAsNewProject} title="Import project from file">↓ Import</button>
               </div>
             </div>
             {showNew && (
@@ -3266,7 +3266,7 @@ function Blackwire() {
                     <div className="prj-date">{p.created_at ? new Date(p.created_at).toLocaleDateString() : ''}</div>
                   </div>
                   <div onClick={e => e.stopPropagation()} style={{ display: 'flex', gap: '4px', alignItems: 'center' }}>
-                    <button className="btn btn-sm btn-s" onClick={() => exportProject(p.name)} title="Export complete project to file">📤</button>
+                    <button className="btn btn-sm btn-s" onClick={() => exportProject(p.name)} title="Export complete project to file">↑</button>
                     <div style={{ position: 'relative', display: 'inline-block' }}>
                       <button
                         className="btn btn-sm btn-s"
@@ -3277,7 +3277,7 @@ function Blackwire() {
                         }}
                         title="Import options"
                       >
-                        📥 ▼
+                        ↓ ▼
                       </button>
                       <div
                         style={{
@@ -3306,7 +3306,7 @@ function Blackwire() {
                           onMouseEnter={(e) => e.currentTarget.style.background = 'var(--bg3)'}
                           onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
                         >
-                          📥 Merge Data
+                          ↓ Merge Data
                         </div>
                         <div
                           style={{
@@ -3323,7 +3323,7 @@ function Blackwire() {
                         </div>
                       </div>
                     </div>
-                    <button className="btn btn-sm btn-d" onClick={() => delPrj(p.name)}>🗑</button>
+                    <button className="btn btn-sm btn-d" onClick={() => delPrj(p.name)}>×</button>
                   </div>
                 </div>
               ))}
@@ -3399,7 +3399,7 @@ function Blackwire() {
                       ))}
                       {filtered.length === 0 && (
                         <div className="empty">
-                          <div className="empty-i">📭</div>
+                          <div className="empty-i">□</div>
                           <span>No requests</span>
                         </div>
                       )}
@@ -3424,7 +3424,7 @@ function Blackwire() {
                           <button className={'btn btn-sm ' + (selReq.saved ? 'btn-g' : 'btn-s')} onClick={() => togSave(selReq.id)}>
                             {selReq.saved ? '★' : '☆'}
                           </button>
-                          <button className="btn btn-sm btn-d" onClick={() => delReq(selReq.id)}>🗑</button>
+                          <button className="btn btn-sm btn-d" onClick={() => delReq(selReq.id)}>×</button>
                         </div>
                       </div>
                       <div className="det-tabs">
@@ -3632,7 +3632,7 @@ function Blackwire() {
                   <div className="pnl-cnt">
                     {Object.keys(siteTree).length === 0 ? (
                       <div className="empty">
-                        <div className="empty-i">🌐</div>
+                        <div className="empty-i">Web</div>
                         <span>No requests captured</span>
                       </div>
                     ) : (
@@ -3850,7 +3850,7 @@ function Blackwire() {
                   <span className="rul-pat">{r.pattern}</span>
                   <div className="rul-acts">
                     <button className="btn btn-sm btn-s" onClick={() => togRule(r.id)}>{r.enabled ? 'Disable' : 'Enable'}</button>
-                    <button className="btn btn-sm btn-d" onClick={() => delRule(r.id)}>🗑</button>
+                    <button className="btn btn-sm btn-d" onClick={() => delRule(r.id)}>×</button>
                   </div>
                 </div>
               ))}
@@ -4076,7 +4076,7 @@ function Blackwire() {
                   ))}
                   {filteredWhk.length === 0 && (
                     <div className="empty">
-                      <div className="empty-i">🔗</div>
+                      <div className="empty-i">○</div>
                       <span>{webhookExt?.config?.token_id ? 'No webhook requests yet' : 'Create a webhook URL first'}</span>
                     </div>
                   )}
