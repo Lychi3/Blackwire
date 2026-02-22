@@ -1123,6 +1123,44 @@ function Blackwire() {
     toast('Exporting to Burp Suite format: ' + n, 'success');
   };
 
+  const importBurpXML = async n => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.xml,application/xml,text/xml';
+    input.onchange = async e => {
+      const file = e.target.files[0];
+      if (!file) return;
+      try {
+        toast('Importing Burp Suite XML...', 'info');
+        const text = await file.text();
+
+        // Enviar el XML como texto plano
+        const r = await fetch(API + '/api/projects/' + encodeURIComponent(n) + '/import-burp', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'text/plain',
+          },
+          body: text
+        });
+
+        const data = await r.json();
+
+        if (r.ok && data.status === 'success') {
+          toast(`Imported ${data.imported} of ${data.total} items from Burp Suite`, 'success');
+          // Recargar datos si es el proyecto actual
+          if (curPrj === n) {
+            await loadReqs();
+          }
+        } else {
+          toast(data.detail || 'Import failed', 'error');
+        }
+      } catch (err) {
+        toast('Error importing Burp XML: ' + err.message, 'error');
+      }
+    };
+    input.click();
+  };
+
   const importAsNewProject = async () => {
     const input = document.createElement('input');
     input.type = 'file';
@@ -3349,7 +3387,7 @@ function Blackwire() {
                           borderRadius: '4px',
                           boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
                           zIndex: 1000,
-                          minWidth: '150px',
+                          minWidth: '180px',
                           marginTop: '4px'
                         }}
                         onClick={(e) => { e.stopPropagation(); e.currentTarget.style.display = 'none'; }}
@@ -3373,6 +3411,7 @@ function Blackwire() {
                             padding: '8px 12px',
                             cursor: 'pointer',
                             fontSize: '11px',
+                            borderBottom: '1px solid var(--brd)',
                             color: 'var(--red)'
                           }}
                           onClick={(e) => { e.stopPropagation(); importProject(p.name, true); }}
@@ -3380,6 +3419,19 @@ function Blackwire() {
                           onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
                         >
                           🔄 Replace All
+                        </div>
+                        <div
+                          style={{
+                            padding: '8px 12px',
+                            cursor: 'pointer',
+                            fontSize: '11px',
+                            color: 'var(--txt)'
+                          }}
+                          onClick={(e) => { e.stopPropagation(); importBurpXML(p.name); }}
+                          onMouseEnter={(e) => e.currentTarget.style.background = 'var(--bg3)'}
+                          onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
+                        >
+                          ↓ Burp Suite XML
                         </div>
                       </div>
                     </div>

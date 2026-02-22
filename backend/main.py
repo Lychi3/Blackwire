@@ -1189,6 +1189,122 @@ async def export_project_burp(name: str):
         headers={'Content-Disposition': f'attachment; filename="{filename}"'}
     )
 
+@app.post("/api/projects/{name}/import-burp")
+async def import_burp_xml(name: str, xml_content: str = Body(..., media_type="text/plain")):
+    """Importar archivo XML de Burp Suite Pro al proyecto actual"""
+    import xml.etree.ElementTree as ET
+    import base64
+
+    project = get_current_project()
+    if not project:
+        raise HTTPException(status_code=400, detail="Select a project first")
+
+    try:
+        # Parsear XML
+        root = ET.fromstring(xml_content)
+
+        if root.tag != 'items':
+            raise HTTPException(status_code=400, detail="Invalid Burp Suite XML format")
+
+        items = root.findall('item')
+        imported_count = 0
+
+        async with await get_db() as db:
+            for item in items:
+                try:
+                    # Extraer campos del XML
+                    url = item.find('url').text if item.find('url') is not None else ''
+                    method = item.find('method').text if item.find('method') is not None else 'GET'
+                    timestamp = item.find('time').text if item.find('time') is not None else datetime.now().isoformat()
+                    status = item.find('status').text if item.find('status') is not None else None
+
+                    # Parsear request (puede estar en base64)
+                    request_elem = item.find('request')
+                    request_text = ''
+                    if request_elem is not None and request_elem.text:
+                        if request_elem.get('base64') == 'true':
+                            request_text = base64.b64decode(request_elem.text).decode('utf-8', errors='replace')
+                        else:
+                            request_text = request_elem.text
+
+                    # Parsear response (puede estar en base64)
+                    response_elem = item.find('response')
+                    response_text = ''
+                    if response_elem is not None and response_elem.text:
+                        if response_elem.get('base64') == 'true':
+                            response_text = base64.b64decode(response_elem.text).decode('utf-8', errors='replace')
+                        else:
+                            response_text = response_elem.text
+
+                    # Separar headers y body del request
+                    request_headers = {}
+                    request_body = ''
+                    if request_text:
+                        parts = request_text.split('\r\n\r\n', 1)
+                        header_section = parts[0]
+                        request_body = parts[1] if len(parts) > 1 else ''
+
+                        # Parsear headers (saltar la primera línea que es el request line)
+                        header_lines = header_section.split('\r\n')[1:]
+                        for line in header_lines:
+                            if ': ' in line:
+                                key, value = line.split(': ', 1)
+                                request_headers[key] = value
+
+                    # Separar headers y body del response
+                    response_headers = {}
+                    response_body = ''
+                    if response_text:
+                        parts = response_text.split('\r\n\r\n', 1)
+                        header_section = parts[0]
+                        response_body = parts[1] if len(parts) > 1 else ''
+
+                        # Parsear headers (saltar la primera línea que es el status line)
+                        header_lines = header_section.split('\r\n')[1:]
+                        for line in header_lines:
+                            if ': ' in line:
+                                key, value = line.split(': ', 1)
+                                response_headers[key] = value
+
+                    # Insertar en la base de datos
+                    await db.execute("""
+                        INSERT INTO requests (method, url, headers, body, response_status, response_headers,
+                            response_body, timestamp, request_type, tags, notes, saved, in_scope)
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    """, (
+                        method,
+                        url,
+                        json.dumps(request_headers),
+                        request_body,
+                        int(status) if status else None,
+                        json.dumps(response_headers),
+                        response_body,
+                        timestamp,
+                        'http',
+                        '[]',
+                        '',
+                        0,
+                        1
+                    ))
+                    imported_count += 1
+                except Exception as e:
+                    # Si falla un item, continuar con el siguiente
+                    print(f"Error importing item: {e}")
+                    continue
+
+            await db.commit()
+
+        return {
+            "status": "success",
+            "imported": imported_count,
+            "total": len(items)
+        }
+
+    except ET.ParseError as e:
+        raise HTTPException(status_code=400, detail=f"Invalid XML format: {str(e)}")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Import failed: {str(e)}")
+
 @app.post("/api/projects/import")
 async def import_project_create(data: dict = Body(...)):
     """Crear un nuevo proyecto desde un archivo de exportación"""
