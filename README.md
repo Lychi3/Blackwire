@@ -32,13 +32,18 @@
 
 ### Herramientas
 - **Cipher**: Encoder/decoder visual con recetas encadenables — Base64, URL encoding, hashes criptográficos, gzip, hex, y 100+ operaciones
+- **JWT Analyzer**: Decodifica y analiza tokens JWT con documentación de ataques comunes (None algorithm, Key confusion, Weak secrets)
+- **Sensitive Discovery**: Escaneo automático de secrets en responses con 50+ patrones (API keys, tokens, passwords) y filtro Shannon Entropy
 - **Collections**: Agrupa requests en secuencias ejecutables con extracción de variables y sustitución automática para workflows de testing
+- **Session Rules & Macros**: Automatiza extracción de tokens/cookies y reinyección en requests subsecuentes para mantener sesiones activas
 - **Git Integration**: Control de versiones integrado para commits y revisión de historial del proyecto
 
 ### Operación
 - **100% Portable**: Sin rutas hardcoded, funciona desde cualquier directorio
+- **Import/Export**: Exporta proyectos completos (requests, repeater, collections, scope) en formato JSON para compartir con colegas
+- **Burp Suite Integration**: Importa/exporta HTTP history en formato XML compatible con Burp Suite Pro
 - **Desktop Launcher**: Integración con menú de aplicaciones sin terminal visible
-- **Shutdown**: Botón en la UI, script `stop.sh`, o endpoint API para apagar el server
+- **Shutdown**: Botón ⏻ en la UI, script `stop.sh`, o endpoint API para apagar el server
 - **Cross-Platform**: Compatible con cualquier distribución Linux
 - **15 Temas**: Midnight, Dusk, Paper, Gruvbox, Solarized, Aurora, Noir, Glacier, Ember, Forest, Oceanic, Rose, Mono, Desert, Synth
 
@@ -352,6 +357,109 @@ Ideal para testing de flujos multi-paso como login → obtener token → usar to
 
 ---
 
+### Session Rules & Macros
+
+Automatiza la extracción y reinyección de tokens/cookies para mantener sesiones:
+
+#### Session Rules
+1. Ve a Extensions → Session → sub-tab "Rules"
+2. Crea una regla con:
+   - **When**: Cuándo ejecutar (After Request, After Response, Before Request)
+   - **Target**: De dónde extraer (Response Headers, Response Body)
+   - **Extract**: Regex para capturar el valor (ej. `"token":"([^"]+)"`)
+   - **Variable**: Nombre para guardar el valor extraído
+3. La variable se extrae automáticamente cuando coincide el patrón
+
+#### Session Macros
+1. Crea un macro con la petición que obtiene el token (ej. POST /login)
+2. Ejecuta el macro manualmente o desde reglas
+3. El macro envía la request y extrae variables según las reglas definidas
+
+**Uso común**: Extraer token de `/auth/login` y reinyectarlo automáticamente en el header `Authorization` de requests subsecuentes.
+
+---
+
+### JWT Analyzer
+
+Analiza y ataca tokens JWT:
+
+1. Ve a la pestaña Cipher → sub-tab "JWT"
+2. Pega un token JWT en el campo de input
+3. Visualiza header, payload y signature decodificados
+4. Revisa la documentación de ataques comunes:
+   - **None Algorithm Attack**: Eliminar signature y cambiar alg a "none"
+   - **Key Confusion**: Confundir RS256 con HS256 usando clave pública como secret
+   - **Weak Secret**: Bruteforce de secrets débiles con herramientas como hashcat
+
+El analyzer resalta automáticamente tokens con algoritmos inseguros.
+
+---
+
+### Sensitive Discovery
+
+Escanea responses en busca de secrets y credenciales:
+
+1. Ve a Extensions → sub-tab "Sensitive"
+2. Click "Scan All Requests" para escanear el historial completo
+3. Ajusta el umbral de Shannon Entropy para reducir falsos positivos
+4. Revisa los hallazgos por categoría:
+   - AWS Keys, API Tokens, Private Keys, Database URLs
+   - Passwords, JWT tokens, OAuth secrets
+   - Cloud credentials (Azure, GCP, DigitalOcean)
+   - Webhooks (Slack, Discord, Teams)
+5. Click en un hallazgo para ver el request completo
+
+**Filtro de Entropía**: Shannon Entropy mide la aleatoriedad de strings. Ajustar el threshold (default: 3.5) filtra falsos positivos eliminando strings con baja entropía.
+
+---
+
+### Import/Export de Proyectos
+
+Comparte proyectos completos con colegas:
+
+#### Exportar Proyecto
+1. Ve a la pestaña Projects
+2. Click en "↑ ▼" junto al proyecto
+3. Selecciona formato:
+   - **↑ Blackwire Format**: JSON con todos los datos (requests, repeater, collections, filter presets, session rules, scope)
+   - **↑ Burp Suite XML**: Formato XML compatible con Burp Suite Pro (solo HTTP history)
+4. Descarga el archivo
+
+#### Importar Proyecto
+1. Click en "↓ ▼" junto al proyecto destino
+2. Selecciona modo:
+   - **↓ Merge Data**: Combina datos del archivo con el proyecto existente
+   - **🔄 Replace All**: Elimina datos existentes y reemplaza con el archivo
+   - **↓ Burp Suite XML**: Importa HTTP history desde archivo XML de Burp Suite Pro
+3. Selecciona el archivo y confirma
+
+**Crear Proyecto Nuevo desde Export**:
+1. Click en "↓ New Project"
+2. Selecciona archivo de export en formato Blackwire
+3. El proyecto se crea con todos sus datos
+
+---
+
+### Burp Suite Integration
+
+Intercambia datos con Burp Suite Pro:
+
+#### Exportar a Burp Suite
+1. Exporta proyecto en formato "↑ Burp Suite XML"
+2. Abre Burp Suite Pro
+3. Proxy → HTTP History → Import → Selecciona el XML
+4. Todo el historial HTTP aparece en Burp
+
+#### Importar desde Burp Suite
+1. En Burp Suite: Proxy → HTTP History → Selecciona requests → Save Items
+2. Guarda como XML
+3. En Blackwire: Click "↓ Burp Suite XML" → Selecciona el archivo
+4. Las requests se importan al proyecto actual
+
+**Nota**: El formato XML preserva método, URL, headers, body, status code, response headers/body y timestamps.
+
+---
+
 ### WebSocket Viewer
 
 Captura y visualiza tráfico WebSocket:
@@ -472,11 +580,15 @@ Blackwire/
 │   ├── extensions/           # Plugins Python
 │   └── chepy_compat.py       # Motor de operaciones Cipher
 ├── frontend/
-│   ├── App.jsx               # Aplicación React completa (~3400 líneas)
+│   ├── App.jsx               # Aplicación React completa (~5400 líneas)
 │   ├── App.compiled.js       # JSX pre-transpilado (generado automáticamente)
 │   ├── themes.js             # Definiciones de temas
 │   └── index.html            # HTML standalone
 ├── projects/                 # Bases de datos SQLite por proyecto
+│   └── {project_name}/
+│       ├── config.json       # Configuración del proyecto (scope, settings)
+│       └── data.db           # SQLite con requests, repeater, collections,
+│                             # session rules, filter presets
 ├── launch-with-browser.sh    # Launcher principal (sin terminal)
 ├── start.sh                  # Inicio manual
 ├── stop.sh                   # Parar el server
@@ -559,11 +671,20 @@ La documentación interactiva del API está disponible en http://localhost:5000/
 
 **Endpoints principales:**
 - `GET /api/projects` — Listar proyectos
+- `GET /api/projects/{name}/export` — Exportar proyecto en formato Blackwire JSON
+- `GET /api/projects/{name}/export-burp` — Exportar proyecto en formato Burp Suite XML
+- `POST /api/projects/import` — Importar proyecto desde JSON (crear nuevo)
+- `POST /api/projects/{name}/import` — Importar a proyecto existente (merge/replace)
+- `POST /api/projects/{name}/import-burp` — Importar HTTP history desde Burp Suite XML
 - `POST /api/requests/search` — Buscar requests con HTTPQL
 - `GET /api/requests/{id}/detail` — Detalle completo de un request
 - `POST /api/repeater/send-raw` — Enviar request desde Repeater
 - `GET /api/scope` — Obtener reglas de scope
 - `POST /api/chepy/bake` — Ejecutar receta de Cipher
+- `GET /api/session/rules` — Listar session rules
+- `POST /api/session/rules` — Crear session rule
+- `GET /api/session/macros` — Listar session macros
+- `POST /api/session/macros/{id}/execute` — Ejecutar macro
 - `GET /api/websocket/connections` — Listar conexiones WS
 - `POST /api/shutdown` — Apagar el server
 
