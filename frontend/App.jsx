@@ -1074,6 +1074,7 @@ function Blackwire() {
     if (r && r.status === 'selected') {
       setCurPrj(n);
       await loadCur();
+      await loadPrjs();
       setTab('history');
       toast('Project: ' + n, 'success');
     } else {
