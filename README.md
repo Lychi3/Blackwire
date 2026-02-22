@@ -669,25 +669,6 @@ cd Blackwire
 
 La documentación interactiva del API está disponible en http://localhost:5000/docs cuando el server está corriendo.
 
-**Endpoints principales:**
-- `GET /api/projects` — Listar proyectos
-- `GET /api/projects/{name}/export` — Exportar proyecto en formato Blackwire JSON
-- `GET /api/projects/{name}/export-burp` — Exportar proyecto en formato Burp Suite XML
-- `POST /api/projects/import` — Importar proyecto desde JSON (crear nuevo)
-- `POST /api/projects/{name}/import` — Importar a proyecto existente (merge/replace)
-- `POST /api/projects/{name}/import-burp` — Importar HTTP history desde Burp Suite XML
-- `POST /api/requests/search` — Buscar requests con HTTPQL
-- `GET /api/requests/{id}/detail` — Detalle completo de un request
-- `POST /api/repeater/send-raw` — Enviar request desde Repeater
-- `GET /api/scope` — Obtener reglas de scope
-- `POST /api/chepy/bake` — Ejecutar receta de Cipher
-- `GET /api/session/rules` — Listar session rules
-- `POST /api/session/rules` — Crear session rule
-- `GET /api/session/macros` — Listar session macros
-- `POST /api/session/macros/{id}/execute` — Ejecutar macro
-- `GET /api/websocket/connections` — Listar conexiones WS
-- `POST /api/shutdown` — Apagar el server
-
 ---
 
 ## Contribuir
