@@ -953,20 +953,21 @@ async def export_project(name: str):
     if not get_project_path(name).exists():
         raise HTTPException(status_code=404, detail="Project not found")
 
-    # Leer config del proyecto
+    # Leer config del proyecto (incluye scope_rules)
     config = await get_project_config(name)
 
     # Leer todos los datos de la DB
-    async with await get_db() as db:
-        # Requests
+    db_path = get_project_db(name)
+    async with aiosqlite.connect(db_path) as db:
+        # Requests (con TODOS los campos)
         cursor = await db.execute("SELECT * FROM requests")
         requests = []
         for row in await cursor.fetchall():
             requests.append({
-                "id": row[0], "method": row[1], "url": row[2],
-                "headers": row[3], "body": row[4],
+                "method": row[1], "url": row[2], "headers": row[3], "body": row[4],
                 "response_status": row[5], "response_headers": row[6], "response_body": row[7],
-                "timestamp": row[8], "request_type": row[9], "saved": row[10], "in_scope": row[11]
+                "timestamp": row[8], "request_type": row[9], "tags": row[10],
+                "notes": row[11], "saved": row[12], "in_scope": row[13]
             })
 
         # Repeater
@@ -974,36 +975,55 @@ async def export_project(name: str):
         repeater = []
         for row in await cursor.fetchall():
             repeater.append({
-                "id": row[0], "name": row[1], "method": row[2], "url": row[3],
+                "name": row[1], "method": row[2], "url": row[3],
                 "headers": row[4], "body": row[5], "created_at": row[6], "last_response": row[7]
             })
 
-        # Collections
+        # Collections (con description)
         cursor = await db.execute("SELECT * FROM collections")
         collections = []
         for row in await cursor.fetchall():
-            collections.append({"id": row[0], "name": row[1], "created_at": row[2]})
+            collections.append({"name": row[1], "description": row[2], "created_at": row[3]})
 
-        # Collection items
+        # Collection items (estructura correcta)
         cursor = await db.execute("SELECT * FROM collection_items")
         collection_items = []
         for row in await cursor.fetchall():
             collection_items.append({
-                "id": row[0], "collection_id": row[1], "request_id": row[2], "order_index": row[3]
+                "collection_id": row[1], "position": row[2], "method": row[3], "url": row[4],
+                "headers": row[5], "body": row[6], "var_extracts": row[7], "created_at": row[8]
             })
 
-        # Session rules
+        # Filter presets
+        cursor = await db.execute("SELECT * FROM filter_presets")
+        filter_presets = []
+        for row in await cursor.fetchall():
+            filter_presets.append({
+                "name": row[1], "query": row[2], "ast_json": row[3], "created_at": row[4]
+            })
+
+        # Session macros
+        cursor = await db.execute("SELECT * FROM session_macros")
+        session_macros = []
+        for row in await cursor.fetchall():
+            session_macros.append({
+                "name": row[1], "description": row[2], "requests": row[3], "created_at": row[4]
+            })
+
+        # Session rules (nombres de columna correctos)
         cursor = await db.execute("SELECT * FROM session_rules")
         session_rules = []
         for row in await cursor.fetchall():
             session_rules.append({
-                "id": row[0], "enabled": row[1], "name": row[2], "when": row[3],
-                "target": row[4], "header": row[5], "regex": row[6], "group": row[7], "variable": row[8]
+                "enabled": row[1], "name": row[2], "when_stage": row[3],
+                "target": row[4], "header_name": row[5], "regex_pattern": row[6],
+                "extract_group": row[7], "variable_name": row[8], "created_at": row[9]
             })
 
-    # Crear JSON de export
+    # Crear JSON de export COMPLETO
     export_data = {
-        "version": "1.0",
+        "version": "1.1",
+        "blackwire_version": "1.0.0",
         "project_name": name,
         "exported_at": datetime.now().isoformat(),
         "config": config,
@@ -1012,7 +1032,17 @@ async def export_project(name: str):
             "repeater": repeater,
             "collections": collections,
             "collection_items": collection_items,
+            "filter_presets": filter_presets,
+            "session_macros": session_macros,
             "session_rules": session_rules
+        },
+        "stats": {
+            "total_requests": len(requests),
+            "total_repeater": len(repeater),
+            "total_collections": len(collections),
+            "total_filter_presets": len(filter_presets),
+            "total_session_macros": len(session_macros),
+            "total_session_rules": len(session_rules)
         }
     }
 
@@ -1023,8 +1053,101 @@ async def export_project(name: str):
         headers={'Content-Disposition': f'attachment; filename="{filename}"'}
     )
 
+@app.post("/api/projects/import")
+async def import_project_create(data: dict = Body(...)):
+    """Crear un nuevo proyecto desde un archivo de exportación"""
+    # Validar estructura
+    if "version" not in data or "data" not in data or "project_name" not in data:
+        raise HTTPException(status_code=400, detail="Invalid import format")
+
+    project_name = data["project_name"]
+
+    # Verificar si el proyecto ya existe
+    if get_project_path(project_name).exists():
+        raise HTTPException(status_code=400, detail=f"Project '{project_name}' already exists. Use merge endpoint instead.")
+
+    # Crear nuevo proyecto
+    project_path = get_project_path(project_name)
+    project_path.mkdir(parents=True, exist_ok=True)
+
+    # Guardar config
+    config_data = data.get("config", {})
+    config_data["name"] = project_name
+    await save_project_config(project_name, config_data)
+
+    # Inicializar DB
+    await init_db(project_name)
+
+    # Importar datos
+    db_path = get_project_db(project_name)
+    async with aiosqlite.connect(db_path) as db:
+        # Importar requests
+        for req in data["data"].get("requests", []):
+            await db.execute("""
+                INSERT INTO requests (method, url, headers, body, response_status, response_headers,
+                    response_body, timestamp, request_type, tags, notes, saved, in_scope)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """, (req["method"], req["url"], req["headers"], req.get("body"),
+                  req.get("response_status"), req.get("response_headers"), req.get("response_body"),
+                  req["timestamp"], req.get("request_type", "http"), req.get("tags", "[]"),
+                  req.get("notes"), req.get("saved", 0), req.get("in_scope", 1)))
+
+        # Importar repeater
+        for rep in data["data"].get("repeater", []):
+            await db.execute("""
+                INSERT INTO repeater (name, method, url, headers, body, created_at, last_response)
+                VALUES (?, ?, ?, ?, ?, ?, ?)
+            """, (rep["name"], rep["method"], rep["url"], rep["headers"], rep.get("body"),
+                  rep["created_at"], rep.get("last_response")))
+
+        # Importar collections (con description)
+        for coll in data["data"].get("collections", []):
+            await db.execute("""
+                INSERT INTO collections (name, description, created_at) VALUES (?, ?, ?)
+            """, (coll["name"], coll.get("description", ""), coll["created_at"]))
+
+        # Importar collection items (estructura correcta)
+        for item in data["data"].get("collection_items", []):
+            await db.execute("""
+                INSERT INTO collection_items (collection_id, position, method, url, headers, body, var_extracts, created_at)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            """, (item["collection_id"], item["position"], item["method"], item["url"],
+                  item.get("headers", "{}"), item.get("body"), item.get("var_extracts", "[]"),
+                  item["created_at"]))
+
+        # Importar filter presets
+        for preset in data["data"].get("filter_presets", []):
+            await db.execute("""
+                INSERT INTO filter_presets (name, query, ast_json, created_at) VALUES (?, ?, ?, ?)
+            """, (preset["name"], preset["query"], preset["ast_json"], preset["created_at"]))
+
+        # Importar session macros
+        for macro in data["data"].get("session_macros", []):
+            await db.execute("""
+                INSERT INTO session_macros (name, description, requests, created_at) VALUES (?, ?, ?, ?)
+            """, (macro["name"], macro.get("description", ""), macro["requests"], macro["created_at"]))
+
+        # Importar session rules (nombres de columna correctos)
+        for rule in data["data"].get("session_rules", []):
+            await db.execute("""
+                INSERT INTO session_rules (enabled, name, when_stage, target, header_name,
+                    regex_pattern, extract_group, variable_name, created_at)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """, (rule["enabled"], rule["name"], rule["when_stage"], rule["target"],
+                  rule.get("header_name"), rule["regex_pattern"], rule.get("extract_group", 1),
+                  rule["variable_name"], rule["created_at"]))
+
+        await db.commit()
+
+    return {
+        "status": "imported",
+        "message": f"Successfully created project '{project_name}' from import",
+        "stats": data.get("stats", {})
+    }
+
 @app.post("/api/projects/{name}/import")
-async def import_project(name: str, data: dict = Body(...)):
+async def import_project_merge(name: str, data: dict = Body(...), clear_existing: bool = False):
+    """Importar datos a un proyecto existente (merge o replace)"""
     if not get_project_path(name).exists():
         raise HTTPException(status_code=404, detail="Project not found")
 
@@ -1032,56 +1155,93 @@ async def import_project(name: str, data: dict = Body(...)):
     if "version" not in data or "data" not in data:
         raise HTTPException(status_code=400, detail="Invalid import format")
 
-    async with await get_db() as db:
-        # Limpiar datos actuales (opcional - comentar si se quiere merge)
-        # await db.execute("DELETE FROM requests")
-        # await db.execute("DELETE FROM repeater")
-        # await db.execute("DELETE FROM collections")
-        # await db.execute("DELETE FROM collection_items")
-        # await db.execute("DELETE FROM session_rules")
+    db_path = get_project_db(name)
+    async with aiosqlite.connect(db_path) as db:
+        # Limpiar datos si se solicita
+        if clear_existing:
+            await db.execute("DELETE FROM requests")
+            await db.execute("DELETE FROM repeater")
+            await db.execute("DELETE FROM collections")
+            await db.execute("DELETE FROM collection_items")
+            await db.execute("DELETE FROM filter_presets")
+            await db.execute("DELETE FROM session_macros")
+            await db.execute("DELETE FROM session_rules")
 
         # Importar requests
         for req in data["data"].get("requests", []):
             await db.execute("""
                 INSERT INTO requests (method, url, headers, body, response_status, response_headers,
-                    response_body, timestamp, request_type, saved, in_scope)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-            """, (req["method"], req["url"], req["headers"], req["body"],
-                  req["response_status"], req["response_headers"], req["response_body"],
-                  req["timestamp"], req["request_type"], req["saved"], req["in_scope"]))
+                    response_body, timestamp, request_type, tags, notes, saved, in_scope)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """, (req["method"], req["url"], req["headers"], req.get("body"),
+                  req.get("response_status"), req.get("response_headers"), req.get("response_body"),
+                  req["timestamp"], req.get("request_type", "http"), req.get("tags", "[]"),
+                  req.get("notes"), req.get("saved", 0), req.get("in_scope", 1)))
 
         # Importar repeater
         for rep in data["data"].get("repeater", []):
             await db.execute("""
                 INSERT INTO repeater (name, method, url, headers, body, created_at, last_response)
                 VALUES (?, ?, ?, ?, ?, ?, ?)
-            """, (rep["name"], rep["method"], rep["url"], rep["headers"], rep["body"],
-                  rep["created_at"], rep["last_response"]))
+            """, (rep["name"], rep["method"], rep["url"], rep["headers"], rep.get("body"),
+                  rep["created_at"], rep.get("last_response")))
 
         # Importar collections
         for coll in data["data"].get("collections", []):
             await db.execute("""
-                INSERT INTO collections (name, created_at) VALUES (?, ?)
-            """, (coll["name"], coll["created_at"]))
+                INSERT INTO collections (name, description, created_at) VALUES (?, ?, ?)
+            """, (coll["name"], coll.get("description", ""), coll["created_at"]))
 
         # Importar collection items
         for item in data["data"].get("collection_items", []):
             await db.execute("""
-                INSERT INTO collection_items (collection_id, request_id, order_index)
-                VALUES (?, ?, ?)
-            """, (item["collection_id"], item["request_id"], item["order_index"]))
+                INSERT INTO collection_items (collection_id, position, method, url, headers, body, var_extracts, created_at)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            """, (item["collection_id"], item["position"], item["method"], item["url"],
+                  item.get("headers", "{}"), item.get("body"), item.get("var_extracts", "[]"),
+                  item["created_at"]))
+
+        # Importar filter presets
+        for preset in data["data"].get("filter_presets", []):
+            try:
+                await db.execute("""
+                    INSERT INTO filter_presets (name, query, ast_json, created_at) VALUES (?, ?, ?, ?)
+                """, (preset["name"], preset["query"], preset["ast_json"], preset["created_at"]))
+            except:
+                pass  # Skip duplicates
+
+        # Importar session macros
+        for macro in data["data"].get("session_macros", []):
+            await db.execute("""
+                INSERT INTO session_macros (name, description, requests, created_at) VALUES (?, ?, ?, ?)
+            """, (macro["name"], macro.get("description", ""), macro["requests"], macro["created_at"]))
 
         # Importar session rules
         for rule in data["data"].get("session_rules", []):
             await db.execute("""
-                INSERT INTO session_rules (enabled, name, `when`, target, header, regex, `group`, variable)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-            """, (rule["enabled"], rule["name"], rule["when"], rule["target"],
-                  rule["header"], rule["regex"], rule["group"], rule["variable"]))
+                INSERT INTO session_rules (enabled, name, when_stage, target, header_name,
+                    regex_pattern, extract_group, variable_name, created_at)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """, (rule["enabled"], rule["name"], rule["when_stage"], rule["target"],
+                  rule.get("header_name"), rule["regex_pattern"], rule.get("extract_group", 1),
+                  rule["variable_name"], rule["created_at"]))
 
         await db.commit()
 
-    return {"status": "imported", "message": f"Successfully imported data into {name}"}
+    # Actualizar config si viene en el import
+    if "config" in data:
+        current_config = await get_project_config(name)
+        # Merge scope_rules si vienen
+        if "scope_rules" in data["config"]:
+            current_config["scope_rules"] = data["config"]["scope_rules"]
+        await save_project_config(name, current_config)
+
+    action = "replaced" if clear_existing else "merged"
+    return {
+        "status": "imported",
+        "message": f"Successfully {action} data in project '{name}'",
+        "stats": data.get("stats", {})
+    }
 
 @app.get("/api/scope")
 async def get_scope():

@@ -1115,10 +1115,10 @@ function Blackwire() {
 
   const exportProject = async n => {
     window.open(API + '/api/projects/' + encodeURIComponent(n) + '/export', '_blank');
-    toast('Exporting ' + n + '...', 'success');
+    toast('Exporting project: ' + n, 'success');
   };
 
-  const importProject = async n => {
+  const importAsNewProject = async () => {
     const input = document.createElement('input');
     input.type = 'file';
     input.accept = 'application/json,.json';
@@ -1128,9 +1128,54 @@ function Blackwire() {
       try {
         const text = await file.text();
         const data = JSON.parse(text);
-        const r = await api.post('/api/projects/' + encodeURIComponent(n) + '/import', data);
+
+        // Validar estructura
+        if (!data.version || !data.data || !data.project_name) {
+          toast('Invalid export file format', 'error');
+          return;
+        }
+
+        // Importar como nuevo proyecto
+        const r = await api.post('/api/projects/import', data);
         if (r && r.status === 'imported') {
-          toast('Imported successfully', 'success');
+          toast(`Project "${data.project_name}" created successfully! ${r.stats?.total_requests || 0} requests imported.`, 'success');
+          await loadProjects();
+        } else {
+          toast('Import failed', 'error');
+        }
+      } catch (e) {
+        toast('Error reading file: ' + e.message, 'error');
+      }
+    };
+    input.click();
+  };
+
+  const importProject = async (n, clearExisting = false) => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'application/json,.json';
+    input.onchange = async e => {
+      const file = e.target.files[0];
+      if (!file) return;
+      try {
+        const text = await file.text();
+        const data = JSON.parse(text);
+
+        // Validar estructura
+        if (!data.version || !data.data) {
+          toast('Invalid export file format', 'error');
+          return;
+        }
+
+        // Preguntar si quiere merge o replace
+        const action = clearExisting ? 'replace' : 'merge';
+        if (!confirm(`${clearExisting ? 'Replace all data' : 'Merge data'} in project "${n}"?\n\nThis will ${clearExisting ? 'DELETE existing data and' : ''} import:\n- ${data.stats?.total_requests || 0} requests\n- ${data.stats?.total_repeater || 0} repeater items\n- ${data.stats?.total_collections || 0} collections`)) {
+          return;
+        }
+
+        const r = await api.post('/api/projects/' + encodeURIComponent(n) + '/import?clear_existing=' + clearExisting, data);
+        if (r && r.status === 'imported') {
+          toast(`${action === 'replace' ? 'Replaced' : 'Merged'} successfully!`, 'success');
           // Recargar datos si es el proyecto actual
           if (curPrj === n) {
             await loadReqs();
@@ -3194,7 +3239,10 @@ function Blackwire() {
           <div className="prj-pnl">
             <div className="prj-hdr">
               <h2>Projects</h2>
-              <button className="btn btn-p" onClick={() => setShowNew(true)}>+ New</button>
+              <div style={{ display: 'flex', gap: '8px' }}>
+                <button className="btn btn-p" onClick={() => setShowNew(true)}>+ New</button>
+                <button className="btn btn-s" onClick={importAsNewProject} title="Import project from file">📥 Import</button>
+              </div>
             </div>
             {showNew && (
               <div className="new-prj">
@@ -3217,9 +3265,64 @@ function Blackwire() {
                     <div className="prj-desc">{p.description || 'No description'}</div>
                     <div className="prj-date">{p.created_at ? new Date(p.created_at).toLocaleDateString() : ''}</div>
                   </div>
-                  <div onClick={e => e.stopPropagation()} style={{ display: 'flex', gap: '4px' }}>
-                    <button className="btn btn-sm btn-s" onClick={() => exportProject(p.name)} title="Export project">📤</button>
-                    <button className="btn btn-sm btn-s" onClick={() => importProject(p.name)} title="Import to project">📥</button>
+                  <div onClick={e => e.stopPropagation()} style={{ display: 'flex', gap: '4px', alignItems: 'center' }}>
+                    <button className="btn btn-sm btn-s" onClick={() => exportProject(p.name)} title="Export complete project to file">📤</button>
+                    <div style={{ position: 'relative', display: 'inline-block' }}>
+                      <button
+                        className="btn btn-sm btn-s"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          const menu = e.currentTarget.nextElementSibling;
+                          menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+                        }}
+                        title="Import options"
+                      >
+                        📥 ▼
+                      </button>
+                      <div
+                        style={{
+                          display: 'none',
+                          position: 'absolute',
+                          right: 0,
+                          background: 'var(--bg2)',
+                          border: '1px solid var(--brd)',
+                          borderRadius: '4px',
+                          boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
+                          zIndex: 1000,
+                          minWidth: '150px',
+                          marginTop: '4px'
+                        }}
+                        onClick={(e) => { e.stopPropagation(); e.currentTarget.style.display = 'none'; }}
+                      >
+                        <div
+                          style={{
+                            padding: '8px 12px',
+                            cursor: 'pointer',
+                            fontSize: '11px',
+                            borderBottom: '1px solid var(--brd)',
+                            color: 'var(--txt)'
+                          }}
+                          onClick={(e) => { e.stopPropagation(); importProject(p.name, false); }}
+                          onMouseEnter={(e) => e.currentTarget.style.background = 'var(--bg3)'}
+                          onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
+                        >
+                          📥 Merge Data
+                        </div>
+                        <div
+                          style={{
+                            padding: '8px 12px',
+                            cursor: 'pointer',
+                            fontSize: '11px',
+                            color: 'var(--red)'
+                          }}
+                          onClick={(e) => { e.stopPropagation(); importProject(p.name, true); }}
+                          onMouseEnter={(e) => e.currentTarget.style.background = 'var(--bg3)'}
+                          onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
+                        >
+                          🔄 Replace All
+                        </div>
+                      </div>
+                    </div>
                     <button className="btn btn-sm btn-d" onClick={() => delPrj(p.name)}>🗑</button>
                   </div>
                 </div>
