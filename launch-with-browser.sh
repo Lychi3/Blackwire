@@ -28,9 +28,6 @@ source venv/bin/activate
 # Install deps (quiet)
 pip install -q -r requirements.txt 2>/dev/null
 
-# Create data dir
-mkdir -p data
-
 # Generate mitmproxy certificates if not exist
 if [ ! -f "$HOME/.mitmproxy/mitmproxy-ca-cert.pem" ]; then
     python3 -c "from mitmproxy import certs; certs.CertStore.from_store('$HOME/.mitmproxy', 'mitmproxy', 2048)" 2>/dev/null || true

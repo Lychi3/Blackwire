@@ -75,7 +75,6 @@ check "backend/ directory" "test -d backend"
 check "backend/main.py exists" "test -f backend/main.py"
 check "backend/mitm_addon.py exists" "test -f backend/mitm_addon.py"
 check "extensions/ directory" "test -d backend/extensions"
-warn "data/ directory" "test -d data"
 warn "projects/ directory" "test -d projects"
 
 echo ""

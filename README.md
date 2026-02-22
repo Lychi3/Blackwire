@@ -130,7 +130,7 @@ pip install -r requirements.txt
 npm install --save-dev sucrase
 
 # 6. Crear directorios
-mkdir -p data projects
+mkdir -p projects
 
 # 7. Hacer scripts ejecutables
 chmod +x *.sh

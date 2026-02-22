@@ -79,10 +79,6 @@ fi
 pip install -r requirements.txt -q
 echo -e "${GREEN}[✓] Dependencies installed${NC}"
 
-# Create data directory
-mkdir -p data
-echo -e "${GREEN}[✓] Data directory created${NC}"
-
 # Initialize mitmproxy certificates
 echo -e "${CYAN}[*] Initializing mitmproxy certificates...${NC}"
 if [ -f "$HOME/.mitmproxy/mitmproxy-ca-cert.pem" ]; then

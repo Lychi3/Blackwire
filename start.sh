@@ -76,9 +76,6 @@ else
     pip install -q -r requirements.txt &>/dev/null
 fi
 
-# Create data dir
-mkdir -p data
-
 # Generate mitmproxy certificates if not exist
 if [ ! -f "$HOME/.mitmproxy/mitmproxy-ca-cert.pem" ]; then
     log "${CYAN}[*] Generating mitmproxy certificates...${NC}"
