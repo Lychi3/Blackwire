@@ -2,6 +2,7 @@ venv
 projects
 backend/__pycache__
 backend/.proxy_config.json
+backend/extensions/.compiled_ui/
 
 # Archivos temporales y de configuración
 .backend.pid
@@ -13,3 +14,5 @@ backend/.proxy_config.json
 bkp/
 .claude/
 *.BROKEN_*
+
+Blackwire.wiki/

@@ -2415,64 +2415,9 @@ function Blackwire() {
     );
   }
 
-  function WebhookSiteUI({ ext, updateExtCfg, whkReqs, whkApiKey, setWhkApiKey, whkLoading, createWebhookToken, refreshWebhook, loadWebhookLocal, toast }) {
-    return (
-      <div style={{ marginTop: '12px', paddingTop: '12px', borderTop: '1px solid var(--brd)' }}>
-        <div style={{ fontSize: '12px', fontWeight: '600', marginBottom: '8px', color: 'var(--txt2)' }}>Webhook.site</div>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-          <div>
-            <label style={{ display: 'block', fontSize: '11px', color: 'var(--txt2)', marginBottom: '6px' }}>API Key (optional)</label>
-            <div style={{ display: 'flex', gap: '8px' }}>
-              <input className="inp" type="password" placeholder="Api-Key" value={whkApiKey} onChange={e => setWhkApiKey(e.target.value)} />
-              <button className="btn btn-sm btn-s" onClick={() => updateExtCfg(ext.name, { ...ext.config, api_key: whkApiKey })}>Save</button>
-            </div>
-          </div>
-          <div>
-            <label style={{ display: 'block', fontSize: '11px', color: 'var(--txt2)', marginBottom: '6px' }}>Webhook URL</label>
-            <div style={{ display: 'flex', gap: '8px' }}>
-              <input className="inp" readOnly value={ext.config?.token_url || ''} placeholder="Create a webhook URL" />
-              <button className="btn btn-sm btn-s" disabled={!ext.config?.token_url} onClick={() => {
-                navigator.clipboard.writeText(ext.config.token_url);
-                toast('Copied', 'success');
-              }}>Copy</button>
-            </div>
-          </div>
-          <div style={{ display: 'flex', gap: '8px' }}>
-            <button className="btn btn-sm btn-p" onClick={createWebhookToken} disabled={whkLoading}>
-              {ext.config?.token_id ? 'Regenerate URL' : 'Create URL'}
-            </button>
-            <button className="btn btn-sm btn-s" onClick={() => refreshWebhook()} disabled={!ext.config?.token_id || whkLoading}>Sync Now</button>
-          </div>
-          <div style={{ marginTop: '6px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
-              <div style={{ fontSize: '11px', color: 'var(--txt2)' }}>Local history</div>
-              <button className="btn btn-sm btn-s" onClick={loadWebhookLocal} disabled={!ext.config?.token_id}>Reload</button>
-            </div>
-            <div style={{ border: '1px solid var(--brd)', borderRadius: '6px', overflow: 'auto', maxHeight: '220px' }}>
-              {whkReqs.length === 0 && (
-                <div style={{ padding: '10px', fontSize: '11px', color: 'var(--txt3)', textAlign: 'center' }}>
-                  No requests yet
-                </div>
-              )}
-              {whkReqs.map(r => (
-                <div key={r.request_id} style={{ display: 'grid', gridTemplateColumns: '60px 1fr 120px 140px', gap: '8px', padding: '8px 10px', borderBottom: '1px solid var(--brd)', fontSize: '11px', fontFamily: 'var(--font-mono)' }}>
-                  <span className={'mth mth-' + (r.method || 'GET')}>{r.method || 'GET'}</span>
-                  <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{r.url || r.path || '-'}</span>
-                  <span style={{ color: 'var(--txt2)' }}>{r.ip || '-'}</span>
-                  <span style={{ color: 'var(--txt3)' }}>{r.created_at || ''}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   // Registry de componentes de extensión custom (solo para UIs complejas)
   const EXTENSION_CUSTOM_COMPONENTS = {
     'match_replace': MatchReplaceUI,
-    'webhook_site': WebhookSiteUI,
   };
 
   // Componente genérico schema-driven para extensiones simples
@@ -2565,6 +2510,83 @@ function Blackwire() {
         ))}
       </div>
     );
+  }
+
+  // Componente para cargar UIs dinámicas desde archivos .ui.jsx
+  function DynamicExtensionUI({ ext, updateExtCfg, toast, ...otherProps }) {
+    const [component, setComponent] = React.useState(null);
+    const [loading, setLoading] = React.useState(true);
+    const [error, setError] = React.useState(null);
+
+    React.useEffect(() => {
+      const loadUI = async () => {
+        try {
+          setLoading(true);
+          setError(null);
+
+          // Fetch del archivo .ui.js compilado
+          const response = await fetch(`/api/extensions/${ext.name}/ui.js`);
+
+          if (!response.ok) {
+            throw new Error(`Failed to load UI: ${response.status} ${response.statusText}`);
+          }
+
+          const uiCode = await response.text();
+
+          // Inicializar namespace global si no existe
+          if (!window.BlackwireExtensions) {
+            window.BlackwireExtensions = {};
+          }
+
+          // Ejecutar el código del componente
+          // El código debe registrar una función en window.BlackwireExtensions[ext.name]
+          eval(uiCode);
+
+          // Verificar que se registró correctamente
+          if (typeof window.BlackwireExtensions[ext.name] !== 'function') {
+            throw new Error('Extension UI did not register properly. Must define window.BlackwireExtensions["' + ext.name + '"]');
+          }
+
+          // Obtener el componente
+          const ComponentFunc = window.BlackwireExtensions[ext.name];
+          setComponent(() => ComponentFunc);
+          setLoading(false);
+        } catch (err) {
+          console.error('Error loading dynamic extension UI:', err);
+          setError(err.message);
+          setLoading(false);
+        }
+      };
+
+      loadUI();
+    }, [ext.name]);
+
+    if (loading) {
+      return (
+        <div style={{ padding: '20px', color: 'var(--txt3)', fontSize: '11px' }}>
+          Loading custom UI...
+        </div>
+      );
+    }
+
+    if (error) {
+      return (
+        <div style={{ padding: '20px', color: 'var(--red)', fontSize: '11px' }}>
+          Error loading custom UI: {error}
+        </div>
+      );
+    }
+
+    if (!component) {
+      return (
+        <div style={{ padding: '20px', color: 'var(--txt3)', fontSize: '11px' }}>
+          No custom UI available
+        </div>
+      );
+    }
+
+    // Renderizar el componente dinámico con todas las props
+    return React.createElement(component, { ext, updateExtCfg, toast, ...otherProps });
   }
 
   const syntaxHighlightJSON = json => {
@@ -4532,116 +4554,6 @@ function Blackwire() {
           </div>
         )}
 
-        {tab === 'webhook_site' && curPrj && webhookExt?.enabled && (
-          <React.Fragment>
-            <div className="panel hist-pnl">
-              <div className="flt-bar">
-                <input className="flt-in" placeholder="Filter by URL, method, IP..." value={whkSearch} onChange={e => setWhkSearch(e.target.value)} />
-                <div style={{ display: 'flex', gap: '4px', alignItems: 'center' }}>
-                  <span style={{ fontSize: '10px', color: 'var(--txt3)' }}>{webhookExt?.config?.token_url ? '● Live' : ''}</span>
-                </div>
-              </div>
-              <div className="pnl-hdr">
-                <span>{filteredWhk.length} webhook requests</span>
-                <div className="acts">
-                  <button className="btn btn-sm btn-s" onClick={() => refreshWebhook()} disabled={whkLoading}>{whkLoading ? '⏳' : '↻'} Sync</button>
-                  <button className="btn btn-sm btn-s" onClick={loadWebhookLocal}>↻</button>
-                  <button className="btn btn-sm btn-d" onClick={clearWebhookHistory}>Clear</button>
-                </div>
-              </div>
-              <div className="pnl-cnt">
-                <div className="req-list">
-                  {filteredWhk.map(r => (
-                    <div
-                      key={r.request_id}
-                      className={'req-item' + (selWhkReq?.request_id === r.request_id ? ' sel' : '')}
-                      onClick={() => { setSelWhkReq(r); setWhkDetTab('request'); }}
-                      onContextMenu={e => showContextMenu(e, r, 'webhook')}
-                    >
-                      <span className={'mth mth-' + (r.method || 'GET')}>{r.method || 'GET'}</span>
-                      <span className="url" title={r.url}>{r.url || r.path || '-'}</span>
-                      <span style={{ color: 'var(--txt2)', fontSize: '10px', minWidth: '90px' }}>{r.ip || '-'}</span>
-                      <span className="ts">{fmtTime(r.created_at)}</span>
-                    </div>
-                  ))}
-                  {filteredWhk.length === 0 && (
-                    <div className="empty">
-                      <div className="empty-i">○</div>
-                      <span>{webhookExt?.config?.token_id ? 'No webhook requests yet' : 'Create a webhook URL first'}</span>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-
-            <div className="panel det-pnl">
-              {selWhkReq ? (
-                <React.Fragment>
-                  <div className="pnl-hdr">
-                    <span>{selWhkReq.method || 'GET'} {(selWhkReq.url || '').substring(0, 50)}</span>
-                    <div className="acts">
-                      <button className="btn btn-sm btn-p" onClick={() => whkToRepeater(selWhkReq)}>→ Rep</button>
-                      <button className="btn btn-sm btn-s" onClick={() => {
-                        navigator.clipboard.writeText(selWhkReq.url || '');
-                        toast('URL copied', 'success');
-                      }}>📋</button>
-                    </div>
-                  </div>
-                  <div className="det-tabs">
-                    <div className={'det-tab' + (whkDetTab === 'request' ? ' act' : '')} onClick={() => setWhkDetTab('request')}>Request</div>
-                    <div className={'det-tab' + (whkDetTab === 'headers' ? ' act' : '')} onClick={() => setWhkDetTab('headers')}>Headers</div>
-                    <div className={'det-tab' + (whkDetTab === 'query' ? ' act' : '')} onClick={() => setWhkDetTab('query')}>Query</div>
-                    <div className={'det-tab' + (whkDetTab === 'body' ? ' act' : '')} onClick={() => setWhkDetTab('body')}>Body</div>
-                    <div style={{ marginLeft: 'auto', display: 'flex', gap: '6px', alignItems: 'center' }}>
-                      {(whkDetTab === 'body' || whkDetTab === 'request') && (
-                        <React.Fragment>
-                          <button className={'btn btn-sm ' + (whkReqFormat === 'raw' ? 'btn-p' : 'btn-s')} onClick={() => setWhkReqFormat('raw')}>Raw</button>
-                          <button className={'btn btn-sm ' + (whkReqFormat === 'pretty' ? 'btn-p' : 'btn-s')} onClick={() => setWhkReqFormat('pretty')}>Pretty</button>
-                        </React.Fragment>
-                      )}
-                    </div>
-                  </div>
-                  {(() => {
-                    if (whkDetTab === 'request') {
-                      const bodyFmt = selWhkReq.content ? formatBody(selWhkReq.content, whkReqFormat) : null;
-                      const info = (selWhkReq.method || 'GET') + ' ' + (selWhkReq.url || '') + '\n'
-                        + 'IP: ' + (selWhkReq.ip || '-') + '\n'
-                        + 'User-Agent: ' + (selWhkReq.user_agent || '-') + '\n'
-                        + 'Time: ' + (selWhkReq.created_at || '-') + '\n\n'
-                        + '--- Headers ---\n' + fmtH(selWhkReq.headers)
-                        + (selWhkReq.content ? '\n\n--- Body ---\n' + (bodyFmt ? bodyFmt.text : selWhkReq.content) : '');
-                      const isHtml = bodyFmt && bodyFmt.html;
-                      return isHtml
-                        ? <div className="code" dangerouslySetInnerHTML={{ __html: info }} />
-                        : <div className="code">{info}</div>;
-                    }
-                    if (whkDetTab === 'headers') {
-                      return <div className="code">{fmtH(selWhkReq.headers) || 'No headers'}</div>;
-                    }
-                    if (whkDetTab === 'query') {
-                      const q = selWhkReq.query || {};
-                      const entries = Object.entries(q);
-                      return <div className="code">{entries.length === 0 ? 'No query parameters' : entries.map(([k, v]) => k + ' = ' + v).join('\n')}</div>;
-                    }
-                    if (whkDetTab === 'body') {
-                      if (!selWhkReq.content) return <div className="code">No body content</div>;
-                      const bodyFmt = formatBody(selWhkReq.content, whkReqFormat);
-                      return bodyFmt.html
-                        ? <div className="code" dangerouslySetInnerHTML={{ __html: bodyFmt.text }} />
-                        : <div className="code">{selWhkReq.content}</div>;
-                    }
-                    return <div className="code"></div>;
-                  })()}
-                </React.Fragment>
-              ) : (
-                <div className="empty">
-                  <span>Select a webhook request</span>
-                </div>
-              )}
-            </div>
-          </React.Fragment>
-        )}
-
         {tab === 'git' && curPrj && (
           <div className="git-pnl">
             <div className="git-sec">
@@ -4695,12 +4607,29 @@ function Blackwire() {
                   </button>
                 </div>
                 {ext.enabled && (() => {
-                  // 1. Si tiene ui_schema con tipo schema-driven → usar SchemaBasedUI
+                  // 1. Si tiene custom_ui_file → usar DynamicExtensionUI (carga desde .ui.jsx)
+                  if (ext.custom_ui_file) {
+                    return React.createElement(DynamicExtensionUI, {
+                      ext,
+                      updateExtCfg,
+                      toast,
+                      // Props adicionales para extensiones que puedan necesitarlas
+                      whkReqs,
+                      whkApiKey,
+                      setWhkApiKey,
+                      whkLoading,
+                      createWebhookToken,
+                      refreshWebhook,
+                      loadWebhookLocal
+                    });
+                  }
+
+                  // 2. Si tiene ui_schema con tipo schema-driven → usar SchemaBasedUI
                   if (ext.ui_schema?.type === 'schema-driven') {
                     return React.createElement(SchemaBasedUI, { ext, updateExtCfg });
                   }
 
-                  // 2. Si está en registry de componentes custom → usar componente custom
+                  // 3. Si está en registry de componentes custom → usar componente custom
                   if (EXTENSION_CUSTOM_COMPONENTS[ext.name]) {
                     return React.createElement(EXTENSION_CUSTOM_COMPONENTS[ext.name], {
                       ext,
@@ -4719,7 +4648,7 @@ function Blackwire() {
                     });
                   }
 
-                  // 3. Fallback: extensión sin UI
+                  // 4. Fallback: extensión sin UI
                   return (
                     <div style={{ marginTop: '12px', padding: '12px', fontSize: '11px', color: 'var(--txt3)' }}>
                       Extension enabled (no UI configured)
@@ -5863,6 +5792,77 @@ function Blackwire() {
             )}
           </div>
         )}
+
+        {/* Generic handler for extension custom tabs */}
+        {curPrj && (() => {
+          // Lista de extensiones que ya tienen implementación hardcoded arriba
+          const hardcodedTabs = ['chepy', 'sensitive', 'intruder'];
+
+          // Check if current tab matches an extension name (excluding hardcoded ones)
+          const activeExt = extensions.find(ext =>
+            ext.enabled &&
+            ext.tabs &&
+            ext.tabs.length > 0 &&
+            tab === ext.name &&
+            !hardcodedTabs.includes(ext.name)
+          );
+
+          if (!activeExt) return null;
+
+          // Determine which UI component to use (same priority as Extensions tab)
+          let uiComponent = null;
+
+          // 1. Si tiene custom_ui_file → usar DynamicExtensionUI (carga desde .ui.jsx)
+          if (activeExt.custom_ui_file) {
+            uiComponent = React.createElement(DynamicExtensionUI, {
+              ext: activeExt,
+              updateExtCfg,
+              toast,
+              whkReqs,
+              whkApiKey,
+              setWhkApiKey,
+              whkLoading,
+              createWebhookToken,
+              refreshWebhook,
+              loadWebhookLocal
+            });
+          }
+          // 2. Si tiene ui_schema con tipo schema-driven → usar SchemaBasedUI
+          else if (activeExt.ui_schema?.type === 'schema-driven') {
+            uiComponent = React.createElement(SchemaBasedUI, { ext: activeExt, updateExtCfg });
+          }
+          // 3. Si está en registry de componentes custom → usar componente custom
+          else if (EXTENSION_CUSTOM_COMPONENTS[activeExt.name]) {
+            uiComponent = React.createElement(EXTENSION_CUSTOM_COMPONENTS[activeExt.name], {
+              ext: activeExt,
+              updateExtCfg,
+              ...(activeExt.name === 'webhook_site' ? {
+                whkReqs,
+                whkApiKey,
+                setWhkApiKey,
+                whkLoading,
+                createWebhookToken,
+                refreshWebhook,
+                loadWebhookLocal,
+                toast
+              } : {})
+            });
+          }
+          // 4. Fallback: extensión sin UI
+          else {
+            uiComponent = (
+              <div style={{ marginTop: '12px', padding: '12px', fontSize: '11px', color: 'var(--txt3)' }}>
+                Extension enabled (no UI configured)
+              </div>
+            );
+          }
+
+          return (
+            <div style={{ display: 'flex', flexDirection: 'column', width: '100%', height: '100%', padding: '20px' }}>
+              {uiComponent}
+            </div>
+          );
+        })()}
       </main>
 
       <div className="toast-c">

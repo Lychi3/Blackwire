@@ -13,7 +13,8 @@ EXTENSION_META = {
     "default_config": {
         "enabled": False,
         "token_id": None,
-        "token_url": None
+        "token_url": None,
+        "api_key": None
     }
 }
 

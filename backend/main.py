@@ -34,6 +34,7 @@ BASE_DIR = Path(__file__).parent.parent
 PROJECTS_DIR = BASE_DIR / "projects"
 CURRENT_PROJECT_FILE = BASE_DIR / ".current_project"
 EXTENSIONS_DIR = Path(__file__).parent / "extensions"
+EXTENSIONS_UI_COMPILED_DIR = EXTENSIONS_DIR / ".compiled_ui"
 FRONTEND_DIR = BASE_DIR / "frontend"
 APP_JSX_PATH = FRONTEND_DIR / "App.jsx"
 APP_COMPILED_PATH = FRONTEND_DIR / "App.compiled.js"
@@ -244,6 +245,61 @@ async def save_extension_config(project: str, name: str, config: dict):
     await update_proxy_config()
 
 
+def compile_extension_ui(ui_jsx_path: Path) -> Optional[Path]:
+    """
+    Compila un archivo .ui.jsx a .ui.js usando Sucrase
+    Retorna el path del archivo compilado o None si falla
+    """
+    try:
+        # Crear directorio de salida si no existe
+        EXTENSIONS_UI_COMPILED_DIR.mkdir(exist_ok=True)
+
+        # Path de salida - reemplazar .jsx con .js
+        output_filename = ui_jsx_path.name.replace('.jsx', '.js')
+        output_path = EXTENSIONS_UI_COMPILED_DIR / output_filename
+
+        # Crear temp dir para sucrase
+        import tempfile
+        with tempfile.TemporaryDirectory() as tmpdir:
+            tmp_src = Path(tmpdir) / "src"
+            tmp_build = Path(tmpdir) / "build"
+            tmp_src.mkdir()
+            tmp_build.mkdir()
+
+            # Copiar archivo fuente
+            shutil.copy(ui_jsx_path, tmp_src / ui_jsx_path.name)
+
+            # Compilar con Sucrase
+            cmd = [
+                "npx", "sucrase",
+                str(tmp_src),
+                "-d", str(tmp_build),
+                "--transforms", "jsx",
+                "--jsx-pragma", "React.createElement",
+                "--jsx-fragment-pragma", "React.Fragment"
+            ]
+
+            result = subprocess.run(cmd, capture_output=True, text=True, cwd=FRONTEND_DIR)
+
+            if result.returncode != 0:
+                logger.error(f"Failed to compile {ui_jsx_path.name}: {result.stderr}")
+                return None
+
+            # Copiar archivo compilado al directorio de salida
+            compiled_file = tmp_build / ui_jsx_path.name.replace('.jsx', '.js')
+            if compiled_file.exists():
+                shutil.copy(compiled_file, output_path)
+                logger.info(f"Compiled extension UI: {ui_jsx_path.name} -> {output_filename}")
+                return output_path
+            else:
+                logger.error(f"Compiled file not found: {compiled_file}")
+                return None
+
+    except Exception as e:
+        logger.error(f"Error compiling extension UI {ui_jsx_path.name}: {e}")
+        return None
+
+
 def load_extension_metadata() -> List[dict]:
     meta_list: List[dict] = []
     if not EXTENSIONS_DIR.exists():
@@ -257,7 +313,8 @@ def load_extension_metadata() -> List[dict]:
             "description": "",
             "tabs": [],
             "ui_schema": None,
-            "default_config": {"enabled": False}
+            "default_config": {"enabled": False},
+            "custom_ui_file": None
         }
         try:
             spec = importlib.util.spec_from_file_location(f"blackwire_ext_meta_{path.stem}", path)
@@ -271,6 +328,16 @@ def load_extension_metadata() -> List[dict]:
                     meta["name"] = getattr(ext, "name", meta["name"])
         except Exception as e:
             logger.warning("Failed to load extension metadata from %s: %s", path.name, e)
+
+        # Detectar y compilar archivo .ui.jsx si existe
+        ui_jsx_path = EXTENSIONS_DIR / f"{path.stem}.ui.jsx"
+        if ui_jsx_path.exists():
+            logger.info(f"Found custom UI for extension {path.stem}: {ui_jsx_path.name}")
+            compiled_path = compile_extension_ui(ui_jsx_path)
+            if compiled_path:
+                meta["custom_ui_file"] = compiled_path.name
+                logger.info(f"Extension {path.stem} has custom UI: {compiled_path.name}")
+
         meta_list.append(meta)
     return meta_list
 
@@ -826,13 +893,56 @@ async def update_extension_config(name: str, config: dict = Body(...)):
     return {"status": "updated", "name": name, "config": config}
 
 
+@app.get("/api/extensions/{ext_name}/ui.js")
+async def get_extension_ui(ext_name: str):
+    """
+    Sirve el archivo .ui.js compilado de una extensión
+    """
+    from fastapi.responses import Response
+
+    # Buscar archivo compilado
+    ui_file = EXTENSIONS_UI_COMPILED_DIR / f"{ext_name}.ui.js"
+
+    if not ui_file.exists():
+        raise HTTPException(status_code=404, detail=f"Custom UI not found for extension: {ext_name}")
+
+    try:
+        with open(ui_file, 'r', encoding='utf-8') as f:
+            content = f.read()
+
+        return Response(
+            content=content,
+            media_type="application/javascript",
+            headers={
+                "Cache-Control": "no-cache",
+                "Access-Control-Allow-Origin": "*"
+            }
+        )
+    except Exception as e:
+        logger.error(f"Error serving extension UI for {ext_name}: {e}")
+        raise HTTPException(status_code=500, detail=f"Error loading custom UI: {str(e)}")
+
+
+@app.post("/api/webhooksite/apikey")
+async def update_webhook_apikey(body: dict = Body(default={})):
+    """Update API Key without creating a new token"""
+    project = get_current_project()
+    if not project:
+        raise HTTPException(status_code=400, detail="Select a project first")
+    cfg = extensions_config.get("webhook_site", {})
+    api_key = body.get("api_key", "")
+    cfg["api_key"] = api_key
+    await save_extension_config(project, "webhook_site", cfg)
+    return {"status": "updated"}
+
+
 @app.post("/api/webhooksite/token")
 async def create_webhook_token(body: dict = Body(default={})):
     project = get_current_project()
     if not project:
         raise HTTPException(status_code=400, detail="Select a project first")
     cfg = extensions_config.get("webhook_site", {})
-    api_key = cfg.get("api_key")
+    api_key = body.get("api_key") or cfg.get("api_key")
     async with httpx.AsyncClient(timeout=20) as client:
         try:
             resp = await client.post(f"{WEBHOOKSITE_API_BASE}/token", headers=webhook_headers(api_key))
@@ -850,9 +960,10 @@ async def create_webhook_token(body: dict = Body(default={})):
         "token_id": token_id,
         "token_url": token_url,
         "token_created_at": datetime.now().isoformat(),
+        "api_key": api_key,
     })
     await save_extension_config(project, "webhook_site", cfg)
-    return {"status": "created", "token_id": token_id, "token_url": token_url}
+    return {"status": "created", "token_id": token_id, "token_url": token_url, "created_at": cfg["token_created_at"]}
 
 
 @app.post("/api/webhooksite/refresh")
@@ -905,20 +1016,30 @@ async def refresh_webhook_requests(body: dict = Body(default={})):
 
 
 @app.get("/api/webhooksite/requests")
-async def get_webhook_requests(limit: int = 200):
+async def get_webhook_requests(limit: int = 200, all_tokens: bool = False):
     project = get_current_project()
     if not project:
         raise HTTPException(status_code=400, detail="Select a project first")
     cfg = extensions_config.get("webhook_site", {})
     token_id = cfg.get("token_id")
-    if not token_id:
-        return {"requests": []}
+
     async with await get_db() as db:
-        cursor = await db.execute(
-            "SELECT request_id, method, url, ip, user_agent, content, headers, query, created_at FROM webhook_requests WHERE token_id = ? ORDER BY created_at DESC, id DESC LIMIT ?",
-            (token_id, limit)
-        )
+        if all_tokens:
+            # Mostrar requests de TODOS los tokens
+            cursor = await db.execute(
+                "SELECT request_id, method, url, ip, user_agent, content, headers, query, created_at, token_id FROM webhook_requests ORDER BY created_at DESC, id DESC LIMIT ?",
+                (limit,)
+            )
+        else:
+            # Solo del token actual
+            if not token_id:
+                return {"requests": []}
+            cursor = await db.execute(
+                "SELECT request_id, method, url, ip, user_agent, content, headers, query, created_at, token_id FROM webhook_requests WHERE token_id = ? ORDER BY created_at DESC, id DESC LIMIT ?",
+                (token_id, limit)
+            )
         rows = await cursor.fetchall()
+
     reqs = [{
         "request_id": r[0],
         "method": r[1],
@@ -929,6 +1050,7 @@ async def get_webhook_requests(limit: int = 200):
         "headers": json.loads(r[6]) if r[6] else {},
         "query": json.loads(r[7]) if r[7] else {},
         "created_at": r[8],
+        "token_id": r[9],
     } for r in rows]
     return {"requests": reqs}
 
