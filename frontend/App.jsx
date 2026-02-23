@@ -1403,21 +1403,60 @@ function Blackwire() {
   };
 
   const prettyPrint = text => {
-    try {
-      const obj = JSON.parse(text);
-      return JSON.stringify(obj, null, 2);
-    } catch (e) {
+    if (!text) return text;
+
+    const lang = detectLanguage(text);
+
+    // JSON - formatear
+    if (lang === 'json') {
+      try {
+        const obj = JSON.parse(text);
+        return JSON.stringify(obj, null, 2);
+      } catch (e) {}
+    }
+
+    // XML/HTML - formatear
+    if (lang === 'xml' || lang === 'html') {
       try {
         const parser = new DOMParser();
         const xml = parser.parseFromString(text, 'text/xml');
         if (xml.getElementsByTagName('parsererror').length === 0) {
           return formatXml(new XMLSerializer().serializeToString(xml));
         }
-      } catch (e2) {}
+      } catch (e) {}
     }
-    // Protobuf best-effort: intentar decodificar datos binarios
+
+    // CSS - formatear
+    if (lang === 'css') {
+      return text
+        .replace(/\s*{\s*/g, ' {\n  ')
+        .replace(/;\s*/g, ';\n  ')
+        .replace(/\s*}\s*/g, '\n}\n')
+        .replace(/,\s*/g, ',\n')
+        .trim();
+    }
+
+    // JavaScript - formateo básico
+    if (lang === 'javascript') {
+      return text
+        .replace(/\s*{\s*/g, ' {\n  ')
+        .replace(/;\s*/g, ';\n  ')
+        .replace(/\s*}\s*/g, '\n}\n')
+        .trim();
+    }
+
+    // SQL - formateo básico
+    if (lang === 'sql') {
+      return text
+        .replace(/\b(SELECT|FROM|WHERE|AND|OR|JOIN|LEFT|RIGHT|INNER|OUTER|GROUP BY|ORDER BY|HAVING|LIMIT)\b/gi, '\n$1')
+        .replace(/,\s*/g, ',\n  ')
+        .trim();
+    }
+
+    // Protobuf
     const proto = tryDecodeProtobuf(text);
     if (proto) return proto;
+
     return text;
   };
 
@@ -2568,6 +2607,146 @@ function Blackwire() {
       });
   };
 
+  // Sistema de syntax highlighting avanzado para múltiples lenguajes
+  const syntaxHighlightHTML = html => {
+    const esc = html.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    return esc
+      // Comentarios HTML
+      .replace(/(&lt;!--.*?--&gt;)/gs, '<span class="json-null">$1</span>')
+      // Doctype
+      .replace(/(&lt;!DOCTYPE[^&]*&gt;)/gi, '<span class="json-null">$1</span>')
+      // Tags y atributos
+      .replace(/(&lt;\/?)([\w:.-]+)/g, '$1<span class="json-key">$2</span>')
+      .replace(/([\w:.-]+)(=)/g, '<span class="json-bool">$1</span>$2')
+      .replace(/(&quot;|")(.*?)(&quot;|")/g, '$1<span class="json-string">$2</span>$3');
+  };
+
+  const syntaxHighlightCSS = css => {
+    const esc = css.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    return esc
+      // Comentarios
+      .replace(/(\/\*[\s\S]*?\*\/)/g, '<span class="json-null">$1</span>')
+      // Selectores
+      .replace(/^([^{]+)(\{)/gm, (m, selector, brace) => {
+        return '<span class="json-key">' + selector.trim() + '</span>' + brace;
+      })
+      // Propiedades
+      .replace(/([a-z-]+)(\s*:)/gi, '<span class="json-bool">$1</span>$2')
+      // Valores
+      .replace(/:\s*([^;}\n]+)/g, (m, val) => {
+        if (/^#[0-9a-f]{3,8}$/i.test(val.trim())) {
+          return ': <span class="json-string">' + val + '</span>';
+        }
+        if (/^[\d.]+(%|px|em|rem|vh|vw|pt|cm|mm|in)?$/i.test(val.trim())) {
+          return ': <span class="json-number">' + val + '</span>';
+        }
+        return ': ' + val;
+      });
+  };
+
+  const syntaxHighlightJS = js => {
+    const esc = js.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    return esc
+      // Comentarios de línea
+      .replace(/(\/\/.*$)/gm, '<span class="json-null">$1</span>')
+      // Comentarios de bloque
+      .replace(/(\/\*[\s\S]*?\*\/)/g, '<span class="json-null">$1</span>')
+      // Strings (comillas dobles y simples)
+      .replace(/("(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|`(?:\\.|[^`\\])*`)/g, '<span class="json-string">$1</span>')
+      // Números
+      .replace(/\b(\d+\.?\d*(?:[eE][+-]?\d+)?)\b/g, '<span class="json-number">$1</span>')
+      // Keywords
+      .replace(/\b(const|let|var|function|return|if|else|for|while|do|switch|case|break|continue|try|catch|finally|throw|new|class|extends|import|export|from|default|async|await|yield|typeof|instanceof|delete|void|null|undefined|true|false|this|super|static|get|set)\b/g, '<span class="json-bool">$1</span>')
+      // Funciones
+      .replace(/\b([a-zA-Z_$][\w$]*)\s*(?=\()/g, '<span class="json-key">$1</span>');
+  };
+
+  const syntaxHighlightPython = py => {
+    const esc = py.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    return esc
+      // Comentarios
+      .replace(/(#.*$)/gm, '<span class="json-null">$1</span>')
+      // Strings (triple quoted, double, single)
+      .replace(/("""[\s\S]*?"""|'''[\s\S]*?'''|"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*')/g, '<span class="json-string">$1</span>')
+      // Números
+      .replace(/\b(\d+\.?\d*(?:[eE][+-]?\d+)?)\b/g, '<span class="json-number">$1</span>')
+      // Keywords
+      .replace(/\b(def|class|if|elif|else|for|while|return|import|from|as|try|except|finally|with|lambda|yield|async|await|pass|break|continue|raise|assert|del|global|nonlocal|and|or|not|in|is|None|True|False)\b/g, '<span class="json-bool">$1</span>')
+      // Funciones y clases
+      .replace(/\b(def|class)\s+([a-zA-Z_]\w*)/g, '$1 <span class="json-key">$2</span>');
+  };
+
+  const syntaxHighlightPHP = php => {
+    const esc = php.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    return esc
+      // Comentarios
+      .replace(/(\/\/.*$|#.*$)/gm, '<span class="json-null">$1</span>')
+      .replace(/(\/\*[\s\S]*?\*\/)/g, '<span class="json-null">$1</span>')
+      // Strings
+      .replace(/("(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*')/g, '<span class="json-string">$1</span>')
+      // Variables
+      .replace(/(\$[a-zA-Z_]\w*)/g, '<span class="json-key">$1</span>')
+      // Números
+      .replace(/\b(\d+\.?\d*)\b/g, '<span class="json-number">$1</span>')
+      // Keywords
+      .replace(/\b(function|return|if|else|elseif|for|foreach|while|do|switch|case|break|continue|try|catch|finally|throw|new|class|extends|implements|public|private|protected|static|const|namespace|use|as|trait|interface|abstract|final|echo|print|include|require|include_once|require_once|array|true|false|null)\b/g, '<span class="json-bool">$1</span>');
+  };
+
+  const syntaxHighlightSQL = sql => {
+    const esc = sql.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    return esc
+      // Comentarios
+      .replace(/(--.*$)/gm, '<span class="json-null">$1</span>')
+      .replace(/(\/\*[\s\S]*?\*\/)/g, '<span class="json-null">$1</span>')
+      // Strings
+      .replace(/('(?:''|[^'])*')/g, '<span class="json-string">$1</span>')
+      // Números
+      .replace(/\b(\d+\.?\d*)\b/g, '<span class="json-number">$1</span>')
+      // Keywords
+      .replace(/\b(SELECT|FROM|WHERE|AND|OR|NOT|IN|LIKE|BETWEEN|IS|NULL|JOIN|LEFT|RIGHT|INNER|OUTER|ON|GROUP BY|HAVING|ORDER BY|ASC|DESC|LIMIT|OFFSET|INSERT|INTO|VALUES|UPDATE|SET|DELETE|CREATE|TABLE|ALTER|DROP|INDEX|VIEW|DATABASE|SCHEMA|PRIMARY KEY|FOREIGN KEY|REFERENCES|CONSTRAINT|UNIQUE|DEFAULT|AUTO_INCREMENT|CASCADE|TRUNCATE|UNION|ALL|DISTINCT|AS|CASE|WHEN|THEN|ELSE|END)\b/gi, '<span class="json-bool">$1</span>');
+  };
+
+  const syntaxHighlightYAML = yaml => {
+    const esc = yaml.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    return esc
+      // Comentarios
+      .replace(/(#.*$)/gm, '<span class="json-null">$1</span>')
+      // Keys (antes de :)
+      .replace(/^(\s*)([a-zA-Z_][\w]*)\s*:/gm, '$1<span class="json-key">$2</span>:')
+      // Strings (quoted)
+      .replace(/("(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*')/g, '<span class="json-string">$1</span>')
+      // Booleanos y null
+      .replace(/:\s*(true|false|null|yes|no|on|off)\b/gi, ': <span class="json-bool">$1</span>')
+      // Números
+      .replace(/:\s*(-?\d+\.?\d*)/g, ': <span class="json-number">$1</span>');
+  };
+
+  const syntaxHighlightGraphQL = gql => {
+    const esc = gql.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    return esc
+      // Comentarios
+      .replace(/(#.*$)/gm, '<span class="json-null">$1</span>')
+      // Strings
+      .replace(/("(?:\\.|[^"\\])*")/g, '<span class="json-string">$1</span>')
+      // Keywords
+      .replace(/\b(query|mutation|subscription|fragment|on|type|interface|union|enum|input|schema|extend|implements|directive|scalar)\b/g, '<span class="json-bool">$1</span>')
+      // Tipos y fields
+      .replace(/\b([A-Z][a-zA-Z0-9]*)\b/g, '<span class="json-key">$1</span>');
+  };
+
+  const syntaxHighlightShell = sh => {
+    const esc = sh.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    return esc
+      // Comentarios
+      .replace(/(#.*$)/gm, '<span class="json-null">$1</span>')
+      // Strings
+      .replace(/("(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*')/g, '<span class="json-string">$1</span>')
+      // Variables
+      .replace(/(\$\{?[a-zA-Z_]\w*\}?|\$\d+)/g, '<span class="json-key">$1</span>')
+      // Comandos comunes
+      .replace(/\b(echo|cd|ls|mkdir|rm|cp|mv|cat|grep|awk|sed|find|chmod|chown|sudo|apt|yum|npm|yarn|git|docker|curl|wget|ssh|scp|tar|zip|unzip|ps|kill|top|df|du|if|then|else|elif|fi|for|while|do|done|case|esac|function|return|export|source|alias)\b/g, '<span class="json-bool">$1</span>');
+  };
+
   const escapeHtml = s => String(s)
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
@@ -2605,51 +2784,134 @@ function Blackwire() {
     }
   };
 
-  // Colorea cualquier body inteligentemente (JSON, XML, protobuf, texto plano)
-  const colorizeBody = text => {
-    if (!text) return { text: text, html: false };
+  // Detecta el lenguaje del código
+  const detectLanguage = text => {
+    if (!text || !text.trim()) return null;
+    const trimmed = text.trim();
+
     // JSON
     try {
       JSON.parse(text);
-      return { text: syntaxHighlightJSON(text), html: true };
+      return 'json';
     } catch (e) {}
-    // XML
-    try {
-      const parser = new DOMParser();
-      const xml = parser.parseFromString(text, 'text/xml');
-      if (xml.getElementsByTagName('parsererror').length === 0 && text.trim().startsWith('<')) {
-        return { text: syntaxHighlightXML(text), html: true };
-      }
-    } catch (e) {}
-    // Protobuf best-effort output
-    if (text.includes('// Protobuf') && text.includes('field ')) {
-      return { text: syntaxHighlightProto(text), html: true };
+
+    // XML/HTML
+    if (trimmed.startsWith('<')) {
+      try {
+        const parser = new DOMParser();
+        const xml = parser.parseFromString(text, 'text/xml');
+        if (xml.getElementsByTagName('parsererror').length === 0) {
+          // Detectar si es HTML o XML
+          if (trimmed.toLowerCase().startsWith('<!doctype html') ||
+              /<html|<head|<body|<div|<span|<p|<a |<img |<script|<style/i.test(trimmed.substring(0, 200))) {
+            return 'html';
+          }
+          return 'xml';
+        }
+      } catch (e) {}
     }
-    return { text: text, html: false };
+
+    // CSS
+    if (/^\s*([.#]?[a-z][\w-]*|\*|@[\w-]+)\s*\{/im.test(trimmed) ||
+        /@import|@media|@keyframes/i.test(trimmed)) {
+      return 'css';
+    }
+
+    // JavaScript/TypeScript
+    if (/^(import |export |const |let |var |function |class |async |\/\/|\/\*)/m.test(trimmed) ||
+        /=>\s*\{|\.then\(|\.catch\(|console\.(log|error|warn)/i.test(trimmed)) {
+      return 'javascript';
+    }
+
+    // Python
+    if (/^(def |class |import |from |#|""")/m.test(trimmed) ||
+        /:\s*$\n\s{4,}/m.test(trimmed)) {
+      return 'python';
+    }
+
+    // PHP
+    if (trimmed.startsWith('<?php') || /\$[a-z_]/i.test(trimmed)) {
+      return 'php';
+    }
+
+    // SQL
+    if (/^(SELECT|INSERT|UPDATE|DELETE|CREATE|ALTER|DROP)\s+/im.test(trimmed)) {
+      return 'sql';
+    }
+
+    // YAML
+    if (/^[a-z_][\w]*:\s*$/m.test(trimmed) && !/[{}[\]]/g.test(trimmed)) {
+      return 'yaml';
+    }
+
+    // GraphQL
+    if (/^(query|mutation|subscription|fragment|type|interface|enum)\s+/im.test(trimmed)) {
+      return 'graphql';
+    }
+
+    // Shell/Bash
+    if (trimmed.startsWith('#!') || /^(echo|cd|ls|mkdir|export|source|function)\s+/m.test(trimmed)) {
+      return 'shell';
+    }
+
+    // Protobuf
+    if (text.includes('// Protobuf') && text.includes('field ')) {
+      return 'protobuf';
+    }
+
+    return null;
+  };
+
+  // Colorea cualquier body inteligentemente detectando el lenguaje
+  const colorizeBody = text => {
+    if (!text) return { text: text, html: false };
+
+    const lang = detectLanguage(text);
+    if (!lang) return { text: text, html: false };
+
+    switch (lang) {
+      case 'json': return { text: syntaxHighlightJSON(text), html: true };
+      case 'xml': return { text: syntaxHighlightXML(text), html: true };
+      case 'html': return { text: syntaxHighlightHTML(text), html: true };
+      case 'css': return { text: syntaxHighlightCSS(text), html: true };
+      case 'javascript': return { text: syntaxHighlightJS(text), html: true };
+      case 'python': return { text: syntaxHighlightPython(text), html: true };
+      case 'php': return { text: syntaxHighlightPHP(text), html: true };
+      case 'sql': return { text: syntaxHighlightSQL(text), html: true };
+      case 'yaml': return { text: syntaxHighlightYAML(text), html: true };
+      case 'graphql': return { text: syntaxHighlightGraphQL(text), html: true };
+      case 'shell': return { text: syntaxHighlightShell(text), html: true };
+      case 'protobuf': return { text: syntaxHighlightProto(text), html: true };
+      default: return { text: text, html: false };
+    }
   };
 
   const formatBody = (body, format) => {
     if (!body) return { text: body, html: false };
+
     if (format === 'pretty') {
-      try {
-        const obj = JSON.parse(body);
-        const formatted = JSON.stringify(obj, null, 2);
-        return { text: syntaxHighlightJSON(formatted), html: true };
-      } catch (e) {
-        // XML pretty
-        try {
-          const parser = new DOMParser();
-          const xml = parser.parseFromString(body, 'text/xml');
-          if (xml.getElementsByTagName('parsererror').length === 0 && body.trim().startsWith('<')) {
-            const formatted = formatXml(new XMLSerializer().serializeToString(xml));
-            return { text: syntaxHighlightXML(formatted), html: true };
-          }
-        } catch (e2) {}
-        // Protobuf best-effort
-        const proto = tryDecodeProtobuf(body);
-        if (proto) return { text: syntaxHighlightProto(proto), html: true };
+      const lang = detectLanguage(body);
+      if (!lang) return { text: body, html: false };
+
+      const formatted = prettyPrint(body);
+
+      switch (lang) {
+        case 'json': return { text: syntaxHighlightJSON(formatted), html: true };
+        case 'xml': return { text: syntaxHighlightXML(formatted), html: true };
+        case 'html': return { text: syntaxHighlightHTML(formatted), html: true };
+        case 'css': return { text: syntaxHighlightCSS(formatted), html: true };
+        case 'javascript': return { text: syntaxHighlightJS(formatted), html: true };
+        case 'python': return { text: syntaxHighlightPython(formatted), html: true };
+        case 'php': return { text: syntaxHighlightPHP(formatted), html: true };
+        case 'sql': return { text: syntaxHighlightSQL(formatted), html: true };
+        case 'yaml': return { text: syntaxHighlightYAML(formatted), html: true };
+        case 'graphql': return { text: syntaxHighlightGraphQL(formatted), html: true };
+        case 'shell': return { text: syntaxHighlightShell(formatted), html: true };
+        case 'protobuf': return { text: syntaxHighlightProto(formatted), html: true };
+        default: return { text: formatted, html: false };
       }
     }
+
     // Siempre intentar colorear, incluso en raw
     return colorizeBody(body);
   };
