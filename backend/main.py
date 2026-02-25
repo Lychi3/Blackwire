@@ -15,6 +15,9 @@ import re
 import shutil
 import importlib.util
 import shlex
+import shutil
+import subprocess
+from pathlib import Path
 from datetime import datetime
 from pathlib import Path
 from typing import Optional, List, Dict
@@ -1680,6 +1683,9 @@ async def toggle_intercept():
     global intercept_enabled
     intercept_enabled = not intercept_enabled
     logger.info('Intercept toggled -> %s', intercept_enabled)
+    if not intercept_enabled:
+        await forward_all()
+    
     project = get_current_project()
     if project:
         config = await get_project_config(project)
@@ -2410,6 +2416,10 @@ async def launch_browser(proxy_port: int = 8080):
     profile = Path("/tmp/blackwire_browser")
     profile.mkdir(exist_ok=True)
     for browser in ["chromium-browser", "google-chrome", "chromium", "firefox"]:
+        path = shutil.which(browser)
+        if not path:
+            continue
+        
         try:
             if "firefox" in browser:
                 cmd = [browser, "-no-remote", "-profile", str(profile)]
@@ -2418,7 +2428,7 @@ async def launch_browser(proxy_port: int = 8080):
                     f"--user-data-dir={profile}", "--ignore-certificate-errors", "--no-first-run"]
             proc = subprocess.Popen(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
             return {"status": "launched", "browser": browser}
-        except FileNotFoundError:
+        except (FileNotFoundError, PermissionError):
             continue
     return {"status": "failed", "error": "No browser found"}
 
