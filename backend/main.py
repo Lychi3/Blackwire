@@ -189,7 +189,10 @@ CHEPY_OPERATIONS = {
 
 
 def get_project_path(name: str) -> Path:
-    return PROJECTS_DIR / name
+    safe_name = os.path.basename(name)
+    if not safe_name or safe_name in ['.', '..']:
+        raise HTTPException(status_code=400, detail="Nombre de proyecto inválido")
+    return PROJECTS_DIR / safe_name
 
 def get_project_db(name: str) -> Path:
     return get_project_path(name) / "blackwire.db"
@@ -758,7 +761,7 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(title="Blackwire API", lifespan=lifespan)
 app.add_middleware(GZipMiddleware, minimum_size=500)
-app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_credentials=True, allow_methods=["*"], allow_headers=["*"])
+app.add_middleware(CORSMiddleware, allow_origins=["http://localhost:5000", "http://127.0.0.1:5000"], allow_credentials=True, allow_methods=["*"], allow_headers=["*"])
 
 # Usar el frontend.html original que tiene toda la funcionalidad
 FRONTEND_HTML_PATH = Path(__file__).parent / "frontend.html"
